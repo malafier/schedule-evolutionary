@@ -1,0 +1,34 @@
+{% macro plan_cell(lesson, teachers, subjects) %}
+  {% set teacher_name = teachers | selectattr("id", "equalto", lesson.teacher_id) | map(attribute="name") | first %}
+  {% set subject_name = subjects | selectattr("id", "equalto", lesson.id) | map(attribute="name") | first %}
+  <div class="flex flex-col justify-between items-center">
+    <div class="text-sm">{{ subject_name }}</div>
+    <div class="text-sm">{{ teacher_name }}</div>
+  </div>
+{% endmacro %}
+
+{% macro plan_view(class_plan, teachers, subjects) %}
+  <div class="overflow-x-auto">
+    {% set table_style = "px-4 py-2 border border-gray-300" %}
+    <table class="table-auto border-collapse border border-gray-300">
+      <tr>
+        <th class="{{ table_style }} bg-gray-100">No.</th>
+        <th class="{{ table_style }} bg-gray-100">Monday</th>
+        <th class="{{ table_style }} bg-gray-100">Tuesday</th>
+        <th class="{{ table_style }} bg-gray-100">Wednesday</th>
+        <th class="{{ table_style }} bg-gray-100">Thursday</th>
+        <th class="{{ table_style }} bg-gray-100">Friday</th>
+      </tr>
+      {% for i in range(8) %}
+        <tr>
+          <td class="{{ table_style }}">{{ i + 1 }}</td>
+          <td class="{{ table_style }}">{{ plan_cell(class_plan['Monday'][i],    teachers, subjects) }}</td>
+          <td class="{{ table_style }}">{{ plan_cell(class_plan['Tuesday'][i],   teachers, subjects) }}</td>
+          <td class="{{ table_style }}">{{ plan_cell(class_plan['Wednesday'][i], teachers, subjects) }}</td>
+          <td class="{{ table_style }}">{{ plan_cell(class_plan['Thursday'][i],  teachers, subjects) }}</td>
+          <td class="{{ table_style }}">{{ plan_cell(class_plan['Friday'][i],    teachers, subjects) }}</td>
+        </tr>
+      {% endfor %}
+    </table>
+  </div>
+{% endmacro %}

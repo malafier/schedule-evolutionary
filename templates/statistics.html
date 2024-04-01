@@ -1,0 +1,11 @@
+{% block statistics %}
+  <h5>Generation {{ score[0] }}</h5>
+  <p>Max score: {{ score[1] }}</p>
+  <p>Average score: {{ score[2] }}</p>
+  <p>Min score: {{ score[3] }}</p>
+
+  {% if graph %}
+    <h5>Graph</h5>
+    <img src="{{ graph }}" alt="Graph">
+  {% endif %}
+{% endblock %}

@@ -1,4 +1,5 @@
 import random
+from time import sleep
 
 WEEK_DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
 DEFAULT_EVAL_CRITERIA = {}
@@ -132,9 +133,11 @@ class Generation:
         self.gen_no = 0
         self.size = size
         self.config = config
-        self.population = [SchoolPlan(config.head_teachers.keys())] * size
-        for plan in self.population:
+        self.population = []
+        for _ in range(size):
+            plan = SchoolPlan(config.head_teachers.keys())
             plan.generate(config)
+            self.population.append(plan)
 
     def evaluate(self):
         for plan in self.population:

@@ -1,0 +1,12 @@
+{% from "macros.html" import plan_view %}
+
+{% block plan %}
+    <h2>Plan szkolny</h2>
+
+    {% for class_name in school_plan.class_plans.keys() %}
+      <h3>Plan {{ class_name }}</h3>
+      <h4>HT: {{ config.head_teachers[class_name]["name"] }}</h4>
+
+      {{ plan_view(school_plan.class_plans[class_name], config.teachers, config.subjects[class_name]) }}
+    {% endfor %}
+{% endblock %}

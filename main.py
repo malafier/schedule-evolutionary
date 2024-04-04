@@ -67,20 +67,39 @@ class SchoolPlan:  # TODO: replace again?
                         hours_count[hour] += 1
         score += sum(hours_count[1:6]) - hours_count[7] * 0.5 - hours_count[7] * 1
 
-        # empty lessons FIXME: add multi hour empty lessons
-        empty_lessons = 0
+        # empty lessons
+        empty_lessons = [0] * 8
         for name in self.class_plans.keys():
             for day in WEEK_DAYS:
-                for hour in range(1, 6):
-                    if self.class_plans[name][day][hour] is None and self.class_plans[name][day][hour - 1] is not None \
-                            and self.class_plans[name][day][hour + 1] is not None:
-                        empty_lessons += 1
-        score -= empty_lessons * 0.5
+                blank_hours = [0] * 8
+                if self.class_plans[name][day][0] is None:
+                    blank_hours[0] = 1
+
+                for hour in range(1, 8):
+                    if self.class_plans[name][day][hour] is None:
+                        blank_hours[hour] = blank_hours[hour - 1] + 1
+                    else:
+                        blank_hours[hour] = 0
+
+                for i in range(1, 7):
+                    if blank_hours[i] != 0 and blank_hours[i + 1] == 0 and i != blank_hours[i]:
+                        empty_lessons[blank_hours[i]] += 1
+        score -= sum([empty_lessons[i] * i for i in range(6)])
 
         self.fitness = score
 
     def swap(self, swaps=1):
         pass
+
+    def genome(self):
+        subjects_gen = []
+        teachers_gen = []
+        for name in self.class_plans.keys():
+            for day in WEEK_DAYS:
+                for hour in range(8):
+                    subjects_gen.append(self.class_plans[name][day][hour]["id"] if self.class_plans[name][day][hour] else 0)
+                    teachers_gen.append(self.class_plans[name][day][hour]["teacher_id"] if self.class_plans[name][day][hour] else 0)
+        return "".join(map(str, subjects_gen)), "".join(map(str, teachers_gen))
 
     def add_to_plan(self, config: Config, name: str, day: str, hour: int, subject: dict | None) -> bool:
         if subject is None:
@@ -91,7 +110,7 @@ class SchoolPlan:  # TODO: replace again?
         sub_current_hours = self.count_subject_hours(name, subject["id"])
         if self.class_plans[name][day][hour] is None and self.teacher_free_at(subject["teacher_id"], day, hour) \
                 and sub_config_hours > sub_current_hours:
-            self.class_plans[name][day][hour] = subject
+            self.class_plans[name][day][hour] = {"id": subject["id"], "teacher_id": subject["teacher_id"]}
             return True
         return False
 
@@ -108,11 +127,17 @@ class SchoolPlan:  # TODO: replace again?
 
 
 def cross_plans(plan1: SchoolPlan, plan2: SchoolPlan, config: Config) -> SchoolPlan | None:
+    if plan1.class_plans.keys() != plan2.class_plans.keys() or plan1.class_plans.keys() != config.subjects.keys():
+        return None
+    if plan1.class_plans == plan2.class_plans:
+        return None
+
     DIV_FACTOR = 0.5
 
+    groups = config.head_teachers.keys()
     child = SchoolPlan(config.head_teachers.keys())
     verification_not_needed = True
-    for name in plan1.class_plans.keys():
+    for name in groups:
         for day in WEEK_DAYS:
             for hour in range(8):
                 lesson = plan2.class_plans[name][day][hour] if random.random() < DIV_FACTOR \
@@ -125,7 +150,7 @@ def cross_plans(plan1: SchoolPlan, plan2: SchoolPlan, config: Config) -> SchoolP
 
 
 class Generation:
-    def __init__(self, config: Config, size=10, crossover_rate=0.7, mutation_rate=0.1, eval_criteria=None):
+    def __init__(self, config: Config, size=20, crossover_rate=0.7, mutation_rate=0.1, eval_criteria=None):
         self.CROSSOVER_RATE = crossover_rate
         self.MUTATION_RATE = mutation_rate
         self.EVAL_CRITERIA = eval_criteria  # TODO: set defaults and provide option
@@ -142,7 +167,7 @@ class Generation:
     def evaluate(self):
         for plan in self.population:
             plan.evaluate()
-        self.population.sort(key=lambda x: x.fitness)
+        self.population.sort(key=lambda x: x.fitness, reverse=True)
 
     def best_plan(self) -> SchoolPlan:
         return max(self.population, key=lambda x: x.fitness)
@@ -151,8 +176,11 @@ class Generation:
         return {
             "max": self.best_plan().fitness,
             "avg": sum([plan.fitness for plan in self.population]) / self.size,
-            "min": self.population[0].fitness
+            "min": self.population[-1].fitness
         }
+
+    def genomes(self):
+        return [plan.genome() for plan in self.population]
 
     def crossover(self):
         # selection

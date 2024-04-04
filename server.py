@@ -57,14 +57,15 @@ def make_next_generation():
     generation.evaluate()
     stats = generation.statistics()
     scores.append((generation.gen_no, stats["max"], stats["avg"], stats["min"]))
-    return render_template("statistics.html", score=scores[-1])
 
-
-@app.route('/graph', methods=['GET'])
-def show_graph():
-    global scores
     graph = generate_graph()
     return render_template("statistics.html", score=scores[-1], graph=graph)
+
+
+@app.route('/all', methods=['GET'])
+def show_all_plans():
+    global generation
+    return render_template("all_plans.html", plans=generation.population, config=generation.config)
 
 
 @app.route('/bestplan', methods=['GET'])
@@ -72,6 +73,11 @@ def show_plan():
     global generation
     school_plan: SchoolPlan = generation.best_plan()
     return render_template("plan.html", school_plan=school_plan, config=generation.config)
+
+@app.route('/genomes', methods=['GET'])
+def show_genomes():
+    global generation
+    return render_template("genomes.html", genomes=generation.genomes())
 
 
 if __name__ == '__main__':

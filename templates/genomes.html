@@ -1,0 +1,11 @@
+{% block genomes %}
+  {% set i = 0 %}
+  {% for genome in genomes %}
+    <div class="genome">
+      <h2>Gen {{ i }}</h2>
+      <p>{{ genome[0] }}</p>
+      <p>{{ genome[1] }}</p>
+    </div>
+    {% set i = i + 1 %}
+  {% endfor %}
+{% endblock %}

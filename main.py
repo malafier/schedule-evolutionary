@@ -1,4 +1,5 @@
 import random
+from abc import ABC
 from enum import Enum
 
 WEEK_DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
@@ -14,6 +15,54 @@ class Day(Enum):
     FRI = 4 * H_PER_DAY
 
 
+class FitnessEvaluationMethod(ABC):
+    def evaluate(self, plan):
+        pass
+
+
+class BasicEvaluation(FitnessEvaluationMethod):
+    def evaluate(self, plan):
+        score = 0
+        hours_count = [0] * H_PER_DAY
+        for name in plan.keys():
+            for i in range(len(plan[name])):
+                if plan[name][i] != (0, 0):
+                    hours_count[i % H_PER_DAY] += 1
+        score += sum(hours_count[:5]) + hours_count[6] * 0.5 - hours_count[7] * 1
+        return score
+
+
+class BlankLessonsEvaluation(FitnessEvaluationMethod):
+    def evaluate(self, plan):
+        def is_empty(group_name: str, x_day: Day, start_h: int, h_span: int) -> bool:
+            lessons = plan[group_name][x_day.value + start_h: x_day.value + start_h + h_span - 1]
+            lesson_before = plan[group_name][x_day.value + start_h - 1]
+            lesson_after = plan[group_name][x_day.value + start_h + h_span]
+            return all([lesson == (0, 0) for lesson in lessons]) and lesson_after != (0, 0) and lesson_before != (0, 0)
+
+        score = 0
+        for name in plan.keys():
+            for day in Day:
+                for empty_size in range(1, 7):
+                    for lesson_h in range(1, H_PER_DAY - empty_size):
+                        if is_empty(name, day, lesson_h, empty_size):
+                            score -= 1 * empty_size
+        return score
+
+
+class HoursPerDayEvaluation(FitnessEvaluationMethod):
+    def evaluate(self, plan):
+        score = 0
+        for name in plan.keys():
+            for day in Day:
+                hours = 0
+                for i in range(H_PER_DAY):
+                    if plan[name][day.value + i] != (0, 0):
+                        hours += 1
+                score += 1 if hours <= 6 else -hours/2
+        return score
+
+
 class Config:
     def __init__(self, head_teachers, teachers, subjects):
         self.head_teachers: dict = head_teachers
@@ -27,9 +76,9 @@ class Config:
         return -1
 
 
-class SchoolPlan:  # TODO: replace again?
+class SchoolPlan:
     def __init__(self, classes_name):
-        self.fitness = -1
+        self.fitness = 0
         self.plans = {class_name: [(0, 0) for _ in range((H_PER_DAY * len(Day)))] for class_name in classes_name}
 
     def generate(self, config: Config):
@@ -46,9 +95,11 @@ class SchoolPlan:  # TODO: replace again?
         for class_name in config.subjects.keys():
             generate_group_plan(class_name)
 
-    def teacher_free_at(self, teacher_id: int, day: Day, hour: int) -> bool:
+    def teacher_free_at(self, teacher_id: int, day: Day | int, hour: int) -> bool:
+        if isinstance(day, Day):
+            day = day.value
         for name in self.plans.keys():
-            if self.plans[name][day.value + hour][1] == teacher_id:
+            if self.plans[name][day + hour][1] == teacher_id:
                 return False
         return True
 
@@ -61,37 +112,29 @@ class SchoolPlan:  # TODO: replace again?
 
     def evaluate(self):  # TODO: send evaluation criteria from Generation class
         score = 0
-
-        hours_count = [0] * H_PER_DAY
-        for name in self.plans.keys():
-            for i in range(len(self.plans[name])):
-                if self.plans[name][i] != (0, 0):
-                    hours_count[i % H_PER_DAY] += 1
-        score += sum(hours_count[:5]) + hours_count[6] * 0.5 - hours_count[7] * 1
-
-        # empty lessons
-        empty_lessons = [0] * H_PER_DAY
-        for name in self.plans.keys():
-            for day in Day:
-                blank_hours = [0] * 8
-                if self.plans[name][day.value] == (0, 0):
-                    blank_hours[0] = 1
-
-                for hour in range(1, H_PER_DAY):
-                    if self.plans[name][day.value + hour] == (0, 0):
-                        blank_hours[hour] = blank_hours[hour - 1] + 1
-                    else:
-                        blank_hours[hour] = 0
-
-                for i in range(1, 7):
-                    if blank_hours[i] != 0 and blank_hours[i + 1] == 0 and i != blank_hours[i]:
-                        empty_lessons[blank_hours[i]] += 1
-        score -= sum([empty_lessons[i] * i for i in range(6)])
+        score += BasicEvaluation().evaluate(self.plans)
+        score += BlankLessonsEvaluation().evaluate(self.plans)
+        score += HoursPerDayEvaluation().evaluate(self.plans)
 
         self.fitness = score
 
     def swap(self, swaps=1):
-        pass
+        for i in range(swaps):
+            lesson1 = random.choice(list(Day)).value + random.choice(range(H_PER_DAY))
+            lesson2 = random.choice(list(Day)).value + random.choice(range(H_PER_DAY))
+            group = random.choice(list(self.plans.keys()))
+
+            teachers_ok = True
+            if self.plans[group][lesson1] != (0, 0):
+                teacher1 = self.plans[group][lesson1][1]
+                teachers_ok &= self.teacher_free_at(teacher1, lesson2 // H_PER_DAY, lesson2 % H_PER_DAY) or self.plans[group][lesson2][1] == teacher1
+            if self.plans[group][lesson2] != (0, 0):
+                teacher2 = self.plans[group][lesson2][1]
+                teachers_ok &= self.teacher_free_at(teacher2, lesson1 // H_PER_DAY, lesson1 % H_PER_DAY) or self.plans[group][lesson1][1] == teacher2
+            if teachers_ok:
+                self.plans[group][lesson1], self.plans[group][lesson2] = self.plans[group][lesson2], self.plans[group][lesson1]
+            else:
+                i -= 1
 
     def add_to_plan(self, config: Config, name: str, day: Day, hour: int, subject: tuple):
         if subject == (0, 0):
@@ -131,24 +174,106 @@ class SchoolPlan:  # TODO: replace again?
         return str(self.plans)
 
 
-def cross_plans(plan1: SchoolPlan, plan2: SchoolPlan, config: Config) -> SchoolPlan | None:
-    if plan1.plans.keys() != plan2.plans.keys() or plan1.plans.keys() != config.head_teachers.keys():
-        return None
-    if plan1.plans == plan2.plans:
-        return None
+class CrossoverStrategy(ABC):
+    def crossover(self, parents, best_plan, size, crossover_rate, config: Config) -> list[SchoolPlan]:
+        pass
 
-    DIV_FACTOR = 0.5
+    def cross(self, plan1, plan2, config) -> SchoolPlan | None:
+        pass
 
-    groups = config.head_teachers.keys()
-    child = SchoolPlan(groups)
-    for name in groups:
-        for day in list(Day):
-            for hour in range(H_PER_DAY):
-                lesson = plan2.plans[name][day.value + hour] if random.random() < DIV_FACTOR \
-                    else plan1.plans[name][day.value + hour]
-                child.add_to_plan(config, name, day, hour, lesson)
-    child.fill_plan(config)
-    return child
+    def valid_plans(self, plan1: SchoolPlan, plan2: SchoolPlan, config: Config) -> bool:
+        return plan1.plans.keys() == plan2.plans.keys() and plan1.plans.keys() == config.head_teachers.keys() \
+                and plan1.plans != plan2.plans
+
+
+class SinglePointCrossover(CrossoverStrategy):
+    def crossover(self, parents, best_plan, size, crossover_rate, config: Config) -> list[SchoolPlan]:
+        children = []
+        while len(children) < size - 1:
+            parent1 = random.choice(parents)
+            parent2 = random.choice(parents)
+            if random.random() < crossover_rate:
+                child = self.cross(parent1, parent2, config)
+                if child is not None:
+                    children.append(child)
+        children.append(best_plan)
+        return children
+
+    def cross(self, plan1, plan2, config) -> SchoolPlan | None:
+        if not self.valid_plans(plan1, plan2, config):
+            return None
+
+        DIV_FACTOR = 0.5
+
+        groups = config.head_teachers.keys()
+        child = SchoolPlan(groups)
+        for name in groups:
+            for day in list(Day):
+                for hour in range(H_PER_DAY):
+                    lesson = plan2.plans[name][day.value + hour] if random.random() < DIV_FACTOR \
+                        else plan1.plans[name][day.value + hour]
+                    child.add_to_plan(config, name, day, hour, lesson)
+        child.fill_plan(config)
+        return child
+
+
+class DayCrossover(CrossoverStrategy):
+    def crossover(self, parents, best_plan, size, crossover_rate, config: Config) -> list[SchoolPlan]:
+        children = []
+        while len(children) < size - 1:
+            parent1 = random.choice(parents)
+            parent2 = random.choice(parents)
+            if random.random() < crossover_rate:
+                child = self.cross(parent1, parent2, config)
+                if child is not None:
+                    children.append(child)
+        children.append(best_plan)
+        return children
+
+    def cross(self, plan1, plan2, config) -> SchoolPlan | None:
+        if not self.valid_plans(plan1, plan2, config):
+            return None
+
+        DIV_FACTOR = 0.5
+
+        groups = config.head_teachers.keys()
+        child = SchoolPlan(groups)
+        for name in groups:
+            for day in list(Day):
+                plan = plan2 if random.random() < DIV_FACTOR else plan1
+                for hour in range(H_PER_DAY):
+                    lesson = plan.plans[name][day.value + hour]
+                    child.add_to_plan(config, name, day, hour, lesson)
+        child.fill_plan(config)
+        return child
+
+
+class ChampionCrossover(CrossoverStrategy):
+    def crossover(self, parents, best_plan, size, crossover_rate, config: Config) -> list[SchoolPlan]:
+        children = []
+        while len(children) < size - 1:
+            parent2 = random.choice(parents)
+            if random.random() < crossover_rate:
+                child = self.cross(best_plan, parent2, config)
+                if child is not None:
+                    children.append(child)
+        children.append(best_plan)
+        return children
+
+    def cross(self, plan1, plan2, config) -> SchoolPlan | None:
+        if not self.valid_plans(plan1, plan2, config):
+            return None
+
+        groups = config.head_teachers.keys()
+        child = SchoolPlan(groups)
+        for name in groups:
+            for day in list(Day):
+                for hour in range(H_PER_DAY):
+                    lesson = plan1.plans[name][day.value + hour] if plan1.fitness > plan2.fitness \
+                        else plan2.plans[name][day.value + hour]
+                    child.add_to_plan(config, name, day, hour, lesson)
+        child.fill_plan(config)
+        return child
 
 
 class Generation:
@@ -164,13 +289,13 @@ class Generation:
         for _ in range(size):
             plan = SchoolPlan(config.head_teachers.keys())
             plan.generate(config)
-            print(f"Generated plan: {plan}")
+            # print(f"Generated plan: {plan}")
             self.population.append(plan)
 
     def evaluate(self):
         for plan in self.population:
             plan.evaluate()
-            print(f"Evaluated plan; fitness: {plan.fitness}")
+            # print(f"Evaluated plan; fitness: {plan.fitness}")
         self.population.sort(key=lambda x: x.fitness, reverse=True)
 
     def best_plan(self) -> SchoolPlan:
@@ -186,29 +311,29 @@ class Generation:
             "min": self.population[-1].fitness
         }
 
-    def crossover(self):
+    def crossover(self, strategy: CrossoverStrategy = SinglePointCrossover()):
         # selection
         self.population.sort(key=lambda x: x.fitness)
         best_plan = self.best_plan()
         parents = self.population[: self.size // 2]
 
         # crossover
-        children = []
-        while len(children) < self.size - 1:
-            parent1 = random.choice(parents)
-            parent2 = random.choice(parents)
-            if random.random() < self.CROSSOVER_RATE:
-                child = cross_plans(parent1, parent2, self.config)
-                if child is not None:
-                    children.append(child)
-        children.append(best_plan)
-        self.population = children
+        self.population = strategy.crossover(parents, best_plan, self.size, self.CROSSOVER_RATE, self.config)
         self.gen_no += 1
 
     def mutate(self):
-        for plan in self.population:
+        for i in range(self.size-1):
             if random.random() < self.MUTATION_RATE:
-                plan.swap()
+                self.population[i].swap(4)
+
+    def purge_worst(self, min_limit: int):
+        self.population = [plan for plan in self.population if plan.fitness > min_limit]
+        purges = self.size - len(self.population)
+        print(f"Purged {purges} worst plans")
+        for _ in range(purges):
+            plan = SchoolPlan(self.config.head_teachers.keys())
+            plan.generate(self.config)
+            self.population.append(plan)
 
 
 def get_generation() -> Generation:

@@ -12,18 +12,21 @@
             hx-get="/nextgen" hx-swap="innerHTML" hx-target="#statistics"
     >Następna generacja</button>
     <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-            hx-get="/all" hx-swap="innerHTML" hx-target="#plan-target"
-    >Pokaż wszystkie</button>
-    <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
             hx-get="/bestplan" hx-swap="innerHTML" hx-target="#plan-target"
     >Pokaż najlepszy plan</button>
+    <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+            hx-get="/next10gen" hx-swap="innerHTML" hx-target="#statistics"
+    >Następne 10 generacji</button>
+    <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+            hx-get="/all" hx-swap="innerHTML" hx-target="#plan-target"
+    >Pokaż wszystkie</button>
     <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
             hx-get="/genomes" hx-swap="innerHTML" hx-target="#genomes"
     >Pokaż genotypy</button>
   </div>
 
   <div class="flex">
-    <div class="w-1/3">
+    <div class="w-2/5">
       <div id="statistics">
         {% include "statistics.html" %}
       </div>

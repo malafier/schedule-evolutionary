@@ -5,7 +5,7 @@ import base64
 from flask import render_template, Flask
 import matplotlib.pyplot as plt
 
-from main import get_generation, Generation, SchoolPlan
+from main import get_generation, Generation, SchoolPlan, DayCrossover, ChampionCrossover
 
 templates_dir = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'templates')
 app = Flask(__name__, template_folder=templates_dir)
@@ -41,6 +41,7 @@ def generate_graph():
 @app.route('/', methods=['GET'])
 def get_school_plan():
     global generation, scores
+    scores = []
     generation = get_generation()
     generation.evaluate()
     stats = generation.statistics()
@@ -51,10 +52,27 @@ def get_school_plan():
 @app.route('/nextgen', methods=['GET'])
 def make_next_generation():
     global generation, scores
+    # generation.purge_worst(scores[-1][2] - (scores[-1][2]-scores[-1][3] * 0.8))
     generation.evaluate()
-    generation.crossover()
-    # generation.mutate() TODO: Add mutation
+    generation.crossover(ChampionCrossover())
+    generation.mutate()
     generation.evaluate()
+    stats = generation.statistics()
+    scores.append((generation.gen_no, stats["max"], stats["avg"], stats["min"]))
+
+    graph = generate_graph()
+    return render_template("statistics.html", score=scores[-1], graph=graph)
+
+
+@app.route('/next10gen', methods=['GET'])
+def make_next_10_gens():
+    global generation, scores
+    for i in range(10):
+        # generation.purge_worst(scores[-1][2] - (scores[-1][2]-scores[-1][3] * 0.8))
+        generation.evaluate()
+        generation.crossover(ChampionCrossover())
+        generation.mutate()
+        generation.evaluate()
     stats = generation.statistics()
     scores.append((generation.gen_no, stats["max"], stats["avg"], stats["min"]))
 

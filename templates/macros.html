@@ -1,6 +1,6 @@
 {% macro plan_cell(lesson, teachers, subjects) %}
   {% set teacher_name = teachers | selectattr("id", "equalto", lesson.teacher_id) | map(attribute="name") | first %}
-  {% set subject_name = subjects | selectattr("id", "equalto", lesson.id) | map(attribute="name") | first %}
+  {% set subject_name = subjects | selectattr("id", "equalto", lesson.subject_id) | map(attribute="name") | first %}
   <div class="flex flex-col justify-between items-center">
     <div class="text-sm">{{ subject_name }}</div>
     <div class="text-sm">{{ teacher_name }}</div>

@@ -65,19 +65,20 @@ def make_next_generation():
 @app.route('/all', methods=['GET'])
 def show_all_plans():
     global generation
-    return render_template("all_plans.html", plans=generation.population, config=generation.config)
+    return render_template("all_plans.html", school_plans=generation.all(), config=generation.config)
 
 
 @app.route('/bestplan', methods=['GET'])
 def show_plan():
     global generation
-    school_plan: SchoolPlan = generation.best_plan()
+    school_plan: dict = generation.best_plan().as_dict()
     return render_template("plan.html", school_plan=school_plan, config=generation.config)
 
-@app.route('/genomes', methods=['GET'])
-def show_genomes():
-    global generation
-    return render_template("genomes.html", genomes=generation.genomes())
+
+# @app.route('/genomes', methods=['GET'])
+# def show_genomes():
+#     global generation
+#     return render_template("genomes.html", genomes=generation.genomes())
 
 
 if __name__ == '__main__':

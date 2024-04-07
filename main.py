@@ -15,6 +15,9 @@ class Day(Enum):
     FRI = 4 * H_PER_DAY
 
 
+# TODO: religia, wf na końcu lub początku
+# TODO: nauczyciele powinni mieć zajęcia pod rząd
+# TODO: maksymalana ilość zajęć danego przedmotu w ciągu dnia i po sobie
 class FitnessEvaluationMethod(ABC):
     def evaluate(self, plan):
         pass
@@ -64,7 +67,7 @@ class HoursPerDayEvaluation(FitnessEvaluationMethod):
 
 
 class Config:
-    def __init__(self, head_teachers, teachers, subjects):
+    def __init__(self, head_teachers: dict, teachers: list, subjects: dict):
         self.head_teachers: dict = head_teachers
         self.teachers: list = teachers
         self.subjects: dict = subjects

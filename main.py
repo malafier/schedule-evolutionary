@@ -15,16 +15,28 @@ class Day(Enum):
     FRI = 4 * H_PER_DAY
 
 
+class Config:
+    def __init__(self, head_teachers: dict, teachers: list, subjects: dict):
+        self.head_teachers: dict = head_teachers
+        self.teachers: list = teachers
+        self.subjects: dict = subjects
+
+    def hours_by_id(self, name: str, subject_id: str) -> int:
+        for subject in self.subjects[name]:
+            if subject["id"] == subject_id:
+                return subject["hours"]
+        return -1
+
+
 # TODO: religia, wf na końcu lub początku
 # TODO: nauczyciele powinni mieć zajęcia pod rząd
-# TODO: maksymalana ilość zajęć danego przedmotu w ciągu dnia i po sobie
 class FitnessEvaluationMethod(ABC):
-    def evaluate(self, plan):
+    def evaluate(self, plan, config: Config):
         pass
 
 
 class BasicEvaluation(FitnessEvaluationMethod):
-    def evaluate(self, plan):
+    def evaluate(self, plan, config: Config):
         score = 0
         hours_count = [0] * H_PER_DAY
         for name in plan.keys():
@@ -36,7 +48,7 @@ class BasicEvaluation(FitnessEvaluationMethod):
 
 
 class BlankLessonsEvaluation(FitnessEvaluationMethod):
-    def evaluate(self, plan):
+    def evaluate(self, plan, config: Config):
         def is_empty(group_name: str, x_day: Day, start_h: int, h_span: int) -> bool:
             lessons = plan[group_name][x_day.value + start_h: x_day.value + start_h + h_span - 1]
             lesson_before = plan[group_name][x_day.value + start_h - 1]
@@ -49,12 +61,12 @@ class BlankLessonsEvaluation(FitnessEvaluationMethod):
                 for empty_size in range(1, 7):
                     for lesson_h in range(1, H_PER_DAY - empty_size):
                         if is_empty(name, day, lesson_h, empty_size):
-                            score -= 1 * empty_size
+                            score -= 2 * empty_size
         return score
 
 
 class HoursPerDayEvaluation(FitnessEvaluationMethod):
-    def evaluate(self, plan):
+    def evaluate(self, plan, config: Config):
         score = 0
         for name in plan.keys():
             for day in Day:
@@ -66,17 +78,37 @@ class HoursPerDayEvaluation(FitnessEvaluationMethod):
         return score
 
 
-class Config:
-    def __init__(self, head_teachers: dict, teachers: list, subjects: dict):
-        self.head_teachers: dict = head_teachers
-        self.teachers: list = teachers
-        self.subjects: dict = subjects
+class MaxSubjectHoursPerDayEvaluation(FitnessEvaluationMethod):
+    def evaluate(self, plan, config: Config):
+        score = 0
+        for name in plan.keys():
+            for day in Day:
+                for subject in config.subjects[name]:
+                    hours = 0
+                    for i in range(H_PER_DAY):
+                        if plan[name][day.value + i][0] == subject["id"]:
+                            hours += 1
+                    score += 1 if hours <= 2 else -hours
+        return score
 
-    def hours_by_id(self, name: str, subject_id: str) -> int:
-        for subject in self.subjects[name]:
-            if subject["id"] == subject_id:
-                return subject["hours"]
-        return -1
+
+class SubjectBlockEvaluation(FitnessEvaluationMethod):
+    def evaluate(self, plan, config: Config):
+        score = 0
+        for name in plan.keys():
+            for day in Day:
+                for subject in config.subjects[name]:
+                    hours = 0
+                    hour = -1
+                    for i in range(H_PER_DAY):
+                        if plan[name][day.value + i][0] == subject["id"]:
+                            hours += 1
+                            hour = i
+                    if hours > 1:
+                        same_lesson_after = hour + 1 < 7 and plan[name][day.value + hour + 1][0] == subject["id"]
+                        same_lesson_before = hour - 1 > 0 and plan[name][day.value + hour - 1][0] == subject["id"]
+                        score += 2 if same_lesson_after or same_lesson_before else -5
+        return score
 
 
 class SchoolPlan:
@@ -113,11 +145,13 @@ class SchoolPlan:
                 hours += 1
         return hours
 
-    def evaluate(self):  # TODO: send evaluation criteria from Generation class
+    def evaluate(self, config: Config):  # TODO: send evaluation criteria from Generation class
         score = 0
-        score += BasicEvaluation().evaluate(self.plans)
-        score += BlankLessonsEvaluation().evaluate(self.plans)
-        score += HoursPerDayEvaluation().evaluate(self.plans)
+        score += BasicEvaluation().evaluate(self.plans, config)
+        score += BlankLessonsEvaluation().evaluate(self.plans, config)
+        score += HoursPerDayEvaluation().evaluate(self.plans, config)
+        score += MaxSubjectHoursPerDayEvaluation().evaluate(self.plans, config)
+        score += SubjectBlockEvaluation().evaluate(self.plans, config)
 
         self.fitness = score
 
@@ -297,7 +331,7 @@ class Generation:
 
     def evaluate(self):
         for plan in self.population:
-            plan.evaluate()
+            plan.evaluate(self.config)
             # print(f"Evaluated plan; fitness: {plan.fitness}")
         self.population.sort(key=lambda x: x.fitness, reverse=True)
 

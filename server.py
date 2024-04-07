@@ -86,7 +86,7 @@ def show_all_plans():
     return render_template("all_plans.html", school_plans=generation.all(), config=generation.config)
 
 
-@app.route('/bestplan', methods=['GET'])
+@app.route('/best-plan', methods=['GET'])
 def show_plan():
     global generation
     school_plan: dict = generation.best_plan().as_dict()

@@ -130,7 +130,7 @@ class SchoolPlan:
         for class_name in config.subjects.keys():
             generate_group_plan(class_name)
 
-    def teacher_free_at(self, teacher_id: int, day: Day | int, hour: int) -> bool:
+    def teacher_free_at(self, teacher_id: int, day, hour: int) -> bool:
         if isinstance(day, Day):
             day = day.value
         for name in self.plans.keys():
@@ -212,10 +212,10 @@ class SchoolPlan:
 
 
 class CrossoverStrategy(ABC):
-    def crossover(self, parents, best_plan, size, crossover_rate, config: Config) -> list[SchoolPlan]:
+    def crossover(self, parents, best_plan, size, crossover_rate, config: Config):
         pass
 
-    def cross(self, plan1, plan2, config) -> SchoolPlan | None:
+    def cross(self, plan1, plan2, config):
         pass
 
     def valid_plans(self, plan1: SchoolPlan, plan2: SchoolPlan, config: Config) -> bool:
@@ -223,8 +223,9 @@ class CrossoverStrategy(ABC):
                 and plan1.plans != plan2.plans
 
 
+# TODO: zmienić na koło rulety
 class SinglePointCrossover(CrossoverStrategy):
-    def crossover(self, parents, best_plan, size, crossover_rate, config: Config) -> list[SchoolPlan]:
+    def crossover(self, parents, best_plan, size, crossover_rate, config: Config):
         children = []
         while len(children) < size - 1:
             parent1 = random.choice(parents)
@@ -236,7 +237,7 @@ class SinglePointCrossover(CrossoverStrategy):
         children.append(best_plan)
         return children
 
-    def cross(self, plan1, plan2, config) -> SchoolPlan | None:
+    def cross(self, plan1, plan2, config):
         if not self.valid_plans(plan1, plan2, config):
             return None
 
@@ -254,8 +255,9 @@ class SinglePointCrossover(CrossoverStrategy):
         return child
 
 
+# TODO: jw.
 class DayCrossover(CrossoverStrategy):
-    def crossover(self, parents, best_plan, size, crossover_rate, config: Config) -> list[SchoolPlan]:
+    def crossover(self, parents, best_plan, size, crossover_rate, config: Config):
         children = []
         while len(children) < size - 1:
             parent1 = random.choice(parents)
@@ -267,7 +269,7 @@ class DayCrossover(CrossoverStrategy):
         children.append(best_plan)
         return children
 
-    def cross(self, plan1, plan2, config) -> SchoolPlan | None:
+    def cross(self, plan1, plan2, config):
         if not self.valid_plans(plan1, plan2, config):
             return None
 
@@ -286,7 +288,7 @@ class DayCrossover(CrossoverStrategy):
 
 
 class ChampionCrossover(CrossoverStrategy):
-    def crossover(self, parents, best_plan, size, crossover_rate, config: Config) -> list[SchoolPlan]:
+    def crossover(self, parents, best_plan, size, crossover_rate, config: Config):
         children = []
         while len(children) < size - 1:
             parent2 = random.choice(parents)
@@ -297,7 +299,7 @@ class ChampionCrossover(CrossoverStrategy):
         children.append(best_plan)
         return children
 
-    def cross(self, plan1, plan2, config) -> SchoolPlan | None:
+    def cross(self, plan1, plan2, config):
         if not self.valid_plans(plan1, plan2, config):
             return None
 

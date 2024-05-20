@@ -1,6 +1,7 @@
 import os
 import io
 import base64
+import time
 
 from flask import render_template, Flask
 import matplotlib.pyplot as plt
@@ -67,7 +68,25 @@ def make_next_generation():
 @app.route('/next10gen', methods=['GET'])
 def make_next_10_gens():
     global generation, scores
+    # time_eval > time_cross >> time_mut
     for i in range(10):
+        # generation.purge_worst(scores[-1][2] - (scores[-1][2]-scores[-1][3] * 0.8))
+        generation.evaluate()
+        generation.crossover(ChampionCrossover())
+        generation.mutate()
+        generation.evaluate()
+    stats = generation.statistics()
+    scores.append((generation.gen_no, stats["max"], stats["avg"], stats["min"]))
+
+    graph = generate_graph()
+    return render_template("statistics.html", score=scores[-1], graph=graph)
+
+
+@app.route('/next50gen', methods=['GET'])
+def make_next_50_gens():
+    global generation, scores
+    # time_eval > time_cross >> time_mut
+    for i in range(50):
         # generation.purge_worst(scores[-1][2] - (scores[-1][2]-scores[-1][3] * 0.8))
         generation.evaluate()
         generation.crossover(ChampionCrossover())

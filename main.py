@@ -4,7 +4,20 @@ from enum import Enum
 
 WEEK_DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
 H_PER_DAY = 8
-DEFAULT_EVAL_CRITERIA = {}
+DEFAULT_EVAL_CRITERIA = {
+    "basic_evaluation": {
+        "weight_per_hour": [0.8, 1, 1, 1, 1, 0.5, 0.5, -1],
+    },
+    "importance": {
+        "basic_evaluation": 1,
+        "blank_lessons_evaluation": 1,
+        "hours_per_day_evaluation": 1,
+        "max_subject_hours_per_day_evaluation": 1,
+        "subject_block_evaluation": 1,
+        "teacher_block_evaluation": 1,
+        "subject_at_end_or_start_evaluation": 1
+    }
+}
 
 
 class Day(Enum):
@@ -20,6 +33,7 @@ class Config:
         self.head_teachers: dict = head_teachers
         self.teachers: list = teachers
         self.subjects: dict = subjects
+        self.eval_criteria = DEFAULT_EVAL_CRITERIA
 
     def hours_by_id(self, name: str, subject_id: str) -> int:
         for subject in self.subjects[name]:
@@ -28,87 +42,113 @@ class Config:
         return -1
 
 
-# TODO: religia, wf na końcu lub początku
-# TODO: nauczyciele powinni mieć zajęcia pod rząd
-class FitnessEvaluationMethod(ABC):
-    def evaluate(self, plan, config: Config):
-        pass
+def basic_evaluation(plan, weight_per_hour: list):
+    score = 0
+    hours_count = [0] * H_PER_DAY
+    for name in plan.keys():
+        for i in range(len(plan[name])):
+            if plan[name][i] != (0, 0):
+                hours_count[i % H_PER_DAY] += 1
+    for i in range(len(hours_count)):
+        score += weight_per_hour[i] * hours_count[i]
+    return score
 
 
-class BasicEvaluation(FitnessEvaluationMethod):
-    def evaluate(self, plan, config: Config):
-        score = 0
-        hours_count = [0] * H_PER_DAY
-        for name in plan.keys():
-            for i in range(len(plan[name])):
-                if plan[name][i] != (0, 0):
-                    hours_count[i % H_PER_DAY] += 1
-        score += sum(hours_count[:5]) + hours_count[6] * 0.5 - hours_count[7] * 1
-        return score
+def blank_lessons_evaluation(plan):
+    def is_empty(group_name: str, x_day: Day, start_h: int, h_span: int) -> bool:
+        lessons = plan[group_name][x_day.value + start_h: x_day.value + start_h + h_span - 1]
+        lesson_before = plan[group_name][x_day.value + start_h - 1]
+        lesson_after = plan[group_name][x_day.value + start_h + h_span]
+        return all([lesson == (0, 0) for lesson in lessons]) and lesson_after != (0, 0) and lesson_before != (0, 0)
+
+    score = 0
+    for name in plan.keys():
+        for day in Day:
+            for empty_size in range(1, 7):
+                for lesson_h in range(1, H_PER_DAY - empty_size):
+                    if is_empty(name, day, lesson_h, empty_size):
+                        score += empty_size
+    return -score
 
 
-class BlankLessonsEvaluation(FitnessEvaluationMethod):
-    def evaluate(self, plan, config: Config):
-        def is_empty(group_name: str, x_day: Day, start_h: int, h_span: int) -> bool:
-            lessons = plan[group_name][x_day.value + start_h: x_day.value + start_h + h_span - 1]
-            lesson_before = plan[group_name][x_day.value + start_h - 1]
-            lesson_after = plan[group_name][x_day.value + start_h + h_span]
-            return all([lesson == (0, 0) for lesson in lessons]) and lesson_after != (0, 0) and lesson_before != (0, 0)
-
-        score = 0
-        for name in plan.keys():
-            for day in Day:
-                for empty_size in range(1, 7):
-                    for lesson_h in range(1, H_PER_DAY - empty_size):
-                        if is_empty(name, day, lesson_h, empty_size):
-                            score -= 2 * empty_size
-        return score
+def hours_per_day_evaluation(plan):
+    score = 0
+    for name in plan.keys():
+        for day in Day:
+            hours = 0
+            for i in range(H_PER_DAY):
+                if plan[name][day.value + i] != (0, 0):
+                    hours += 1
+            score += 1 if hours <= 6 else -hours
+    return score
 
 
-class HoursPerDayEvaluation(FitnessEvaluationMethod):
-    def evaluate(self, plan, config: Config):
-        score = 0
-        for name in plan.keys():
-            for day in Day:
+def max_subject_hours_per_day_evaluation(plan, config: Config):
+    score = 0
+    for name in plan.keys():
+        for day in Day:
+            for subject in config.subjects[name]:
                 hours = 0
                 for i in range(H_PER_DAY):
-                    if plan[name][day.value + i] != (0, 0):
+                    if plan[name][day.value + i][0] == subject["id"]:
                         hours += 1
-                score += 1 if hours <= 6 else -hours/2
-        return score
+                score += 1 if hours <= 2 else -hours
+    return score
 
 
-class MaxSubjectHoursPerDayEvaluation(FitnessEvaluationMethod):
-    def evaluate(self, plan, config: Config):
-        score = 0
-        for name in plan.keys():
+def subject_block_evaluation(plan, reward, punishment, config: Config):
+    score = 0
+    for name in plan.keys():
+        for day in Day:
+            for subject in config.subjects[name]:
+                hours = []
+                for i in range(H_PER_DAY):
+                    if plan[name][day.value + i][0] == subject["id"]:
+                        hours.append(i)
+                if len(hours) > 1:
+                    for i in range(len(hours) - 1):
+                        if hours[i + 1] - hours[i] == 1:
+                            score += reward
+                        else:
+                            score += punishment
+    return score
+
+
+def teacher_block_evaluation(plan, reward, punishment, config: Config):
+    score = 0
+    teachers = config.teachers
+    for teacher in teachers:
+        for day in Day:
+            lessons = []
+            for name in plan.keys():
+                for i in range(H_PER_DAY):
+                    if plan[name][day.value + i][1] == teacher["id"]:
+                        lessons.append((name, i))
+            if len(lessons) > 1:
+                for i in range(len(lessons) - 1):
+                    if lessons[i + 1][1] - lessons[i][1] == 1:
+                        score += reward
+                    else:
+                        score += punishment
+    return score
+
+
+def subject_at_end_or_start_evaluation(plan, config: Config):
+    score = 0
+    for name in plan.keys():
+        special_subjects = filter(lambda x: x["start_end"], config.subjects[name])
+        for subject in special_subjects:
             for day in Day:
-                for subject in config.subjects[name]:
-                    hours = 0
-                    for i in range(H_PER_DAY):
-                        if plan[name][day.value + i][0] == subject["id"]:
-                            hours += 1
-                    score += 1 if hours <= 2 else -hours
-        return score
-
-
-class SubjectBlockEvaluation(FitnessEvaluationMethod):
-    def evaluate(self, plan, config: Config):
-        score = 0
-        for name in plan.keys():
-            for day in Day:
-                for subject in config.subjects[name]:
-                    hours = 0
-                    hour = -1
-                    for i in range(H_PER_DAY):
-                        if plan[name][day.value + i][0] == subject["id"]:
-                            hours += 1
-                            hour = i
-                    if hours > 1:
-                        same_lesson_after = hour + 1 < 7 and plan[name][day.value + hour + 1][0] == subject["id"]
-                        same_lesson_before = hour - 1 > 0 and plan[name][day.value + hour - 1][0] == subject["id"]
-                        score += 2 if same_lesson_after or same_lesson_before else -5
-        return score
+                for i in range(H_PER_DAY):
+                    first_or_last = (
+                            i == 0 or
+                            i == H_PER_DAY - 1 or
+                            all([plan[name][day.value: day.value + i] == (0, 0)]) or
+                            all([plan[name][day.value + i + 1: day.value + H_PER_DAY] == (0, 0)])
+                    )
+                    if plan[name][day.value + i] == subject["id"] and first_or_last:
+                        score += 1
+    return score
 
 
 class SchoolPlan:
@@ -123,7 +163,8 @@ class SchoolPlan:
                 while hours_added < subject["hours"]:
                     day = random.choice(list(Day))
                     hour = random.choice(range(H_PER_DAY))
-                    if self.plans[group_name][day.value + hour] == (0, 0) and self.teacher_free_at(subject["teacher_id"], day, hour):
+                    if self.plans[group_name][day.value + hour] == (0, 0) and self.teacher_free_at(
+                            subject["teacher_id"], day, hour):
                         self.plans[group_name][day.value + hour] = (subject["id"], subject["teacher_id"])
                         hours_added += 1
 
@@ -145,13 +186,20 @@ class SchoolPlan:
                 hours += 1
         return hours
 
-    def evaluate(self, config: Config):  # TODO: send evaluation criteria from Generation class
+    def evaluate(self, config: Config):
+        importance = config.eval_criteria["importance"]
+
         score = 0
-        score += BasicEvaluation().evaluate(self.plans, config)
-        score += BlankLessonsEvaluation().evaluate(self.plans, config)
-        score += HoursPerDayEvaluation().evaluate(self.plans, config)
-        score += MaxSubjectHoursPerDayEvaluation().evaluate(self.plans, config)
-        score += SubjectBlockEvaluation().evaluate(self.plans, config)
+        score += importance["basic_evaluation"] * basic_evaluation(self.plans, config.eval_criteria["basic_evaluation"][
+            "weight_per_hour"])
+        score += importance["blank_lessons_evaluation"] * blank_lessons_evaluation(self.plans)
+        score += importance["hours_per_day_evaluation"] * hours_per_day_evaluation(self.plans)
+        score += importance["max_subject_hours_per_day_evaluation"] * max_subject_hours_per_day_evaluation(self.plans,
+                                                                                                           config)
+        score += importance["subject_block_evaluation"] * subject_block_evaluation(self.plans, 0, -5, config)
+        score += importance["teacher_block_evaluation"] * teacher_block_evaluation(self.plans, 1, -2, config)
+        score += importance["subject_at_end_or_start_evaluation"] * subject_at_end_or_start_evaluation(self.plans,
+                                                                                                       config)
 
         self.fitness = score
 
@@ -164,12 +212,15 @@ class SchoolPlan:
             teachers_ok = True
             if self.plans[group][lesson1] != (0, 0):
                 teacher1 = self.plans[group][lesson1][1]
-                teachers_ok &= self.teacher_free_at(teacher1, lesson2 // H_PER_DAY, lesson2 % H_PER_DAY) or self.plans[group][lesson2][1] == teacher1
+                teachers_ok &= self.teacher_free_at(teacher1, lesson2 // H_PER_DAY, lesson2 % H_PER_DAY) or \
+                               self.plans[group][lesson2][1] == teacher1
             if self.plans[group][lesson2] != (0, 0):
                 teacher2 = self.plans[group][lesson2][1]
-                teachers_ok &= self.teacher_free_at(teacher2, lesson1 // H_PER_DAY, lesson1 % H_PER_DAY) or self.plans[group][lesson1][1] == teacher2
+                teachers_ok &= self.teacher_free_at(teacher2, lesson1 // H_PER_DAY, lesson1 % H_PER_DAY) or \
+                               self.plans[group][lesson1][1] == teacher2
             if teachers_ok:
-                self.plans[group][lesson1], self.plans[group][lesson2] = self.plans[group][lesson2], self.plans[group][lesson1]
+                self.plans[group][lesson1], self.plans[group][lesson2] = self.plans[group][lesson2], self.plans[group][
+                    lesson1]
             else:
                 i -= 1
 
@@ -191,7 +242,8 @@ class SchoolPlan:
                 while hours_needed > self.count_subject_hours(name, subject["id"]):
                     day = random.choice(list(Day))
                     hour = random.choice(range(H_PER_DAY))
-                    if self.plans[name][day.value + hour] == (0, 0) and self.teacher_free_at(subject["teacher_id"], day, hour):
+                    if self.plans[name][day.value + hour] == (0, 0) and self.teacher_free_at(subject["teacher_id"], day,
+                                                                                             hour):
                         self.plans[name][day.value + hour] = (subject["id"], subject["teacher_id"])
 
     def as_dict(self) -> dict:
@@ -220,7 +272,7 @@ class CrossoverStrategy(ABC):
 
     def valid_plans(self, plan1: SchoolPlan, plan2: SchoolPlan, config: Config) -> bool:
         return plan1.plans.keys() == plan2.plans.keys() and plan1.plans.keys() == config.head_teachers.keys() \
-                and plan1.plans != plan2.plans
+            and plan1.plans != plan2.plans
 
 
 class SinglePointCrossover(CrossoverStrategy):
@@ -359,7 +411,7 @@ class Generation:
         self.gen_no += 1
 
     def mutate(self):
-        for i in range(self.size-1):
+        for i in range(self.size - 1):
             if random.random() < self.MUTATION_RATE:
                 self.population[i].swap(4)
 
@@ -411,73 +463,85 @@ def get_generation() -> Generation:
                     "id": 1,
                     "name": "Matematyka",
                     "hours": 4,
-                    "teacher_id": 1
+                    "teacher_id": 1,
+                    "start_end": False
                 },
                 {
                     "id": 2,
                     "name": "J. Angielski",
                     "hours": 3,
-                    "teacher_id": 2
+                    "teacher_id": 2,
+                    "start_end": False
                 },
                 {
                     "id": 3,
                     "name": "Fizyka",
                     "hours": 2,
-                    "teacher_id": 3
+                    "teacher_id": 3,
+                    "start_end": False
                 },
                 {
                     "id": 4,
                     "name": "J. Polski",
                     "hours": 4,
-                    "teacher_id": 4
+                    "teacher_id": 4,
+                    "start_end": False
                 },
                 {
                     "id": 5,
                     "name": "Biologia",
                     "hours": 2,
-                    "teacher_id": 1
+                    "teacher_id": 1,
+                    "start_end": False
                 },
                 {
                     "id": 6,
                     "name": "Chemia",
                     "hours": 2,
-                    "teacher_id": 2
+                    "teacher_id": 2,
+                    "start_end": False
                 },
                 {
                     "id": 7,
                     "name": "Historia",
                     "hours": 2,
-                    "teacher_id": 3
+                    "teacher_id": 3,
+                    "start_end": False
                 },
                 {
                     "id": 8,
                     "name": "WOS",
                     "hours": 1,
-                    "teacher_id": 4
+                    "teacher_id": 4,
+                    "start_end": False
                 },
                 {
                     "id": 9,
                     "name": "WF",
                     "hours": 2,
-                    "teacher_id": 1
+                    "teacher_id": 1,
+                    "start_end": True
                 },
                 {
                     "id": 10,
                     "name": "Religia",
                     "hours": 2,
-                    "teacher_id": 2
+                    "teacher_id": 2,
+                    "start_end": True
                 },
                 {
                     "id": 11,
                     "name": "Godzina wychowawcza",
                     "hours": 1,
-                    "teacher_id": 3
+                    "teacher_id": 3,
+                    "start_end": False
                 },
                 {
                     "id": 12,
                     "name": "Informatyka",
                     "hours": 2,
-                    "teacher_id": 4
+                    "teacher_id": 4,
+                    "start_end": False
                 }
             ],
             "1B": [
@@ -485,73 +549,85 @@ def get_generation() -> Generation:
                     "id": 1,
                     "name": "Matematyka",
                     "hours": 4,
-                    "teacher_id": 1
+                    "teacher_id": 1,
+                    "start_end": False
                 },
                 {
                     "id": 2,
                     "name": "J. Angielski",
                     "hours": 3,
-                    "teacher_id": 2
+                    "teacher_id": 2,
+                    "start_end": False
                 },
                 {
                     "id": 3,
                     "name": "Fizyka",
                     "hours": 2,
-                    "teacher_id": 3
+                    "teacher_id": 3,
+                    "start_end": False
                 },
                 {
                     "id": 4,
                     "name": "J. Polski",
                     "hours": 4,
-                    "teacher_id": 4
+                    "teacher_id": 4,
+                    "start_end": False
                 },
                 {
                     "id": 5,
                     "name": "Biologia",
                     "hours": 2,
-                    "teacher_id": 1
+                    "teacher_id": 1,
+                    "start_end": False
                 },
                 {
                     "id": 6,
                     "name": "Chemia",
                     "hours": 2,
-                    "teacher_id": 2
+                    "teacher_id": 2,
+                    "start_end": False
                 },
                 {
                     "id": 7,
                     "name": "Historia",
                     "hours": 2,
-                    "teacher_id": 3
+                    "teacher_id": 3,
+                    "start_end": False
                 },
                 {
                     "id": 8,
                     "name": "WOS",
                     "hours": 1,
-                    "teacher_id": 4
+                    "teacher_id": 4,
+                    "start_end": False
                 },
                 {
                     "id": 9,
                     "name": "WF",
                     "hours": 2,
-                    "teacher_id": 1
+                    "teacher_id": 1,
+                    "start_end": True
                 },
                 {
                     "id": 10,
                     "name": "Religia",
                     "hours": 2,
-                    "teacher_id": 2
+                    "teacher_id": 2,
+                    "start_end": True
                 },
                 {
                     "id": 11,
                     "name": "Godzina wychowawcza",
                     "hours": 1,
-                    "teacher_id": 3
+                    "teacher_id": 3,
+                    "start_end": False
                 },
                 {
                     "id": 12,
                     "name": "Informatyka",
                     "hours": 2,
-                    "teacher_id": 4
+                    "teacher_id": 4,
+                    "start_end": False
                 }
             ]
         }

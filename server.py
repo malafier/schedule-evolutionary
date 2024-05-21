@@ -6,7 +6,8 @@ import time
 from flask import render_template, Flask
 import matplotlib.pyplot as plt
 
-from main import get_generation, Generation, SchoolPlan, DayCrossover, ChampionCrossover
+from evolutionary.generation import Generation, ChampionCrossover
+from main import get_generation
 
 templates_dir = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'templates')
 app = Flask(__name__, template_folder=templates_dir)

@@ -16,6 +16,11 @@ DEFAULT_EVAL_CRITERIA = {
         "subject_at_end_or_start_evaluation": 1
     }
 }
+DEFAULT_CROSS_PARAMS = {
+    "crossover_rate": 0.8,
+    "div_factor": 0.5,
+    "mutation_rate": 0.1
+}
 
 
 class Day(Enum):
@@ -27,11 +32,17 @@ class Day(Enum):
 
 
 class Config:
-    def __init__(self, head_teachers: dict, teachers: list, subjects: dict):
+    def __init__(self,
+                 head_teachers: dict,
+                 teachers: list,
+                 subjects: dict,
+                 eval_criteria: dict | None = None,
+                 cross_params: dict | None = None):
         self.head_teachers: dict = head_teachers
         self.teachers: list = teachers
         self.subjects: dict = subjects
-        self.eval_criteria = DEFAULT_EVAL_CRITERIA
+        self.eval_criteria = DEFAULT_EVAL_CRITERIA if eval_criteria is None else eval_criteria
+        self.cross_params = DEFAULT_CROSS_PARAMS if cross_params is None else cross_params
 
     def hours_by_id(self, name: str, subject_id: str) -> int:
         for subject in self.subjects[name]:

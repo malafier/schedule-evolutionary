@@ -6,7 +6,7 @@ from evolutionary.school_plan import SchoolPlan
 
 
 class CrossoverStrategy(ABC):
-    def crossover(self, parents, best_plan, size, crossover_rate, config: Config):
+    def crossover(self, parents, best_plan, size, config: Config):
         pass
 
     def cross(self, plan1, plan2, config):
@@ -17,63 +17,63 @@ class CrossoverStrategy(ABC):
             and plan1.plans != plan2.plans
 
 
-# TODO: zmienić na koło rulety
-class SinglePointCrossover(CrossoverStrategy):
-    def crossover(self, parents, best_plan, size, crossover_rate, config: Config):
-        children = []
-        while len(children) < size - 1:
-            parent1 = random.choice(parents)
-            parent2 = random.choice(parents)
-            if random.random() < crossover_rate:
+class RouletteSinglePointCrossover(CrossoverStrategy):
+    def crossover(self, parents, best_plan, size, config: Config):
+        children = [best_plan]
+
+        sum_fitness = sum([plan.fitness for plan in parents])
+        probabilities = [plan.fitness / sum_fitness for plan in parents]
+        while len(children) < size:
+            parent1, parent2 = random.choices(parents, probabilities, k=2)
+            if random.random() < config.cross_params["crossover_rate"]:
                 child = self.cross(parent1, parent2, config)
                 if child is not None:
                     children.append(child)
-        children.append(best_plan)
         return children
 
     def cross(self, plan1, plan2, config):
         if not self.valid_plans(plan1, plan2, config):
             return None
 
-        DIV_FACTOR = 0.5
+        div_factor = config.cross_params["div_factor"]
 
         groups = config.head_teachers.keys()
         child = SchoolPlan(groups)
         for name in groups:
             for day in list(Day):
                 for hour in range(H_PER_DAY):
-                    lesson = plan2.plans[name][day.value + hour] if random.random() < DIV_FACTOR \
+                    lesson = plan2.plans[name][day.value + hour] if random.random() < div_factor \
                         else plan1.plans[name][day.value + hour]
                     child.add_to_plan(config, name, day, hour, lesson)
         child.fill_plan(config)
         return child
 
 
-# TODO: jw.
-class DayCrossover(CrossoverStrategy):
-    def crossover(self, parents, best_plan, size, crossover_rate, config: Config):
-        children = []
-        while len(children) < size - 1:
-            parent1 = random.choice(parents)
-            parent2 = random.choice(parents)
-            if random.random() < crossover_rate:
+class RouletteDayCrossover(CrossoverStrategy):
+    def crossover(self, parents, best_plan, size, config: Config):
+        children = [best_plan]
+
+        sum_fitness = sum([plan.fitness for plan in parents])
+        probabilities = [plan.fitness / sum_fitness for plan in parents]
+        while len(children) < size:
+            parent1, parent2 = random.choices(parents, probabilities, k=2)
+            if random.random() < config.cross_params["crossover_rate"]:
                 child = self.cross(parent1, parent2, config)
                 if child is not None:
                     children.append(child)
-        children.append(best_plan)
         return children
 
     def cross(self, plan1, plan2, config):
         if not self.valid_plans(plan1, plan2, config):
             return None
 
-        DIV_FACTOR = 0.5
+        div_factor = config.cross_params["div_factor"]
 
         groups = config.head_teachers.keys()
         child = SchoolPlan(groups)
         for name in groups:
             for day in list(Day):
-                plan = plan2 if random.random() < DIV_FACTOR else plan1
+                plan = plan2 if random.random() < div_factor else plan1
                 for hour in range(H_PER_DAY):
                     lesson = plan.plans[name][day.value + hour]
                     child.add_to_plan(config, name, day, hour, lesson)
@@ -82,15 +82,14 @@ class DayCrossover(CrossoverStrategy):
 
 
 class ChampionCrossover(CrossoverStrategy):
-    def crossover(self, parents, best_plan, size, crossover_rate, config: Config):
-        children = []
-        while len(children) < size - 1:
+    def crossover(self, parents, best_plan, size, config: Config):
+        children = [best_plan]
+        while len(children) < size:
             parent2 = random.choice(parents)
-            if random.random() < crossover_rate:
+            if random.random() < config.cross_params["crossover_rate"]:
                 child = self.cross(best_plan, parent2, config)
                 if child is not None:
                     children.append(child)
-        children.append(best_plan)
         return children
 
     def cross(self, plan1, plan2, config):
@@ -110,11 +109,7 @@ class ChampionCrossover(CrossoverStrategy):
 
 
 class Generation:
-    def __init__(self, config: Config, size=20, crossover_rate=0.7, mutation_rate=0.1, eval_criteria=None):
-        self.CROSSOVER_RATE = crossover_rate
-        self.MUTATION_RATE = mutation_rate
-        self.EVAL_CRITERIA = eval_criteria  # TODO: set defaults and provide option
-
+    def __init__(self, config: Config, size=20):
         self.gen_no = 0
         self.size = size
         self.config = config
@@ -122,7 +117,6 @@ class Generation:
         for _ in range(size):
             plan = SchoolPlan(config.head_teachers.keys())
             plan.generate(config)
-            # print(f"Generated plan: {plan}")
             self.population.append(plan)
 
     def evaluate(self):
@@ -144,19 +138,19 @@ class Generation:
             "min": self.population[-1].fitness
         }
 
-    def crossover(self, strategy: CrossoverStrategy = SinglePointCrossover()):
+    def crossover(self, strategy: CrossoverStrategy = RouletteSinglePointCrossover()):
         # selection
         self.population.sort(key=lambda x: x.fitness)
         best_plan = self.best_plan()
         parents = self.population[: self.size // 2]
 
         # crossover
-        self.population = strategy.crossover(parents, best_plan, self.size, self.CROSSOVER_RATE, self.config)
+        self.population = strategy.crossover(parents, best_plan, self.size, self.config)
         self.gen_no += 1
 
     def mutate(self):
         for i in range(self.size - 1):
-            if random.random() < self.MUTATION_RATE:
+            if random.random() < self.config.cross_params["mutation_rate"]:
                 self.population[i].swap(4)
 
     def purge_worst(self, min_limit: int):

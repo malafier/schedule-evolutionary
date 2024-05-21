@@ -1,12 +1,11 @@
-import os
-import io
 import base64
-import time
+import io
+import os
 
-from flask import render_template, Flask
 import matplotlib.pyplot as plt
+from flask import render_template, Flask
 
-from evolutionary.generation import Generation, ChampionCrossover
+from evolutionary.generation import Generation, ChampionCrossover, RouletteSinglePointCrossover
 from main import get_generation
 
 templates_dir = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'templates')
@@ -15,6 +14,7 @@ app = Flask(__name__, template_folder=templates_dir)
 generation: Generation | None = None
 scores = []
 plans = []  # TODO: Add plans
+crossover_strategy = RouletteSinglePointCrossover()
 
 
 def generate_graph():
@@ -54,9 +54,8 @@ def get_school_plan():
 @app.route('/nextgen', methods=['GET'])
 def make_next_generation():
     global generation, scores
-    # generation.purge_worst(scores[-1][2] - (scores[-1][2]-scores[-1][3] * 0.8))
     generation.evaluate()
-    generation.crossover(ChampionCrossover())
+    generation.crossover(crossover_strategy)
     generation.mutate()
     generation.evaluate()
     stats = generation.statistics()
@@ -71,9 +70,8 @@ def make_next_10_gens():
     global generation, scores
     # time_eval > time_cross >> time_mut
     for i in range(10):
-        # generation.purge_worst(scores[-1][2] - (scores[-1][2]-scores[-1][3] * 0.8))
         generation.evaluate()
-        generation.crossover(ChampionCrossover())
+        generation.crossover(crossover_strategy)
         generation.mutate()
         generation.evaluate()
     stats = generation.statistics()
@@ -88,9 +86,8 @@ def make_next_50_gens():
     global generation, scores
     # time_eval > time_cross >> time_mut
     for i in range(50):
-        # generation.purge_worst(scores[-1][2] - (scores[-1][2]-scores[-1][3] * 0.8))
         generation.evaluate()
-        generation.crossover(ChampionCrossover())
+        generation.crossover(crossover_strategy)
         generation.mutate()
         generation.evaluate()
     stats = generation.statistics()

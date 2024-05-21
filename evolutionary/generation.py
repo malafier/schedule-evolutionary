@@ -109,11 +109,12 @@ class ChampionCrossover(CrossoverStrategy):
 
 
 class Generation:
-    def __init__(self, config: Config, size=20):
-        self.gen_no = 0
-        self.size = size
-        self.config = config
-        self.population = []
+    def __init__(self, config: Config, size=20, purge=False):
+        self.gen_no: int = 0
+        self.size: int = size
+        self.config: Config = config
+        self.purge: bool = purge
+        self.population: list = []
         for _ in range(size):
             plan = SchoolPlan(config.head_teachers.keys())
             plan.generate(config)
@@ -148,13 +149,17 @@ class Generation:
         self.population = strategy.crossover(parents, best_plan, self.size, self.config)
         self.gen_no += 1
 
+        # purge worst plans
+        if self.purge: # FIXME: this is not working
+            self.purge_worst(0.4 * sum([plan.fitness for plan in self.population]) / self.size)
+
     def mutate(self):
         for i in range(self.size - 1):
             if random.random() < self.config.cross_params["mutation_rate"]:
                 self.population[i].swap(4)
 
-    def purge_worst(self, min_limit: int):
-        self.population = [plan for plan in self.population if plan.fitness > min_limit]
+    def purge_worst(self, min_limit: float):
+        self.population = [plan for plan in self.population if plan.fitness >= min_limit]
         purges = self.size - len(self.population)
         print(f"Purged {purges} worst plans")
         for _ in range(purges):

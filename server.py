@@ -14,7 +14,7 @@ app = Flask(__name__, template_folder=templates_dir)
 generation: Generation | None = None
 scores = []
 plans = []  # TODO: Add plans
-crossover_strategy = RouletteSinglePointCrossover()
+crossover_strategy = ChampionCrossover()
 
 
 def generate_graph():

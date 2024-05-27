@@ -3,15 +3,17 @@ import io
 import os
 
 import matplotlib.pyplot as plt
-from flask import render_template, Flask
+from flask import render_template, Flask, request
 
+from evolutionary.config import Config
 from evolutionary.generation import Generation, ChampionCrossover, RouletteSinglePointCrossover
-from main import get_generation
+from main import get_config
 
 templates_dir = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'templates')
 app = Flask(__name__, template_folder=templates_dir)
 
 generation: Generation | None = None
+config: Config | None = None
 scores = []
 plans = []  # TODO: Add plans
 crossover_strategy = ChampionCrossover()
@@ -42,9 +44,10 @@ def generate_graph():
 
 @app.route('/', methods=['GET'])
 def get_school_plan():
-    global generation, scores
+    global generation, scores, config
     scores = []
-    generation = get_generation()
+    config = get_config()
+    generation = Generation(config)
     generation.evaluate()
     stats = generation.statistics()
     scores.append((generation.gen_no, stats["max"], stats["avg"], stats["min"]))
@@ -110,10 +113,26 @@ def show_plan():
     return render_template("plan.html", school_plan=school_plan, config=generation.config)
 
 
-# @app.route('/genomes', methods=['GET'])
-# def show_genomes():
-#     global generation
-#     return render_template("genomes.html", genomes=generation.genomes())
+@app.route('/config', methods=['GET'])  # TODO: finalise
+def show_genomes():
+    global generation, config, scores, crossover_strategy
+    scores = []
+
+    config.population_size = int(request.form.get('population'))
+    config.elitism = request.form.get('elitism') == 'on'
+    config.cross_params['crossover_rate'] = float(request.form.get('crossover'))
+    config.cross_params['div_factor'] = float(request.form.get('div_factor'))
+    config.cross_params['mutation_rate'] = float(request.form.get('mutation'))
+    crossover_strategy = RouletteSinglePointCrossover() if request.form.get('crossover_strategy') == 'roulette' else ChampionCrossover()
+    config.eval_criteria['importance']['basic_evaluation'] = float(request.form.get('imp_basic'))
+    config.eval_criteria['importance']['blank_lessons_evaluation'] = float(request.form.get('imp_blank'))
+    config.eval_criteria['importance']['hours_per_day_evaluation'] = float(request.form.get('imp_hours_per_day'))
+    config.eval_criteria['importance']['subject_block_evaluation'] = float(request.form.get('imp_lesson_block'))
+    config.eval_criteria['importance']['teacher_block_evaluation'] = float(request.form.get('imp_teacher_block'))
+    config.eval_criteria['importance']['subject_at_end_or_start_evaluation'] = float(request.form.get('imp_start_end_day_subject'))
+    generation = Generation(config)
+
+    return render_template("config_input.html", config=config)
 
 
 if __name__ == '__main__':

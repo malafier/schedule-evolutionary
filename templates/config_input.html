@@ -1,0 +1,44 @@
+{% block config %}
+  <h4>Konfiguracja</h4>
+  <form hx-post="/config" hx-swap="innerHTML" hx-target="#config">
+    <label for="population">Populacja</label>
+    <input type="number" id="population" name="population" value="{{ config.population_size }}">
+    <br>
+    <label for="mutation">Mutacja</label>
+    <input type="number" id="mutation" name="mutation" value="{{ mutation }}">
+    <br>
+    <label for="crossover">Krzyżowanie</label>
+    <input type="number" id="crossover" name="crossover" value="{{ crossover }}">
+    <br>
+    <label for="crossover_strategy">Strategia krzyżowania</label>
+    <select id="crossover_strategy" name="crossover_strategy">
+      <option value="roulette" {% if selection == 'roulette' %}selected{% endif %}>Ruletka</option>
+      <option value="tournament" {% if selection == 'tournament' %}selected{% endif %}>Turniej</option>
+    </select>
+    <br>
+    <label for="elitism">Elityzm</label>
+    <input type="checkbox" id="elitism" name="elitism" {% if elitism %}checked{% endif %}>
+    <br>
+
+    <label for="imp_basic">Współczynnik wpływu ewaluacji podstawowej</label>
+    <input type="number" id="imp_basic" name="imp_basic" value="{{ imp_basic }}">
+    <br>
+    <label for="imp_blank">Współczynnik wpływu pustych lekcji</label>
+    <input type="number" id="imp_blank" name="imp_blank" value="{{ imp_blank }}">
+    <br>
+    <label for="imp_hours_per_day">Współczynnik wpływu maksymalnej liczby godzin dziennie</label>
+    <input type="number" id="imp_hours_per_day" name="imp_hours_per_day" value="{{ imp_hours_per_day }}">
+    <br>
+    <label for="imp_lesson_block">Współczynnik wpływu lekcji w blokach</label>
+    <input type="number" id="imp_lesson_block" name="imp_lesson_block" value="{{ imp_lesson_block }}">
+    <br>
+    <label for="imp_teacher_block">Współczynnik wpływu planu nauczycieli</label>
+    <input type="number" id="imp_teacher_block" name="imp_teacher_block" value="{{ imp_teacher_block }}">
+    <br>
+    <label for="imp_start_end_day_subject">Współczynnik wpływu przedmiotów na początek/koniec dnia</label>
+    <input type="number" id="imp_start_end_day_subject" name="imp_start_end_day_subject" value="{{ imp_start_end_day_subject }}">
+    <br>
+
+    <button type="submit">Zapisz</button>
+  </form>
+{% endblock %}

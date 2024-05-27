@@ -36,11 +36,15 @@ class Config:
                  head_teachers: dict,
                  teachers: list,
                  subjects: dict,
+                 elitism: bool = True,
+                 population_size: int = 100,
                  eval_criteria: dict | None = None,
                  cross_params: dict | None = None):
         self.head_teachers: dict = head_teachers
         self.teachers: list = teachers
         self.subjects: dict = subjects
+        self.elitism: bool = elitism
+        self.population_size: int = population_size
         self.eval_criteria = DEFAULT_EVAL_CRITERIA if eval_criteria is None else eval_criteria
         self.cross_params = DEFAULT_CROSS_PARAMS if cross_params is None else cross_params
 

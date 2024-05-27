@@ -5,13 +5,10 @@ from evolutionary.config import WEEK_DAYS, H_PER_DAY, Day, Config
 
 def basic_evaluation(plan, weight_per_hour: list):
     score = 0
-    hours_count = [0] * H_PER_DAY
     for name in plan.keys():
         for i in range(len(plan[name])):
             if plan[name][i] != (0, 0):
-                hours_count[i % H_PER_DAY] += 1
-    for i in range(len(hours_count)):
-        score += weight_per_hour[i] * hours_count[i]
+                score += weight_per_hour[i % H_PER_DAY]
     return score
 
 
@@ -104,8 +101,10 @@ def subject_at_end_or_start_evaluation(plan, config: Config):
                     first_or_last = (
                             i == 0 or
                             i == H_PER_DAY - 1 or
-                            all([plan[name][day.value: day.value + i] == (0, 0)]) or
-                            all([plan[name][day.value + i + 1: day.value + H_PER_DAY] == (0, 0)])
+                            all([plan[name][day.value: day.value + i] == (0, 0) or
+                                 plan[name][day.value: day.value + i][0] == subject["id"]]) or
+                            all([plan[name][day.value + i + 1: day.value + H_PER_DAY] == (0, 0) or
+                                 plan[name][day.value + i + 1: day.value + H_PER_DAY][0] == subject["id"]])
                     )
                     if plan[name][day.value + i] == subject["id"] and first_or_last:
                         score += 1

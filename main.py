@@ -1,9 +1,9 @@
 from evolutionary.config import Config
-from evolutionary.generation import Generation
 
 
-def get_generation() -> Generation:
+def get_config() -> Config:
     config = Config(
+        population_size=100,
         head_teachers={
             "1A": {
                 "id": 1,
@@ -209,5 +209,4 @@ def get_generation() -> Generation:
             ]
         }
     )
-    generation = Generation(config, size=100)
-    return generation
+    return config

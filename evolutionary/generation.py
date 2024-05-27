@@ -109,13 +109,13 @@ class ChampionCrossover(CrossoverStrategy):
 
 
 class Generation:
-    def __init__(self, config: Config, size=20, purge=False):
+    def __init__(self, config: Config, purge=False):
         self.gen_no: int = 0
-        self.size: int = size
+        self.size: int = config.population_size
         self.config: Config = config
         self.purge: bool = purge
         self.population: list = []
-        for _ in range(size):
+        for _ in range(self.size):
             plan = SchoolPlan(config.head_teachers.keys())
             plan.generate(config)
             self.population.append(plan)

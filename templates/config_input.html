@@ -2,41 +2,42 @@
   <h4>Konfiguracja</h4>
   <form hx-post="/config" hx-swap="innerHTML" hx-target="#config">
     <label for="population">Populacja</label>
-    <input type="number" id="population" name="population" value="{{ config.population_size }}">
+    <input type="number" id="population" name="population" value="{{ 100 }}">
     <br>
     <label for="mutation">Mutacja</label>
-    <input type="number" id="mutation" name="mutation" value="{{ mutation }}">
+    <input type="number" id="mutation" name="mutation" value="{{ config.cross_params["mutation_rate"] }}">
     <br>
     <label for="crossover">Krzyżowanie</label>
-    <input type="number" id="crossover" name="crossover" value="{{ crossover }}">
+    <input type="number" id="crossover" name="crossover" value="{{ config.cross_params["crossover_rate"] }}">
     <br>
     <label for="crossover_strategy">Strategia krzyżowania</label>
     <select id="crossover_strategy" name="crossover_strategy">
-      <option value="roulette" {% if selection == 'roulette' %}selected{% endif %}>Ruletka</option>
-      <option value="tournament" {% if selection == 'tournament' %}selected{% endif %}>Turniej</option>
+      <option value="tournament" {% if selection == 'ChampionCrossover' %}selected{% endif %}>Turniej</option>
+      <option value="roulette_l" {% if selection == 'RouletteSinglePointCrossover' %}selected{% endif %}>Ruleta - lekcje</option>
+      <option value="roulette_d" {% if selection == 'RouletteDayCrossover' %}selected{% endif %}>Ruleta - dni</option>
     </select>
     <br>
     <label for="elitism">Elityzm</label>
-    <input type="checkbox" id="elitism" name="elitism" {% if elitism %}checked{% endif %}>
+    <input type="checkbox" id="elitism" name="elitism" {% if config.elitism %}checked{% endif %}>
     <br>
 
     <label for="imp_basic">Współczynnik wpływu ewaluacji podstawowej</label>
-    <input type="number" id="imp_basic" name="imp_basic" value="{{ imp_basic }}">
+    <input type="number" id="imp_basic" name="imp_basic" value="{{ config.eval_criteria['importance']['basic_evaluation'] }}">
     <br>
     <label for="imp_blank">Współczynnik wpływu pustych lekcji</label>
-    <input type="number" id="imp_blank" name="imp_blank" value="{{ imp_blank }}">
+    <input type="number" id="imp_blank" name="imp_blank" value="{{ config.eval_criteria['importance']['blank_lessons_evaluation'] }}">
     <br>
     <label for="imp_hours_per_day">Współczynnik wpływu maksymalnej liczby godzin dziennie</label>
-    <input type="number" id="imp_hours_per_day" name="imp_hours_per_day" value="{{ imp_hours_per_day }}">
+    <input type="number" id="imp_hours_per_day" name="imp_hours_per_day" value="{{ config.eval_criteria['importance']['hours_per_day_evaluation'] }}">
     <br>
     <label for="imp_lesson_block">Współczynnik wpływu lekcji w blokach</label>
-    <input type="number" id="imp_lesson_block" name="imp_lesson_block" value="{{ imp_lesson_block }}">
+    <input type="number" id="imp_lesson_block" name="imp_lesson_block" value="{{ config.eval_criteria['importance']['subject_block_evaluation'] }}">
     <br>
     <label for="imp_teacher_block">Współczynnik wpływu planu nauczycieli</label>
-    <input type="number" id="imp_teacher_block" name="imp_teacher_block" value="{{ imp_teacher_block }}">
+    <input type="number" id="imp_teacher_block" name="imp_teacher_block" value="{{ config.eval_criteria['importance']['teacher_block_evaluation'] }}">
     <br>
     <label for="imp_start_end_day_subject">Współczynnik wpływu przedmiotów na początek/koniec dnia</label>
-    <input type="number" id="imp_start_end_day_subject" name="imp_start_end_day_subject" value="{{ imp_start_end_day_subject }}">
+    <input type="number" id="imp_start_end_day_subject" name="imp_start_end_day_subject" value="{{ config.eval_criteria['importance']['subject_at_end_or_start_evaluation'] }}">
     <br>
 
     <button type="submit">Zapisz</button>

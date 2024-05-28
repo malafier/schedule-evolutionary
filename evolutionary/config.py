@@ -38,15 +38,15 @@ class Config:
                  subjects: dict,
                  elitism: bool = True,
                  population_size: int = 100,
-                 eval_criteria: dict | None = None,
-                 cross_params: dict | None = None):
+                 eval_criteria: dict = DEFAULT_EVAL_CRITERIA,
+                 cross_params: dict = DEFAULT_CROSS_PARAMS):
         self.head_teachers: dict = head_teachers
         self.teachers: list = teachers
         self.subjects: dict = subjects
         self.elitism: bool = elitism
         self.population_size: int = population_size
-        self.eval_criteria = DEFAULT_EVAL_CRITERIA if eval_criteria is None else eval_criteria
-        self.cross_params = DEFAULT_CROSS_PARAMS if cross_params is None else cross_params
+        self.eval_criteria = eval_criteria
+        self.cross_params = cross_params
 
     def hours_by_id(self, name: str, subject_id: str) -> int:
         for subject in self.subjects[name]:

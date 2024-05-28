@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 from flask import render_template, Flask, request
 
 from evolutionary.config import Config
-from evolutionary.generation import Generation, ChampionCrossover, RouletteSinglePointCrossover
+from evolutionary.generation import Generation, ChampionCrossover, RouletteSinglePointCrossover, RouletteDayCrossover
 from main import get_config
 
 templates_dir = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'templates')
@@ -14,9 +14,9 @@ app = Flask(__name__, template_folder=templates_dir)
 
 generation: Generation | None = None
 config: Config | None = None
+crossover_strategy = ChampionCrossover()
 scores = []
 plans = []  # TODO: Add plans
-crossover_strategy = ChampionCrossover()
 
 
 def generate_graph():
@@ -42,6 +42,14 @@ def generate_graph():
     return 'data:image/png;base64,{}'.format(plot_url)
 
 
+@app.after_request
+def add_cache_control_headers(response):
+    response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+    response.headers['Pragma'] = 'no-cache'
+    response.headers['Expires'] = '0'
+    return response
+
+
 @app.route('/', methods=['GET'])
 def get_school_plan():
     global generation, scores, config
@@ -51,7 +59,14 @@ def get_school_plan():
     generation.evaluate()
     stats = generation.statistics()
     scores.append((generation.gen_no, stats["max"], stats["avg"], stats["min"]))
-    return render_template("main.html", score=scores[-1])
+
+    print(config.eval_criteria)
+    return render_template(
+        "main.html",
+        score=scores[-1],
+        config=config,
+        selection=crossover_strategy.__class__.__name__
+    )
 
 
 @app.route('/nextgen', methods=['GET'])
@@ -114,25 +129,39 @@ def show_plan():
 
 
 @app.route('/config', methods=['GET'])  # TODO: finalise
-def show_genomes():
+def alter_configuration():
     global generation, config, scores, crossover_strategy
-    scores = []
 
     config.population_size = int(request.form.get('population'))
     config.elitism = request.form.get('elitism') == 'on'
     config.cross_params['crossover_rate'] = float(request.form.get('crossover'))
     config.cross_params['div_factor'] = float(request.form.get('div_factor'))
     config.cross_params['mutation_rate'] = float(request.form.get('mutation'))
-    crossover_strategy = RouletteSinglePointCrossover() if request.form.get('crossover_strategy') == 'roulette' else ChampionCrossover()
+
+    crossover_strategy = RouletteSinglePointCrossover() \
+        if request.form.get('crossover_strategy') == 'roulette_l' else ChampionCrossover()
+    crossover_strategy = RouletteDayCrossover() \
+        if request.form.get('crossover_strategy') == 'roulette_d' else crossover_strategy
+
     config.eval_criteria['importance']['basic_evaluation'] = float(request.form.get('imp_basic'))
     config.eval_criteria['importance']['blank_lessons_evaluation'] = float(request.form.get('imp_blank'))
     config.eval_criteria['importance']['hours_per_day_evaluation'] = float(request.form.get('imp_hours_per_day'))
     config.eval_criteria['importance']['subject_block_evaluation'] = float(request.form.get('imp_lesson_block'))
     config.eval_criteria['importance']['teacher_block_evaluation'] = float(request.form.get('imp_teacher_block'))
-    config.eval_criteria['importance']['subject_at_end_or_start_evaluation'] = float(request.form.get('imp_start_end_day_subject'))
-    generation = Generation(config)
+    config.eval_criteria['importance']['subject_at_end_or_start_evaluation'] = \
+        float(request.form.get('imp_start_end_day_subject'))
 
-    return render_template("config_input.html", config=config)
+    generation = Generation(config)
+    generation.evaluate()
+    scores.clear()
+    stats = generation.statistics()
+    scores.append((generation.gen_no, stats["max"], stats["avg"], stats["min"]))
+
+    return render_template(
+        "config_input.html",
+        config=config,
+        selection=crossover_strategy.__class__.__name__
+    )
 
 
 if __name__ == '__main__':

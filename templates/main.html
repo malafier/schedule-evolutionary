@@ -5,41 +5,69 @@
   <meta charset="utf-8">
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/htmx.org@1.9.11"></script>
+  <style>
+      /* Custom CSS to remove number input arrows */
+      input[type=number]::-webkit-outer-spin-button,
+      input[type=number]::-webkit-inner-spin-button {
+          -webkit-appearance: none;
+          margin: 0;
+      }
+
+      input[type=number] {
+          -moz-appearance: textfield;
+      }
+  </style>
 </head>
 <body>
-  <div>
-    <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-            hx-get="/nextgen" hx-swap="innerHTML" hx-target="#statistics"
-    >Następna generacja</button>
-    <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-            hx-get="/best-plan" hx-swap="innerHTML" hx-target="#plan-target"
-    >Pokaż najlepszy plan</button>
-    <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-            hx-get="/next10gen" hx-swap="innerHTML" hx-target="#statistics"
-    >Następne 10 generacji</button>
-    <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-            hx-get="/next50gen" hx-swap="innerHTML" hx-target="#statistics"
-    >Następne 50 generacji</button>
-    <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-            hx-get="/all" hx-swap="innerHTML" hx-target="#plan-target"
-    >Pokaż wszystkie</button>
-    <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-            hx-get="/genomes" hx-swap="innerHTML" hx-target="#genomes"
-    >Pokaż genotypy</button>
-  </div>
+<div>
+  <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+          id="config_btn">
+    Konfiguracja
+  </button>
+  <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+          hx-get="/nextgen" hx-swap="innerHTML" hx-target="#statistics"
+  >Następna generacja
+  </button>
+  <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+          hx-get="/best-plan" hx-swap="innerHTML" hx-target="#plan-target"
+  >Pokaż najlepszy plan
+  </button>
+  <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+          hx-get="/next10gen" hx-swap="innerHTML" hx-target="#statistics"
+  >Następne 10 generacji
+  </button>
+  <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+          hx-get="/next50gen" hx-swap="innerHTML" hx-target="#statistics"
+  >Następne 50 generacji
+  </button>
+  <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+          hx-get="/all" hx-swap="innerHTML" hx-target="#plan-target"
+  >Pokaż wszystkie
+  </button>
+  <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+          hx-get="/genomes" hx-swap="innerHTML" hx-target="#genomes"
+  >Pokaż genotypy
+  </button>
+</div>
 
-  <div class="flex">
-    <div class="w-2/5">
-      <div id="config">
-        {% include "config_input.html" %} <!-- TODO: finish it -->
-      </div>
-
-      <div id="statistics">
-        {% include "statistics.html" %}
-      </div>
+<div class="flex">
+  <div class="w-2/5">
+    <div id="config" style="display: none">
+      {% include "config_input.html" %}
     </div>
 
-    <div id="plan-target" class="flex-1"></div>
+    <div id="statistics">
+      {% include "statistics.html" %}
+    </div>
   </div>
 
+  <div id="plan-target" class="flex-1"></div>
+</div>
+
+<script>
+    let config = document.getElementById("config");
+    document.getElementById("config_btn").addEventListener("click", () => {
+        config.style.display = config.style.display === "none" ? "block" : "none";
+    });
+</script>
 </body>

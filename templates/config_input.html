@@ -1,45 +1,46 @@
+{% from "macros.html" import input %}
+
 {% block config %}
-  <h4>Konfiguracja</h4>
-  <form hx-post="/config" hx-swap="innerHTML" hx-target="#config">
-    <label for="population">Populacja</label>
-    <input type="number" id="population" name="population" value="{{ 100 }}">
-    <br>
-    <label for="mutation">Mutacja</label>
-    <input type="number" id="mutation" name="mutation" value="{{ config.cross_params["mutation_rate"] }}">
-    <br>
-    <label for="crossover">Krzyżowanie</label>
-    <input type="number" id="crossover" name="crossover" value="{{ config.cross_params["crossover_rate"] }}">
-    <br>
-    <label for="crossover_strategy">Strategia krzyżowania</label>
-    <select id="crossover_strategy" name="crossover_strategy">
-      <option value="tournament" {% if selection == 'ChampionCrossover' %}selected{% endif %}>Turniej</option>
-      <option value="roulette_l" {% if selection == 'RouletteSinglePointCrossover' %}selected{% endif %}>Ruleta - lekcje</option>
-      <option value="roulette_d" {% if selection == 'RouletteDayCrossover' %}selected{% endif %}>Ruleta - dni</option>
-    </select>
-    <br>
-    <label for="elitism">Elityzm</label>
-    <input type="checkbox" id="elitism" name="elitism" {% if config.elitism %}checked{% endif %}>
-    <br>
+  <form hx-post="/config" hx-swap="innerHTML" hx-target="#config"
+      class="bg-white border-blue-500 border-2 shadow-md rounded px-8 pt-6 pb-8 mb-4">
+    <h4 class="text-xl font-bold mb-4">Konfiguracja</h4>
+    {{ input("population_size", "Rozmiar populacji", config.population_size) }}
+    {{ input("mutation", "Mutacja", config.cross_params["mutation_rate"]) }}
+    {{ input("crossover", "Krzyżowanie", config.cross_params["crossover_rate"]) }}
 
-    <label for="imp_basic">Współczynnik wpływu ewaluacji podstawowej</label>
-    <input type="number" id="imp_basic" name="imp_basic" value="{{ config.eval_criteria['importance']['basic_evaluation'] }}">
-    <br>
-    <label for="imp_blank">Współczynnik wpływu pustych lekcji</label>
-    <input type="number" id="imp_blank" name="imp_blank" value="{{ config.eval_criteria['importance']['blank_lessons_evaluation'] }}">
-    <br>
-    <label for="imp_hours_per_day">Współczynnik wpływu maksymalnej liczby godzin dziennie</label>
-    <input type="number" id="imp_hours_per_day" name="imp_hours_per_day" value="{{ config.eval_criteria['importance']['hours_per_day_evaluation'] }}">
-    <br>
-    <label for="imp_lesson_block">Współczynnik wpływu lekcji w blokach</label>
-    <input type="number" id="imp_lesson_block" name="imp_lesson_block" value="{{ config.eval_criteria['importance']['subject_block_evaluation'] }}">
-    <br>
-    <label for="imp_teacher_block">Współczynnik wpływu planu nauczycieli</label>
-    <input type="number" id="imp_teacher_block" name="imp_teacher_block" value="{{ config.eval_criteria['importance']['teacher_block_evaluation'] }}">
-    <br>
-    <label for="imp_start_end_day_subject">Współczynnik wpływu przedmiotów na początek/koniec dnia</label>
-    <input type="number" id="imp_start_end_day_subject" name="imp_start_end_day_subject" value="{{ config.eval_criteria['importance']['subject_at_end_or_start_evaluation'] }}">
-    <br>
+    <div class="mb-4 flex items-center">
+      <label for="crossover_strategy" class="block text-gray-700 text-sm font-bold mr-2">Strategia krzyżowania</label>
+      <select id="crossover_strategy" name="crossover_strategy"
+              class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+        <option value="tournament" {% if selection == 'ChampionCrossover' %}selected{% endif %}>Turniej</option>
+        <option value="roulette_l"
+                {% if selection == 'RouletteSinglePointCrossover' %}selected{% endif %}
+        >Ruleta - lekcje
+        </option>
+        <option value="roulette_d"
+                {% if selection == 'RouletteDayCrossover' %}selected{% endif %}
+        >Ruleta - dni
+        </option>
+      </select>
+    </div>
+    <div class="mb-4 flex items-center">
+      <label for="elitism" class="block text-gray-700 text-sm font-bold mr-2">Elityzm</label>
+      <input type="checkbox" id="elitism" name="elitism"
+             class="form-checkbox h-5 w-5 text-blue-600"
+             {% if config.elitism %}checked{% endif %}>
+    </div>
 
-    <button type="submit">Zapisz</button>
+    <h6 class="text-lg font-bold mb-4">Kryteria oceny</h6>
+    {{ input("imp_basic", "Współczynnik wpływu ewaluacji podstawowej", config.eval_criteria['importance']['basic_evaluation']) }}
+    {{ input("imp_blank", "Współczynnik wpływu pustych lekcji", config.eval_criteria['importance']['blank_lessons_evaluation']) }}
+    {{ input("imp_hours_per_day", "Współczynnik wpływu maksymalnej liczby godzin dziennie", config.eval_criteria['importance']['hours_per_day_evaluation']) }}
+    {{ input("imp_lesson_block", "Współczynnik wpływu lekcji w blokach", config.eval_criteria['importance']['subject_block_evaluation']) }}
+    {{ input("imp_teacher_block", "Współczynnik wpływu planu nauczycieli", config.eval_criteria['importance']['teacher_block_evaluation']) }}
+    {{ input("imp_start_end_day_subject", "Współczynnik wpływu przedmiotów na początek/koniec dnia", config.eval_criteria['importance']['subject_at_end_or_start_evaluation']) }}
+
+    <button type="submit"
+            class="bg-blue-500 hover:bg-blue-700 text-white font-semibold py-1 px-3 rounded focus:outline-none focus:shadow-outline"
+    >Zapisz
+    </button>
   </form>
 {% endblock %}

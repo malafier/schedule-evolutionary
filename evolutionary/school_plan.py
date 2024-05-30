@@ -1,9 +1,9 @@
 import random
 
+from evolutionary.config import WEEK_DAYS, H_PER_DAY, Day, Config
 from evolutionary.evaluation import basic_evaluation, blank_lessons_evaluation, hours_per_day_evaluation, \
     max_subject_hours_per_day_evaluation, subject_block_evaluation, teacher_block_evaluation, \
     subject_at_end_or_start_evaluation
-from evolutionary.config import WEEK_DAYS, H_PER_DAY, Day, Config
 
 
 class SchoolPlan:
@@ -45,16 +45,20 @@ class SchoolPlan:
         importance = config.eval_criteria["importance"]
 
         score = 0
-        score += importance["basic_evaluation"] * basic_evaluation(self.plans, config.eval_criteria["basic_evaluation"][
-            "weight_per_hour"])
-        score += importance["blank_lessons_evaluation"] * blank_lessons_evaluation(self.plans)
-        score += importance["hours_per_day_evaluation"] * hours_per_day_evaluation(self.plans)
-        score += importance["max_subject_hours_per_day_evaluation"] * max_subject_hours_per_day_evaluation(self.plans,
-                                                                                                           config.subjects)
-        score += importance["subject_block_evaluation"] * subject_block_evaluation(self.plans, 0, -5, config.subjects)
-        score += importance["teacher_block_evaluation"] * teacher_block_evaluation(self.plans, 1, -2, config.teachers)
-        score += importance["subject_at_end_or_start_evaluation"] * subject_at_end_or_start_evaluation(self.plans,
-                                                                                                       config.subjects)
+        score += (importance["basic_evaluation"] *
+                  basic_evaluation(self.plans, config.eval_criteria["basic_evaluation"]["weight_per_hour"]))
+        score += (importance["blank_lessons_evaluation"] *
+                  blank_lessons_evaluation(self.plans))
+        score += (importance["hours_per_day_evaluation"] *
+                  hours_per_day_evaluation(self.plans))
+        score += (importance["max_subject_hours_per_day_evaluation"] *
+                  max_subject_hours_per_day_evaluation(self.plans, config.subjects))
+        score += (importance["subject_block_evaluation"] *
+                  subject_block_evaluation(self.plans, 0, -5, config.subjects))
+        score += (importance["teacher_block_evaluation"] *
+                  teacher_block_evaluation(self.plans, 1, -2, config.teachers))
+        score += (importance["subject_at_end_or_start_evaluation"] *
+                  subject_at_end_or_start_evaluation(self.plans, config.subjects))
 
         self.fitness = score
 

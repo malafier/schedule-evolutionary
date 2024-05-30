@@ -1,6 +1,7 @@
 import base64
 import io
 import os
+import time
 
 import matplotlib.pyplot as plt
 from flask import render_template, Flask, request
@@ -98,16 +99,26 @@ def make_next_10_gens():
     graph = generate_graph()
     return render_template("statistics.html", score=scores[-1], graph=graph)
 
-
+# global time_eval, time_cross, time_mut
 @app.route('/next50gen', methods=['GET'])
 def make_next_50_gens():
     global generation, scores
+    # global time_eval, time_cross, time_mut
+    # times = [0, 0, 0]
     # time_eval > time_cross >> time_mut
     for i in range(50):
+        # time_start = time.time()
         generation.evaluate()
+        # time_eval = time.time() - time_start
         generation.crossover(crossover_strategy)
+        # time_cross = time.time() - time_eval
         generation.mutate()
+        # time_mut = time.time() - time_cross
         generation.evaluate()
+        # times[0] += time_eval
+        # times[1] += time_cross
+        # times[2] += time_mut
+    # print("Evaluation time: ", times[0], "Crossover time: ", times[1], "Mutation time: ", times[2])
     stats = generation.statistics()
     scores.append((generation.gen_no, stats["max"], stats["avg"], stats["min"]))
 

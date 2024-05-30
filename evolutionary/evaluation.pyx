@@ -1,5 +1,4 @@
 import cython
-from libcpp cimport bool
 
 cdef int H_PER_DAY = 8
 
@@ -31,7 +30,6 @@ cpdef double basic_evaluation(dict plan, list weight_per_hour):
                 score += weight_per_hour[i % H_PER_DAY]
     return score
 
-
 @cython.boundscheck(False)
 @cython.wraparound(False)
 cdef bint is_empty(dict plan, str group_name, int x_day, int start_h, int h_span):
@@ -39,7 +37,6 @@ cdef bint is_empty(dict plan, str group_name, int x_day, int start_h, int h_span
     cdef tuple lesson_before = plan[group_name][x_day + start_h - 1]
     cdef tuple lesson_after = plan[group_name][x_day + start_h + h_span]
     return all(lesson == (0, 0) for lesson in lessons) and lesson_after != (0, 0) and lesson_before != (0, 0)
-
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
@@ -73,10 +70,9 @@ cpdef double hours_per_day_evaluation(dict plan):
             score += 1 if hours <= 6 else -hours
     return score
 
-
 @cython.boundscheck(False)
 @cython.wraparound(False)
-cdef double max_subject_hours_per_day_evaluation(dict plan, dict subjects):
+cpdef double max_subject_hours_per_day_evaluation(dict plan, dict subjects):
     cdef double score = 0
     cdef int hours
     cdef str name
@@ -92,10 +88,9 @@ cdef double max_subject_hours_per_day_evaluation(dict plan, dict subjects):
                 score += 1 if hours <= 2 else -hours
     return score
 
-
 @cython.boundscheck(False)
 @cython.wraparound(False)
-cdef double subject_block_evaluation(dict plan, double reward, double punishment, dict subjects):
+cpdef double subject_block_evaluation(dict plan, double reward, double punishment, dict subjects):
     cdef double score = 0
     cdef int i
     cdef list hours
@@ -117,19 +112,17 @@ cdef double subject_block_evaluation(dict plan, double reward, double punishment
                             score += punishment
     return score
 
-
 @cython.boundscheck(False)
 @cython.wraparound(False)
-cdef double teacher_block_evaluation(dict plan, double reward, double punishment, dict teachers):
+cpdef double teacher_block_evaluation(dict plan, double reward, double punishment, list teachers):
     cdef double score = 0
-    cdef str teacher_id
+    cdef int teacher_id
     cdef list lessons
     cdef str name
     cdef int day
     cdef int i
     cdef dict teacher
     cdef list lesson
-    cdef list teachers = teachers
     for teacher in teachers:
         teacher_id = teacher["id"]
         for day in Day():
@@ -146,30 +139,29 @@ cdef double teacher_block_evaluation(dict plan, double reward, double punishment
                         score += punishment
     return score
 
-
 @cython.boundscheck(False)
 @cython.wraparound(False)
-cdef double subject_at_end_or_start_evaluation(dict plan, Config config):
+cpdef double subject_at_end_or_start_evaluation(dict plan, dict subjects):
     cdef double score = 0
     cdef str name
-    cdef Day day
+    cdef int day
     cdef int i
     cdef dict subject
     cdef list special_subjects
     cdef int first_or_last
     for name in plan.keys():
-        special_subjects = [sub for sub in config.subjects[name] if sub["start_end"]]
+        special_subjects = [sub for sub in subjects[name] if sub["start_end"]]
         for subject in special_subjects:
             for day in Day():
                 for i in range(H_PER_DAY):
                     first_or_last = (
                             i == 0 or
                             i == H_PER_DAY - 1 or
-                            all(plan[name][day.value: day.value + i] == (0, 0) or
-                                plan[name][day.value: day.value + i][0] == subject["id"]) or
-                            all(plan[name][day.value + i + 1: day.value + H_PER_DAY] == (0, 0) or
-                                plan[name][day.value + i + 1: day.value + H_PER_DAY][0] == subject["id"])
+                            all([plan[name][day: day + i] == (0, 0)]) or
+                            all([plan[name][day: day + i][0] == subject["id"]]) or
+                            all([plan[name][day + i + 1: day + H_PER_DAY] == (0, 0)]) or
+                            all([plan[name][day + i + 1: day + H_PER_DAY][0] == subject["id"]])
                     )
-                    if plan[name][day.value + i][0] == subject["id"] and first_or_last:
+                    if plan[name][day + i][0] == subject["id"] and first_or_last:
                         score += 1
     return score

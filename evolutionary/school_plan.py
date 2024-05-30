@@ -54,7 +54,7 @@ class SchoolPlan:
         score += importance["subject_block_evaluation"] * subject_block_evaluation(self.plans, 0, -5, config.subjects)
         score += importance["teacher_block_evaluation"] * teacher_block_evaluation(self.plans, 1, -2, config.teachers)
         score += importance["subject_at_end_or_start_evaluation"] * subject_at_end_or_start_evaluation(self.plans,
-                                                                                                       config)
+                                                                                                       config.subjects)
 
         self.fitness = score
 

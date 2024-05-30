@@ -1,120 +1,15 @@
 import random
 
+from evolutionary.evaluation import basic_evaluation, blank_lessons_evaluation, hours_per_day_evaluation, \
+    max_subject_hours_per_day_evaluation, subject_block_evaluation, teacher_block_evaluation, \
+    subject_at_end_or_start_evaluation
 from evolutionary.config import WEEK_DAYS, H_PER_DAY, Day, Config
-
-
-def basic_evaluation(plan, weight_per_hour: list):
-    score = 0
-    for name in plan.keys():
-        for i in range(len(plan[name])):
-            if plan[name][i] != (0, 0):
-                score += weight_per_hour[i % H_PER_DAY]
-    return score
-
-
-def blank_lessons_evaluation(plan):
-    def is_empty(group_name: str, x_day: Day, start_h: int, h_span: int) -> bool:
-        lessons = plan[group_name][x_day.value + start_h: x_day.value + start_h + h_span - 1]
-        lesson_before = plan[group_name][x_day.value + start_h - 1]
-        lesson_after = plan[group_name][x_day.value + start_h + h_span]
-        return all([lesson == (0, 0) for lesson in lessons]) and lesson_after != (0, 0) and lesson_before != (0, 0)
-
-    score = 0
-    for name in plan.keys():
-        for day in Day:
-            for empty_size in range(1, 7):
-                for lesson_h in range(1, H_PER_DAY - empty_size):
-                    if is_empty(name, day, lesson_h, empty_size):
-                        score += empty_size
-    return -score
-
-
-def hours_per_day_evaluation(plan):
-    score = 0
-    for name in plan.keys():
-        for day in Day:
-            hours = 0
-            for i in range(H_PER_DAY):
-                if plan[name][day.value + i] != (0, 0):
-                    hours += 1
-            score += 1 if hours <= 6 else -hours
-    return score
-
-
-def max_subject_hours_per_day_evaluation(plan, config: Config):
-    score = 0
-    for name in plan.keys():
-        for day in Day:
-            for subject in config.subjects[name]:
-                hours = 0
-                for i in range(H_PER_DAY):
-                    if plan[name][day.value + i][0] == subject["id"]:
-                        hours += 1
-                score += 1 if hours <= 2 else -hours
-    return score
-
-
-def subject_block_evaluation(plan, reward, punishment, config: Config):
-    score = 0
-    for name in plan.keys():
-        for day in Day:
-            for subject in config.subjects[name]:
-                hours = []
-                for i in range(H_PER_DAY):
-                    if plan[name][day.value + i][0] == subject["id"]:
-                        hours.append(i)
-                if len(hours) > 1:
-                    for i in range(len(hours) - 1):
-                        if hours[i + 1] - hours[i] == 1:
-                            score += reward
-                        else:
-                            score += punishment
-    return score
-
-
-def teacher_block_evaluation(plan, reward, punishment, config: Config):
-    score = 0
-    teachers = config.teachers
-    for teacher in teachers:
-        for day in Day:
-            lessons = []
-            for name in plan.keys():
-                for i in range(H_PER_DAY):
-                    if plan[name][day.value + i][1] == teacher["id"]:
-                        lessons.append((name, i))
-            if len(lessons) > 1:
-                for i in range(len(lessons) - 1):
-                    if lessons[i + 1][1] - lessons[i][1] == 1:
-                        score += reward
-                    else:
-                        score += punishment
-    return score
-
-
-def subject_at_end_or_start_evaluation(plan, config: Config):
-    score = 0
-    for name in plan.keys():
-        special_subjects = filter(lambda x: x["start_end"], config.subjects[name])
-        for subject in special_subjects:
-            for day in Day:
-                for i in range(H_PER_DAY):
-                    first_or_last = (
-                            i == 0 or
-                            i == H_PER_DAY - 1 or
-                            all([plan[name][day.value: day.value + i] == (0, 0) or
-                                 plan[name][day.value: day.value + i][0] == subject["id"]]) or
-                            all([plan[name][day.value + i + 1: day.value + H_PER_DAY] == (0, 0) or
-                                 plan[name][day.value + i + 1: day.value + H_PER_DAY][0] == subject["id"]])
-                    )
-                    if plan[name][day.value + i] == subject["id"] and first_or_last:
-                        score += 1
-    return score
 
 
 class SchoolPlan:
     def __init__(self, classes_name):
-        self.fitness = 0
-        self.plans = {class_name: [(0, 0) for _ in range((H_PER_DAY * len(Day)))] for class_name in classes_name}
+        self.fitness: float = 0
+        self.plans: dict = {class_name: [(0, 0) for _ in range((H_PER_DAY * len(Day)))] for class_name in classes_name}
 
     def generate(self, config: Config):
         def generate_group_plan(group_name: str):
@@ -155,9 +50,9 @@ class SchoolPlan:
         score += importance["blank_lessons_evaluation"] * blank_lessons_evaluation(self.plans)
         score += importance["hours_per_day_evaluation"] * hours_per_day_evaluation(self.plans)
         score += importance["max_subject_hours_per_day_evaluation"] * max_subject_hours_per_day_evaluation(self.plans,
-                                                                                                           config)
-        score += importance["subject_block_evaluation"] * subject_block_evaluation(self.plans, 0, -5, config)
-        score += importance["teacher_block_evaluation"] * teacher_block_evaluation(self.plans, 1, -2, config)
+                                                                                                           config.subjects)
+        score += importance["subject_block_evaluation"] * subject_block_evaluation(self.plans, 0, -5, config.subjects)
+        score += importance["teacher_block_evaluation"] * teacher_block_evaluation(self.plans, 1, -2, config.teachers)
         score += importance["subject_at_end_or_start_evaluation"] * subject_at_end_or_start_evaluation(self.plans,
                                                                                                        config)
 

@@ -61,7 +61,7 @@ def get_school_plan():
     stats = generation.statistics()
     scores.append((generation.gen_no, stats["max"], stats["avg"], stats["min"]))
 
-    print(config.eval_criteria)
+    print(config.population_size, config.elitism)
     return render_template(
         "main.html",
         score=scores[-1],
@@ -80,6 +80,7 @@ def make_next_generation():
     stats = generation.statistics()
     scores.append((generation.gen_no, stats["max"], stats["avg"], stats["min"]))
 
+    print(config.population_size, config.elitism)
     graph = generate_graph()
     return render_template("statistics.html", score=scores[-1], graph=graph)
 
@@ -142,14 +143,14 @@ def show_plan():
     return render_template("plan.html", school_plan=school_plan, config=generation.config)
 
 
-@app.route('/config', methods=['GET'])  # TODO: finalise
+@app.route('/config', methods=['POST'])  # TODO: finalise
 def alter_configuration():
     global generation, config, scores, crossover_strategy
 
-    config.population_size = int(request.form.get('population'))
+    config.population_size = int(request.form.get('population_size'))
     config.elitism = request.form.get('elitism') == 'on'
     config.cross_params['crossover_rate'] = float(request.form.get('crossover'))
-    config.cross_params['div_factor'] = float(request.form.get('div_factor'))
+    # config.cross_params['div_factor'] = float(request.form.get('div_factor')) # TODO: remove div_factor
     config.cross_params['mutation_rate'] = float(request.form.get('mutation'))
 
     crossover_strategy = RouletteSinglePointCrossover() \

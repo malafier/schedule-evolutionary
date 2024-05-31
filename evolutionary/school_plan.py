@@ -7,9 +7,10 @@ from evolutionary.evaluation import basic_evaluation, blank_lessons_evaluation, 
 
 
 class SchoolPlan:
-    def __init__(self, classes_name):
+    def __init__(self, classes_name, plans=None):
         self.fitness: float = 0
-        self.plans: dict = {class_name: [(0, 0) for _ in range((H_PER_DAY * len(Day)))] for class_name in classes_name}
+        self.plans: dict = {class_name: [(0, 0) for _ in range((H_PER_DAY * len(Day)))] for class_name in classes_name} \
+            if plans is None else plans
 
     def generate(self, config: Config):
         def generate_group_plan(group_name: str):

@@ -1,111 +1,78 @@
 import random
 from abc import ABC
 
-from evolutionary.config import Config, H_PER_DAY, Day
+from evolutionary.config import Config
+from evolutionary.crossover import single_point_cross, day_cross
 from evolutionary.school_plan import SchoolPlan
 
 
 class CrossoverStrategy(ABC):
-    def crossover(self, parents, best_plan, size, config: Config):
+    def crossover(self, parents: list, best_plan: SchoolPlan, size: int, config: Config):
         pass
-
-    def cross(self, plan1, plan2, config):
-        pass
-
-    def valid_plans(self, plan1: SchoolPlan, plan2: SchoolPlan, config: Config) -> bool:
-        return plan1.plans.keys() == plan2.plans.keys() and plan1.plans.keys() == config.head_teachers.keys() \
-            and plan1.plans != plan2.plans
 
 
 class RouletteSinglePointCrossover(CrossoverStrategy):
-    def crossover(self, parents, best_plan, size, config: Config):
-        children = [best_plan]
+    def crossover(self, parents: list, best_plan: SchoolPlan, size: int, config: Config):
+        children = []
+        if config.elitism:
+            children.append(best_plan)
 
+        crossover_rate = config.cross_params["crossover_rate"]
+        div_factor = config.cross_params["div_factor"]
+        groups = list(config.head_teachers.keys())
         sum_fitness = sum([plan.fitness for plan in parents])
         probabilities = [plan.fitness / sum_fitness for plan in parents]
+
         while len(children) < size:
             parent1, parent2 = random.choices(parents, probabilities, k=2)
-            if random.random() < config.cross_params["crossover_rate"]:
-                child = self.cross(parent1, parent2, config)
-                if child is not None:
+            if random.random() < crossover_rate:
+                child_plan = single_point_cross(parent1.plans, parent2.plans, div_factor, groups, config.subjects)
+                if child_plan is not None:
+                    child = SchoolPlan(groups, child_plan)
                     children.append(child)
         return children
-
-    def cross(self, plan1, plan2, config):
-        if not self.valid_plans(plan1, plan2, config):
-            return None
-
-        div_factor = config.cross_params["div_factor"]
-
-        groups = config.head_teachers.keys()
-        child = SchoolPlan(groups)
-        for name in groups:
-            for day in list(Day):
-                for hour in range(H_PER_DAY):
-                    lesson = plan2.plans[name][day.value + hour] if random.random() < div_factor \
-                        else plan1.plans[name][day.value + hour]
-                    child.add_to_plan(config, name, day, hour, lesson)
-        child.fill_plan(config)
-        return child
 
 
 class RouletteDayCrossover(CrossoverStrategy):
-    def crossover(self, parents, best_plan, size, config: Config):
-        children = [best_plan]
+    def crossover(self, parents: list, best_plan: SchoolPlan, size: int, config: Config):
+        children = []
+        if config.elitism:
+            children.append(best_plan)
 
+        crossover_rate = config.cross_params["crossover_rate"]
+        div_factor = config.cross_params["div_factor"]
+        groups = list(config.head_teachers.keys())
         sum_fitness = sum([plan.fitness for plan in parents])
         probabilities = [plan.fitness / sum_fitness for plan in parents]
+
         while len(children) < size:
             parent1, parent2 = random.choices(parents, probabilities, k=2)
-            if random.random() < config.cross_params["crossover_rate"]:
-                child = self.cross(parent1, parent2, config)
-                if child is not None:
+            if random.random() < crossover_rate:
+                child_plan = day_cross(parent1.plans, parent2.plans, div_factor, groups, config.subjects)
+                if child_plan is not None:
+                    child = SchoolPlan(groups, child_plan)
                     children.append(child)
         return children
-
-    def cross(self, plan1, plan2, config):
-        if not self.valid_plans(plan1, plan2, config):
-            return None
-
-        div_factor = config.cross_params["div_factor"]
-
-        groups = config.head_teachers.keys()
-        child = SchoolPlan(groups)
-        for name in groups:
-            for day in list(Day):
-                plan = plan2 if random.random() < div_factor else plan1
-                for hour in range(H_PER_DAY):
-                    lesson = plan.plans[name][day.value + hour]
-                    child.add_to_plan(config, name, day, hour, lesson)
-        child.fill_plan(config)
-        return child
 
 
 class ChampionCrossover(CrossoverStrategy):
-    def crossover(self, parents, best_plan, size, config: Config):
-        children = [best_plan]
+    def crossover(self, parents: list, best_plan: SchoolPlan, size: int, config: Config):
+        children = []
+        if config.elitism:
+            children.append(best_plan)
+
+        crossover_rate = config.cross_params["crossover_rate"]
+        div_factor = config.cross_params["div_factor"]
+        groups = list(config.head_teachers.keys())
+
         while len(children) < size:
             parent2 = random.choice(parents)
-            if random.random() < config.cross_params["crossover_rate"]:
-                child = self.cross(best_plan, parent2, config)
-                if child is not None:
+            if random.random() < crossover_rate:
+                child_plan = single_point_cross(best_plan.plans, parent2.plans, div_factor, groups, config.subjects)
+                if child_plan is not None:
+                    child = SchoolPlan(groups, child_plan)
                     children.append(child)
         return children
-
-    def cross(self, plan1, plan2, config):
-        if not self.valid_plans(plan1, plan2, config):
-            return None
-
-        groups = config.head_teachers.keys()
-        child = SchoolPlan(groups)
-        for name in groups:
-            for day in list(Day):
-                for hour in range(H_PER_DAY):
-                    lesson = plan1.plans[name][day.value + hour] if plan1.fitness > plan2.fitness \
-                        else plan2.plans[name][day.value + hour]
-                    child.add_to_plan(config, name, day, hour, lesson)
-        child.fill_plan(config)
-        return child
 
 
 class Generation:
@@ -150,7 +117,7 @@ class Generation:
         self.gen_no += 1
 
         # purge worst plans
-        if self.purge: # FIXME: this is not working
+        if self.purge:  # FIXME: this is not working
             self.purge_worst(0.4 * sum([plan.fitness for plan in self.population]) / self.size)
 
     def mutate(self):

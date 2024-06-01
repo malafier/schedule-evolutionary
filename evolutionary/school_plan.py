@@ -48,7 +48,7 @@ class SchoolPlan:
         score = 0
         score += (importance["basic_evaluation"] *
                   basic_evaluation(self.plans, config.eval_criteria["basic_evaluation"]["weight_per_hour"]))
-        score += (importance["blank_lessons_evaluation"] *
+        score += (importance["blank_lessons_evaluation"] *  # TODO: *= instead of += -- that change might alter behaviour of the algorithm
                   blank_lessons_evaluation(self.plans))
         score += (importance["hours_per_day_evaluation"] *
                   hours_per_day_evaluation(self.plans))
@@ -102,8 +102,8 @@ class SchoolPlan:
                 while hours_needed > self.count_subject_hours(name, subject["id"]):
                     day = random.choice(list(Day))
                     hour = random.choice(range(H_PER_DAY))
-                    if self.plans[name][day.value + hour] == (0, 0) and self.teacher_free_at(subject["teacher_id"], day,
-                                                                                             hour):
+                    if (self.plans[name][day.value + hour] == (0, 0) and
+                            self.teacher_free_at(subject["teacher_id"], day, hour)):
                         self.plans[name][day.value + hour] = (subject["id"], subject["teacher_id"])
 
     def as_dict(self) -> dict:

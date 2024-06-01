@@ -52,7 +52,7 @@ cdef dict fill_plan(dict child_plan, str group, list group_subjects):
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
-cpdef dict single_point_cross(dict plan1, dict plan2, float div_factor, list groups, dict subjects):
+cpdef dict single_point_cross(dict plan1, dict plan2, list groups, dict subjects):
     if plan1 == plan2:
         return None
 
@@ -64,7 +64,7 @@ cpdef dict single_point_cross(dict plan1, dict plan2, float div_factor, list gro
     for name in groups:
         for day in Day():
             for hour in range(H_PER_DAY):
-                if float(rand() / RAND_MAX) < div_factor:
+                if float(rand() / RAND_MAX) < 0.5:
                     lesson = plan2[name][day + hour]
                 else:
                     lesson = plan1[name][day + hour]
@@ -75,7 +75,7 @@ cpdef dict single_point_cross(dict plan1, dict plan2, float div_factor, list gro
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
-cpdef dict day_cross(dict plan1, dict plan2, float div_factor, list groups, dict subjects):
+cpdef dict day_cross(dict plan1, dict plan2, list groups, dict subjects):
     if plan1 == plan2:
         return None
 
@@ -86,7 +86,7 @@ cpdef dict day_cross(dict plan1, dict plan2, float div_factor, list groups, dict
     cdef tuple lesson
     for name in groups:
         for day in Day():
-            if float(rand() / RAND_MAX) < div_factor:
+            if float(rand() / RAND_MAX) < 0.5:
                 plan = plan2
             else:
                 plan = plan1

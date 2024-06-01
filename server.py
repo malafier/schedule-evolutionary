@@ -109,7 +109,6 @@ def alter_configuration():
     config.population_size = int(request.form.get('population_size'))
     config.elitism = request.form.get('elitism') == 'on'
     config.cross_params['crossover_rate'] = float(request.form.get('crossover'))
-    # config.cross_params['div_factor'] = float(request.form.get('div_factor')) # TODO: remove div_factor
     config.cross_params['mutation_rate'] = float(request.form.get('mutation'))
 
     crossover_strategy = RouletteSinglePointCrossover() \

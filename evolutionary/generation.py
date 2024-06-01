@@ -18,7 +18,6 @@ class RouletteSinglePointCrossover(CrossoverStrategy):
             children.append(best_plan)
 
         crossover_rate = config.cross_params["crossover_rate"]
-        div_factor = config.cross_params["div_factor"]
         groups = list(config.head_teachers.keys())
         sum_fitness = sum([plan.fitness for plan in parents])
         probabilities = [plan.fitness / sum_fitness for plan in parents]
@@ -26,7 +25,7 @@ class RouletteSinglePointCrossover(CrossoverStrategy):
         while len(children) < size:
             parent1, parent2 = random.choices(parents, probabilities, k=2)
             if random.random() < crossover_rate:
-                child_plan = single_point_cross(parent1.plans, parent2.plans, div_factor, groups, config.subjects)
+                child_plan = single_point_cross(parent1.plans, parent2.plans, groups, config.subjects)
                 if child_plan is not None:
                     child = SchoolPlan(groups, child_plan)
                     children.append(child)
@@ -40,7 +39,6 @@ class RouletteDayCrossover(CrossoverStrategy):
             children.append(best_plan)
 
         crossover_rate = config.cross_params["crossover_rate"]
-        div_factor = config.cross_params["div_factor"]
         groups = list(config.head_teachers.keys())
         sum_fitness = sum([plan.fitness for plan in parents])
         probabilities = [plan.fitness / sum_fitness for plan in parents]
@@ -48,7 +46,7 @@ class RouletteDayCrossover(CrossoverStrategy):
         while len(children) < size:
             parent1, parent2 = random.choices(parents, probabilities, k=2)
             if random.random() < crossover_rate:
-                child_plan = day_cross(parent1.plans, parent2.plans, div_factor, groups, config.subjects)
+                child_plan = day_cross(parent1.plans, parent2.plans, groups, config.subjects)
                 if child_plan is not None:
                     child = SchoolPlan(groups, child_plan)
                     children.append(child)
@@ -62,13 +60,12 @@ class ChampionCrossover(CrossoverStrategy):
             children.append(best_plan)
 
         crossover_rate = config.cross_params["crossover_rate"]
-        div_factor = config.cross_params["div_factor"]
         groups = list(config.head_teachers.keys())
 
         while len(children) < size:
             parent2 = random.choice(parents)
             if random.random() < crossover_rate:
-                child_plan = single_point_cross(best_plan.plans, parent2.plans, div_factor, groups, config.subjects)
+                child_plan = single_point_cross(best_plan.plans, parent2.plans, groups, config.subjects)
                 if child_plan is not None:
                     child = SchoolPlan(groups, child_plan)
                     children.append(child)

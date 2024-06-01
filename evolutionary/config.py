@@ -18,7 +18,6 @@ DEFAULT_EVAL_CRITERIA = {
 }
 DEFAULT_CROSS_PARAMS = {
     "crossover_rate": 0.8,
-    "div_factor": 0.5,
     "mutation_rate": 0.1
 }
 

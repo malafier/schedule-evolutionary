@@ -2,7 +2,7 @@
 
 {% block config %}
   <form hx-post="/config" hx-swap="innerHTML" hx-target="#config"
-      class="bg-white border-blue-500 border-2 shadow-md rounded px-8 pt-6 pb-8 mb-4">
+        class="bg-white border-blue-500 border-2 shadow-md rounded px-8 pt-6 pb-8 mb-4">
     <h4 class="text-xl font-bold mb-4">Konfiguracja</h4>
     {{ input("population_size", "Rozmiar populacji", config.population_size) }}
     {{ input("mutation", "Mutacja", config.cross_params["mutation_rate"]) }}

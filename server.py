@@ -1,7 +1,6 @@
 import base64
 import io
 import os
-import time
 
 import matplotlib.pyplot as plt
 from flask import render_template, Flask, request
@@ -61,7 +60,6 @@ def get_school_plan():
     stats = generation.statistics()
     scores.append((generation.gen_no, stats["max"], stats["avg"], stats["min"]))
 
-    print(config.population_size, config.elitism)
     return render_template(
         "main.html",
         score=scores[-1],
@@ -70,59 +68,20 @@ def get_school_plan():
     )
 
 
-@app.route('/nextgen', methods=['GET'])
-def make_next_generation():
+@app.route('/next-n-gen', methods=['POST'])
+def make_next_n_gens():
     global generation, scores
-    generation.evaluate()
-    generation.crossover(crossover_strategy)
-    generation.mutate()
-    generation.evaluate()
-    stats = generation.statistics()
-    scores.append((generation.gen_no, stats["max"], stats["avg"], stats["min"]))
 
-    print(config.population_size, config.elitism)
-    graph = generate_graph()
-    return render_template("statistics.html", score=scores[-1], graph=graph)
-
-
-@app.route('/next10gen', methods=['GET'])
-def make_next_10_gens():
-    global generation, scores
-    # time_eval > time_cross >> time_mut
-    for i in range(10):
+    n = int(request.form.get('n'))
+    for i in range(n):
         generation.evaluate()
         generation.crossover(crossover_strategy)
         generation.mutate()
         generation.evaluate()
-    stats = generation.statistics()
-    scores.append((generation.gen_no, stats["max"], stats["avg"], stats["min"]))
 
-    graph = generate_graph()
-    return render_template("statistics.html", score=scores[-1], graph=graph)
-
-
-global time_eval, time_cross, time_mut
-
-
-@app.route('/next50gen', methods=['GET'])
-def make_next_50_gens():
-    global generation, scores
-    global time_eval, time_cross, time_mut  # TODO: remove
-    times = [0, 0, 0]
-    # time_eval > time_cross >> time_mut
-    for i in range(50):
-        time_start = time.time()
-        generation.evaluate()
-        time_eval = time.time() - time_start
-        generation.crossover(crossover_strategy)  # FIXME: optimise crossover further
-        time_cross = time.time() - time_eval
-        generation.mutate()
-        time_mut = time.time() - time_cross
-        generation.evaluate()
-        times[0] += time_eval
-        times[1] += time_cross
-        times[2] += time_mut
-    print("Evaluation time: ", times[0], "Crossover time: ", times[1], "Mutation time: ", times[2])
+        if generation.gen_no % 20 == 0:
+            stats = generation.statistics()
+            scores.append((generation.gen_no, stats["max"], stats["avg"], stats["min"]))
     stats = generation.statistics()
     scores.append((generation.gen_no, stats["max"], stats["avg"], stats["min"]))
 

@@ -16,7 +16,6 @@ generation: Generation | None = None
 config: Config | None = None
 crossover_strategy = ChampionCrossover()
 scores = []
-plans = []  # TODO: Add plans
 
 
 def generate_graph():
@@ -102,7 +101,7 @@ def show_plan():
     return render_template("plan.html", school_plan=school_plan, config=generation.config)
 
 
-@app.route('/config', methods=['POST'])  # TODO: finalise
+@app.route('/config', methods=['POST'])
 def alter_configuration():
     global generation, config, scores, crossover_strategy
 

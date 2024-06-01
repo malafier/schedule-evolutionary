@@ -7,7 +7,7 @@ from flask import render_template, Flask, request
 
 from evolutionary.config import Config
 from evolutionary.generation import Generation, ChampionCrossover, RouletteSinglePointCrossover, RouletteDayCrossover
-from main import get_config
+from config_gen import get_config
 
 templates_dir = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'templates')
 app = Flask(__name__, template_folder=templates_dir)

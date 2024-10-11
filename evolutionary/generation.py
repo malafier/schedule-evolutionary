@@ -18,7 +18,7 @@ class RouletteSinglePointCrossover(CrossoverStrategy):
             children.append(best_plan)
 
         crossover_rate = config.cross_params["crossover_rate"]
-        groups = list(config.head_teachers.keys())
+        groups = list(config.subjects.keys())
         sum_fitness = sum([plan.fitness for plan in parents])
         probabilities = [plan.fitness / sum_fitness for plan in parents]
 
@@ -39,7 +39,7 @@ class RouletteDayCrossover(CrossoverStrategy):
             children.append(best_plan)
 
         crossover_rate = config.cross_params["crossover_rate"]
-        groups = list(config.head_teachers.keys())
+        groups = list(config.subjects.keys())
         sum_fitness = sum([plan.fitness for plan in parents])
         probabilities = [plan.fitness / sum_fitness for plan in parents]
 
@@ -60,7 +60,7 @@ class ChampionCrossover(CrossoverStrategy):
             children.append(best_plan)
 
         crossover_rate = config.cross_params["crossover_rate"]
-        groups = list(config.head_teachers.keys())
+        groups = list(config.subjects.keys())
 
         while len(children) < size:
             parent2 = random.choice(parents)
@@ -80,7 +80,7 @@ class Generation:
         self.purge: bool = purge
         self.population: list = []
         for _ in range(self.size):
-            plan = SchoolPlan(config.head_teachers.keys())
+            plan = SchoolPlan(config.subjects.keys())
             plan.generate(config)
             self.population.append(plan)
 
@@ -127,6 +127,6 @@ class Generation:
         purges = self.size - len(self.population)
         print(f"Purged {purges} worst plans")
         for _ in range(purges):
-            plan = SchoolPlan(self.config.head_teachers.keys())
+            plan = SchoolPlan(self.config.subjects.keys())
             plan.generate(self.config)
             self.population.append(plan)

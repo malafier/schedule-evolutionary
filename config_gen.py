@@ -4,209 +4,643 @@ from evolutionary.config import Config
 def get_config() -> Config:
     config = Config(
         population_size=100,
-        head_teachers={
-            "1A": {
-                "id": 1,
-                "name": "John Doe",
-                "class": "1A"
-            },
-            "1B": {
-                "id": 2,
-                "name": "Jane Doe",
-                "class": "1B"
-            }
-        },
         teachers=[
             {
                 "id": 1,
-                "name": "John Doe"
+                "name": "FiJu"
             },
             {
                 "id": 2,
-                "name": "Jane Doe"
+                "name": "KoWe"
             },
             {
                 "id": 3,
-                "name": "John Smith"
+                "name": "JaIw"
             },
             {
                 "id": 4,
-                "name": "Jane Smith"
-            }
+                "name": "TrMa"
+            },
+            {
+                "id": 5,
+                "name": "SoJo"
+            },
+            {
+                "id": 6,
+                "name": "KiAn"
+            },
+            {
+                "id": 7,
+                "name": "WoAg"
+            },
+            {
+                "id": 8,
+                "name": "GrAg"
+            },
+            {
+                "id": 9,
+                "name": "WłAl"
+            },
+            {
+                "id": 10,
+                "name": "SzBa"
+            },
+            {
+                "id": 11,
+                "name": "KaKa"
+            },
+            {
+                "id": 12,
+                "name": "MiDo"
+            },
+            {
+                "id": 13,
+                "name": "KrKa"
+            },
+            {
+                "id": 14,
+                "name": "SzŻa"
+            },
+            {
+                "id": 15,
+                "name": "LeAg"
+            },
+            {
+                "id": 16,
+                "name": "JaJo"
+            },
+            {
+                "id": 17,
+                "name": "WrEl"
+            },
+            {
+                "id": 18,
+                "name": "TK"
+            },
+            {
+                "id": 19,
+                "name": "KuPi"
+            },
+            {
+                "id": 20,
+                "name": "GrHa"
+            },
+            {
+                "id": 21,
+                "name": "HF"
+            },
+            {
+                "id": 22,
+                "name": "BoBa"
+            },
+            {
+                "id": 23,
+                "name": "MiIg"
+            },
+            {
+                "id": 24,
+                "name": "GąAg"
+            },
+            {
+                "id": 25,
+                "name": "CiKa"
+            },
+            {
+                "id": 26,
+                "name": "MaMa"
+            },
         ],
         subjects={
             "1A": [
                 {
                     "id": 1,
-                    "name": "Matematyka",
-                    "hours": 4,
+                    "name": "Edu. Wcz.",
+                    "hours": 14,
                     "teacher_id": 1,
                     "start_end": False
                 },
                 {
                     "id": 2,
-                    "name": "J. Angielski",
+                    "name": "WF",
                     "hours": 3,
-                    "teacher_id": 2,
+                    "teacher_id": 1,
                     "start_end": False
                 },
                 {
                     "id": 3,
-                    "name": "Fizyka",
-                    "hours": 2,
-                    "teacher_id": 3,
+                    "name": "Informatyka",
+                    "hours": 1,
+                    "teacher_id": 1,
                     "start_end": False
                 },
                 {
                     "id": 4,
-                    "name": "J. Polski",
-                    "hours": 4,
-                    "teacher_id": 4,
+                    "name": "J. Angielski",
+                    "hours": 2,
+                    "teacher_id": 2,
                     "start_end": False
                 },
                 {
                     "id": 5,
-                    "name": "Biologia",
-                    "hours": 2,
-                    "teacher_id": 1,
-                    "start_end": False
-                },
-                {
-                    "id": 6,
-                    "name": "Chemia",
-                    "hours": 2,
-                    "teacher_id": 2,
-                    "start_end": False
-                },
-                {
-                    "id": 7,
-                    "name": "Historia",
-                    "hours": 2,
-                    "teacher_id": 3,
-                    "start_end": False
-                },
-                {
-                    "id": 8,
-                    "name": "WOS",
-                    "hours": 1,
-                    "teacher_id": 4,
-                    "start_end": False
-                },
-                {
-                    "id": 9,
-                    "name": "WF",
-                    "hours": 2,
-                    "teacher_id": 1,
-                    "start_end": True
-                },
-                {
-                    "id": 10,
                     "name": "Religia",
                     "hours": 2,
-                    "teacher_id": 2,
+                    "teacher_id": 3,
                     "start_end": True
                 },
-                {
-                    "id": 11,
-                    "name": "Godzina wychowawcza",
-                    "hours": 1,
-                    "teacher_id": 3,
-                    "start_end": False
-                },
-                {
-                    "id": 12,
-                    "name": "Informatyka",
-                    "hours": 2,
-                    "teacher_id": 4,
-                    "start_end": False
-                }
             ],
             "1B": [
                 {
                     "id": 1,
-                    "name": "Matematyka",
-                    "hours": 4,
-                    "teacher_id": 1,
+                    "name": "Edu. Wcz.",
+                    "hours": 14,
+                    "teacher_id": 4,
                     "start_end": False
                 },
                 {
                     "id": 2,
+                    "name": "WF",
+                    "hours": 3,
+                    "teacher_id": 4,
+                    "start_end": False
+                },
+                {
+                    "id": 3,
+                    "name": "Informatyka",
+                    "hours": 1,
+                    "teacher_id": 4,
+                    "start_end": False
+                },
+                {
+                    "id": 4,
+                    "name": "J. Angielski",
+                    "hours": 2,
+                    "teacher_id": 5,
+                    "start_end": False
+                },
+                {
+                    "id": 5,
+                    "name": "Religia",
+                    "hours": 2,
+                    "teacher_id": 3,
+                    "start_end": True
+                },
+            ],
+            "1C": [
+                {
+                    "id": 1,
+                    "name": "Edu. Wcz.",
+                    "hours": 14,
+                    "teacher_id": 6,
+                    "start_end": False
+                },
+                {
+                    "id": 2,
+                    "name": "WF",
+                    "hours": 3,
+                    "teacher_id": 6,
+                    "start_end": False
+                },
+                {
+                    "id": 3,
+                    "name": "Informatyka",
+                    "hours": 1,
+                    "teacher_id": 6,
+                    "start_end": False
+                },
+                {
+                    "id": 4,
+                    "name": "J. Angielski",
+                    "hours": 2,
+                    "teacher_id": 2,
+                    "start_end": False
+                },
+                {
+                    "id": 5,
+                    "name": "Religia",
+                    "hours": 2,
+                    "teacher_id": 3,
+                    "start_end": True
+                },
+            ],
+            "1D": [
+                {
+                    "id": 1,
+                    "name": "Edu. Wcz.",
+                    "hours": 14,
+                    "teacher_id": 7,
+                    "start_end": False
+                },
+                {
+                    "id": 2,
+                    "name": "WF",
+                    "hours": 3,
+                    "teacher_id": 7,
+                    "start_end": False
+                },
+                {
+                    "id": 3,
+                    "name": "Informatyka",
+                    "hours": 1,
+                    "teacher_id": 7,
+                    "start_end": False
+                },
+                {
+                    "id": 4,
+                    "name": "J. Angielski",
+                    "hours": 2,
+                    "teacher_id": 7,
+                    "start_end": False
+                },
+                {
+                    "id": 5,
+                    "name": "Religia",
+                    "hours": 2,
+                    "teacher_id": 3,
+                    "start_end": True
+                },
+            ],
+            "2A": [
+                {
+                    "id": 1,
+                    "name": "Edu. Wcz.",
+                    "hours": 14,
+                    "teacher_id": 8,
+                    "start_end": False
+                },
+                {
+                    "id": 2,
+                    "name": "WF",
+                    "hours": 3,
+                    "teacher_id": 8,
+                    "start_end": False
+                },
+                {
+                    "id": 3,
+                    "name": "Informatyka",
+                    "hours": 1,
+                    "teacher_id": 8,
+                    "start_end": False
+                },
+                {
+                    "id": 4,
+                    "name": "J. Angielski",
+                    "hours": 3,
+                    "teacher_id": 9,
+                    "start_end": False
+                },
+                {
+                    "id": 5,
+                    "name": "Religia",
+                    "hours": 2,
+                    "teacher_id": 3,
+                    "start_end": True
+                },
+            ],
+            "2B": [
+                {
+                    "id": 1,
+                    "name": "Edu. Wcz.",
+                    "hours": 14,
+                    "teacher_id": 10,
+                    "start_end": False
+                },
+                {
+                    "id": 2,
+                    "name": "WF",
+                    "hours": 3,
+                    "teacher_id": 10,
+                    "start_end": False
+                },
+                {
+                    "id": 3,
+                    "name": "Informatyka",
+                    "hours": 1,
+                    "teacher_id": 10,
+                    "start_end": False
+                },
+                {
+                    "id": 4,
+                    "name": "J. Angielski",
+                    "hours": 3,
+                    "teacher_id": 11,
+                    "start_end": False
+                },
+                {
+                    "id": 5,
+                    "name": "Religia",
+                    "hours": 2,
+                    "teacher_id": 3,
+                    "start_end": True
+                },
+            ],
+            "2C": [
+                {
+                    "id": 1,
+                    "name": "Edu. Wcz.",
+                    "hours": 14,
+                    "teacher_id": 12,
+                    "start_end": False
+                },
+                {
+                    "id": 2,
+                    "name": "WF",
+                    "hours": 3,
+                    "teacher_id": 12,
+                    "start_end": False
+                },
+                {
+                    "id": 3,
+                    "name": "Informatyka",
+                    "hours": 1,
+                    "teacher_id": 12,
+                    "start_end": False
+                },
+                {
+                    "id": 4,
                     "name": "J. Angielski",
                     "hours": 3,
                     "teacher_id": 2,
                     "start_end": False
                 },
                 {
-                    "id": 3,
-                    "name": "Fizyka",
+                    "id": 5,
+                    "name": "Religia",
                     "hours": 2,
                     "teacher_id": 3,
+                    "start_end": True
+                },
+            ],
+            "2D": [
+                {
+                    "id": 1,
+                    "name": "Edu. Wcz.",
+                    "hours": 14,
+                    "teacher_id": 13,
+                    "start_end": False
+                },
+                {
+                    "id": 2,
+                    "name": "WF",
+                    "hours": 3,
+                    "teacher_id": 13,
+                    "start_end": False
+                },
+                {
+                    "id": 3,
+                    "name": "Informatyka",
+                    "hours": 1,
+                    "teacher_id": 13,
                     "start_end": False
                 },
                 {
                     "id": 4,
-                    "name": "J. Polski",
-                    "hours": 4,
-                    "teacher_id": 4,
+                    "name": "J. Angielski",
+                    "hours": 3,
+                    "teacher_id": 2,
                     "start_end": False
                 },
                 {
                     "id": 5,
-                    "name": "Biologia",
+                    "name": "Religia",
                     "hours": 2,
-                    "teacher_id": 1,
+                    "teacher_id": 3,
+                    "start_end": False
+                },
+            ],
+            "3A" :[
+                {
+                    "id": 1,
+                    "name": "Edu. Wcz.",
+                    "hours": 14,
+                    "teacher_id": 14,
+                    "start_end": False
+                },
+                {
+                    "id": 1,
+                    "name": "Informatyka",
+                    "hours": 1,
+                    "teacher_id": 14,
+                    "start_end": False
+                },
+                {
+                    "id": 1,
+                    "name": "WF",
+                    "hours": 3,
+                    "teacher_id": 14,
+                    "start_end": False
+                },
+                {
+                    "id": 1,
+                    "name": "J. Angielski",
+                    "hours": 3,
+                    "teacher_id": 2,
+                    "start_end": False
+                },
+                {
+                    "id": 5,
+                    "name": "Religia",
+                    "hours": 2,
+                    "teacher_id": 5,
+                    "start_end": False
+                },
+            ],
+            "3B": [
+                {
+                    "id": 1,
+                    "name": "Edu. Wcz.",
+                    "hours": 14,
+                    "teacher_id": 14,
+                    "start_end": False
+                },
+                {
+                    "id": 1,
+                    "name": "Informatyka",
+                    "hours": 1,
+                    "teacher_id": 14,
+                    "start_end": False
+                },
+                {
+                    "id": 1,
+                    "name": "WF",
+                    "hours": 3,
+                    "teacher_id": 14,
+                    "start_end": False
+                },
+                {
+                    "id": 1,
+                    "name": "J. Angielski",
+                    "hours": 3,
+                    "teacher_id": 2,
+                    "start_end": False
+                },
+                {
+                    "id": 5,
+                    "name": "Religia",
+                    "hours": 2,
+                    "teacher_id": 5,
+                    "start_end": False
+                },
+            ],
+            "3C": [
+                {
+                    "id": 1,
+                    "name": "Edu. Wcz.",
+                    "hours": 14,
+                    "teacher_id": 15,
+                    "start_end": False
+                },
+                {
+                    "id": 1,
+                    "name": "Informatyka",
+                    "hours": 1,
+                    "teacher_id": 15,
+                    "start_end": False
+                },
+                {
+                    "id": 1,
+                    "name": "WF",
+                    "hours": 3,
+                    "teacher_id": 15,
+                    "start_end": False
+                },
+                {
+                    "id": 1,
+                    "name": "J. Angielski",
+                    "hours": 3,
+                    "teacher_id": 2,
+                    "start_end": False
+                },
+                {
+                    "id": 5,
+                    "name": "Religia",
+                    "hours": 2,
+                    "teacher_id": 5,
+                    "start_end": False
+                },
+            ],
+            "3D": [
+                {
+                    "id": 1,
+                    "name": "Edu. Wcz.",
+                    "hours": 14,
+                    "teacher_id": 16,
+                    "start_end": False
+                },
+                {
+                    "id": 1,
+                    "name": "Informatyka",
+                    "hours": 1,
+                    "teacher_id": 16,
+                    "start_end": False
+                },
+                {
+                    "id": 1,
+                    "name": "WF",
+                    "hours": 3,
+                    "teacher_id": 16,
+                    "start_end": False
+                },
+                {
+                    "id": 1,
+                    "name": "J. Angielski",
+                    "hours": 3,
+                    "teacher_id": 2,
+                    "start_end": False
+                },
+                {
+                    "id": 5,
+                    "name": "Religia",
+                    "hours": 2,
+                    "teacher_id": 5,
+                    "start_end": False
+                },
+            ],
+            "4A": [
+                {
+                    "id": 1,
+                    "name": "J. Polski",
+                    "hours": 5,
+                    "teacher_id": 17,
+                    "start_end": False
+                },
+                {
+                    "id": 2,
+                    "name": "Informatyka",
+                    "hours": 1,
+                    "teacher_id": 18,
+                    "start_end": False
+                },
+                {
+                    "id": 3,
+                    "name": "WF",
+                    "hours": 4,
+                    "teacher_id": 19,
+                    "start_end": False
+                },
+                {
+                    "id": 4,
+                    "name": "J. Angielski",
+                    "hours": 2,
+                    "teacher_id": 20,
+                    "start_end": False
+                },
+                {
+                    "id": 5,
+                    "name": "Matematyka",
+                    "hours": 4,
+                    "teacher_id": 21,
                     "start_end": False
                 },
                 {
                     "id": 6,
-                    "name": "Chemia",
-                    "hours": 2,
-                    "teacher_id": 2,
+                    "name": "Historia",
+                    "hours": 1,
+                    "teacher_id": 22,
                     "start_end": False
                 },
                 {
                     "id": 7,
-                    "name": "Historia",
-                    "hours": 2,
-                    "teacher_id": 3,
+                    "name": "Technika",
+                    "hours": 1,
+                    "teacher_id": 23,
                     "start_end": False
                 },
                 {
                     "id": 8,
-                    "name": "WOS",
+                    "name": "Muzyka",
                     "hours": 1,
-                    "teacher_id": 4,
+                    "teacher_id": 24,
                     "start_end": False
                 },
                 {
                     "id": 9,
-                    "name": "WF",
-                    "hours": 2,
-                    "teacher_id": 1,
-                    "start_end": True
+                    "name": "Plastyka",
+                    "hours": 1,
+                    "teacher_id": 25,
+                    "start_end": False
                 },
                 {
                     "id": 10,
-                    "name": "Religia",
+                    "name": "Przyroda",
                     "hours": 2,
-                    "teacher_id": 2,
-                    "start_end": True
+                    "teacher_id": 26,
+                    "start_end": False
                 },
                 {
                     "id": 11,
-                    "name": "Godzina wychowawcza",
+                    "name": "G. Wychowawcza",
                     "hours": 1,
-                    "teacher_id": 3,
+                    "teacher_id": 19,
                     "start_end": False
                 },
                 {
                     "id": 12,
-                    "name": "Informatyka",
+                    "name": "Religia",
                     "hours": 2,
-                    "teacher_id": 4,
-                    "start_end": False
-                }
-            ]
+                    "teacher_id": 3,
+                    "start_end": True
+                },
+            ],
         }
     )
     return config

@@ -1,0 +1,249 @@
+1A
+WF - 3 - FiJu
+Edukacja Wczesnoszkolna - 14 - FiJu
+Religia - 2 - JaIw
+Informatyka - 1 - FiJu
+Język Angielski - 2 - KoWe
+
+1B
+WF - 3 - TrMa
+Edukacja Wczesnoszkolna - 14 - TrMa
+Religia - 2 - JaIw
+Informatyka - 1 - TrMa
+Język Angielski - 2 - SoJo
+
+1C
+WF - 3 - KiAn
+Edukacja Wczesnoszkolna - 14 - KiAn
+Religia - 2 - JaIw
+Informatyka - 1 - KiAn
+Język Angielski - 2 - KoWe
+
+1D
+WF - 3 - WoAg
+Edukacja Wczesnoszkolna - 14 - WoAg
+Religia - 2 - JaIw
+Informatyka - 1 - WoAg
+Język Angielski - 2 - SoGa
+
+#####################################
+
+2A
+Edukacja Wczesnoszkolna - 14 - GrAg
+Informatyka - 1 - GrAg
+WF - 3 - GrAg
+Język Angielski - 3 - WłAl
+Religia - JaIw
+
+2B
+Edukacja Wczesnoszkolna - 14 - SzBa
+Informatyka - 1 - SzBa
+WF - 3 - SzBa
+Język Angielski - 3 - KaKa
+Religia - JaIw
+
+2C
+Edukacja Wczesnoszkolna - 14 - MiDo
+Informatyka - 1 - MiDo
+WF - 3 - MiDo
+Język Angielski - 3 - KoWe
+Religia - JaIw
+
+2D
+Edukacja Wczesnoszkolna - 14 - KrKa
+Informatyka - 1 - KrKa
+WF - 3 - KrKa
+Język Angielski - 3 - KoWe
+Religia - JaIw
+
+3A
+Edukacja Wczesnoszkolna - 14 - SzŻa
+Informatyka - 1 - SzŻa
+WF - 3 - SzŻa
+Język Angielski - 3 - KoWe
+Religia - SoJo
+
+3B
+Edukacja Wczesnoszkolna - 14 - KoEw
+Informatyka - 1 - KoEw
+WF - 3 - KoEw
+Język Angielski - 3 - KoWe
+Religia - SoJo
+
+3C
+Edukacja Wczesnoszkolna - 14 - LeAg
+Informatyka - 1 - LeAg
+WF - 3 - LeAg
+Język Angielski - 3 - KoWe
+Religia - SoJo
+
+3D
+Edukacja Wczesnoszkolna - 14 - JaJo
+Informatyka - 1 - JaJo
+WF - 3 - JaJo
+Język Angielski - 3 - KoWe
+Religia - SoJo
+
+
+4A
+Język Polski - 5 - WrEl
+Historia - 1 - BoBa
+Technika - 1 - MiIg
+Matematyka - 4 - AF
+WF - 4 - KuPi
+Muzyka - 1 - GąAg
+Plastyka - 1 - CiKa
+Religia - 2 - JaIw
+Informatyka - 1 - TK
+Język Angielski - 2 - GrHa
+Przyroda - 2 - MaMa
+Godzina Wychowawcza - 1 - KuPi
+
+4B
+Język Polski - 5 - NoAn
+Historia - 1 - BoBa
+Technika - 1 - MiIg
+Matematyka - 4 - SoBe
+WF - 4 - AnBe
+Muzyka - 1 - GąAg
+Plastyka - 1 - ByAl
+Religia - 2 - JaIw
+Informatyka - 1 - KaMa
+Język Angielski - 2 - KaKa
+Przyroda - 2 - MaMa
+Godzina Wychowawcza - 1 - KaKa
+
+4C
+Język Polski - 5 - TuEl
+Historia - 1 - BoBa
+Technika - 1 - MiIg
+Matematyka - 4 - AF
+WF - 4 - TK  
+Muzyka - 1 - GąAg
+Plastyka - 1 - ByAl
+Religia - 2 - JaIw
+Informatyka - 1 - KaMa
+Język Angielski - 2 - KoWe
+Przyroda - 2 - MaMa
+Godzina Wychowawcza - 1 - KoWe
+
+
+4D
+Język Polski - 5 - TuEl
+Historia - 1 - BoBa
+Technika - 1 - MiIg
+Matematyka - 4 - WrJu
+WF - 4 - AnBe
+Muzyka - 1 - GąAg
+Plastyka - 1 - ByAl
+Religia - 2 - JaIw
+Informatyka - 1 - KaMa
+Język Angielski - 2 - SoGa
+Przyroda - 2 - MiMa
+Godzina Wychowawcza - 1 - GoKa
+
+5A
+Język Polski - 5 - NoAn
+Historia - 2 - PaPa
+Technika - 1 - MiIg
+Matematyka - 5 - SoBe
+WF - 4 - KuPi
+Muzyka - 1 - GąAg
+Plastyka - 1 - ByAl
+Religia - 2 - SoJo
+Informatyka - 1 - TK  
+Język Angielski - 2 - GrHa
+Geografia - 1 - MiMa
+Biologia - 1 - GoKa
+Godzina Wychowawcza - 1 - SoBe
+
+5B
+Język Polski - 5 - BaKa
+Historia - 2 - BoBa
+Technika - 1 - MiIg
+Matematyka - 5 - SoBe
+WF - 4 - ŻeWi
+Muzyka - 1 - GąAg
+Plastyka - 1 - ByAl
+Religia - 2 - SoJo
+Informatyka - 1 - KaMa
+Język Angielski - 2 - WłAl
+Geografia - 1 - MiMa
+Biologia - 1 - GoKa
+Godzina Wychowawcza - 1 - BoBa
+
+5C
+Język Polski - 5 - TuEl
+Historia - 2 - PaPa
+Technika - 1 - MiIg
+Matematyka - 5 - LaPi
+WF - 4 - TK  
+Muzyka - 1 - GąAg
+Plastyka - 1 - CiKa
+Religia - 2 - SoJo
+Informatyka - 1 - KaMa
+Język Angielski - 2 - KoOl
+Geografia - 1 - MiMa
+Biologia - 1 - GoKa
+Godzina Wychowawcza - 1 - TuEl
+
+5D
+Język Polski - 5 - NoAn
+Historia - 2 - PaPa
+Technika - 1 - MiIg
+Matematyka - 5 - LaPi
+WF - 4 - CyJa
+Muzyka - 1 - GąAg
+Plastyka - 1 - ByAl
+Religia - 2 - SoJo
+Informatyka - 1 - TK  
+Język Angielski - 2 - KoOl
+Geografia - 1 - MiMa
+Biologia - 1 - GoKa
+Godzina Wychowawcza - 1 - CyJa
+
+6B
+Język Polski - 5 - BaKa
+Historia - 2 - BoBa
+Technika - 1 - MiIg
+Matematyka - 4 - LaPi
+WF - 4 - KuPi
+Muzyka - 1 - GąAg
+Plastyka - 1 - CiKa
+Religia - 2 - AlKa
+Informatyka - 1 - KaMa
+Język Angielski - 2 - SoGa
+Geografia - 1 - MiMa
+Biologia - 1 - AnMW
+Godzina Wychowawcza - 1 - SoGa
+
+6A
+Język Polski - 5 - BiBa
+Historia - 2 - PaPa
+Technika - 1 - MiIg
+Matematyka - 4 - SoBe
+WF - 4 - TK  
+Muzyka - 1 - GąAg
+Plastyka - 1 - ByAl
+Religia - 2 - AlKa
+Informatyka - 1 - KaMa
+Język Angielski - 2 - WłAl
+Geografia - 1 - MiMa
+Biologia - 1 - AnMW
+Godzina Wychowawcza - 1 - WłAl
+
+6C
+Język Polski - 5 - BaKa
+Historia - 2 - BoBa
+Technika - 1 - MiIg
+Matematyka - 4 - SoBe
+WF - 4 - ŻeWi
+Muzyka - 1 - GąAg
+Plastyka - 1 - CiKa
+Religia - 2 - AlKa
+Informatyka - 1 - KaMa
+Język Angielski - 2 - ŻuHa
+Geografia - 1 - MiMa
+Biologia - 1 - AnMW
+Godzina Wychowawcza - 1 - BaKa
+

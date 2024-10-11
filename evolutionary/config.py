@@ -32,14 +32,12 @@ class Day(Enum):
 
 class Config:
     def __init__(self,
-                 head_teachers: dict,
                  teachers: list,
                  subjects: dict,
                  elitism: bool = True,
                  population_size: int = 100,
                  eval_criteria: dict = DEFAULT_EVAL_CRITERIA,
                  cross_params: dict = DEFAULT_CROSS_PARAMS):
-        self.head_teachers: dict = head_teachers
         self.teachers: list = teachers
         self.subjects: dict = subjects
         self.elitism: bool = elitism

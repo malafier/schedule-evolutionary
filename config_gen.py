@@ -109,6 +109,30 @@ def get_config() -> Config:
                 "id": 26,
                 "name": "MaMa"
             },
+            {
+                "id": 27,
+                "name": "NoAn"
+            },
+            {
+                "id": 28,
+                "name": "SoBe"
+            },
+            {
+                "id": 29,
+                "name": "AnBe"
+            },
+            {
+                "id": 30,
+                "name": "ByAl"
+            },
+            {
+                "id": 31,
+                "name": "KaMa"
+            },
+            {
+                "id": 32,
+                "name": "KaKa"
+            },
         ],
         subjects={
             "1A": [
@@ -631,6 +655,92 @@ def get_config() -> Config:
                     "name": "G. Wychowawcza",
                     "hours": 1,
                     "teacher_id": 19,
+                    "start_end": False
+                },
+                {
+                    "id": 12,
+                    "name": "Religia",
+                    "hours": 2,
+                    "teacher_id": 3,
+                    "start_end": True
+                },
+            ],
+            "4B": [
+                {
+                    "id": 1,
+                    "name": "J. Polski",
+                    "hours": 5,
+                    "teacher_id": 27,
+                    "start_end": False
+                },
+                {
+                    "id": 2,
+                    "name": "Informatyka",
+                    "hours": 1,
+                    "teacher_id": 31,
+                    "start_end": False
+                },
+                {
+                    "id": 3,
+                    "name": "WF",
+                    "hours": 4,
+                    "teacher_id": 29,
+                    "start_end": False
+                },
+                {
+                    "id": 4,
+                    "name": "J. Angielski",
+                    "hours": 2,
+                    "teacher_id": 32,
+                    "start_end": False
+                },
+                {
+                    "id": 5,
+                    "name": "Matematyka",
+                    "hours": 4,
+                    "teacher_id": 28,
+                    "start_end": False
+                },
+                {
+                    "id": 6,
+                    "name": "Historia",
+                    "hours": 1,
+                    "teacher_id": 22,
+                    "start_end": False
+                },
+                {
+                    "id": 7,
+                    "name": "Technika",
+                    "hours": 1,
+                    "teacher_id": 23,
+                    "start_end": False
+                },
+                {
+                    "id": 8,
+                    "name": "Muzyka",
+                    "hours": 1,
+                    "teacher_id": 24,
+                    "start_end": False
+                },
+                {
+                    "id": 9,
+                    "name": "Plastyka",
+                    "hours": 1,
+                    "teacher_id": 30,
+                    "start_end": False
+                },
+                {
+                    "id": 10,
+                    "name": "Przyroda",
+                    "hours": 2,
+                    "teacher_id": 26,
+                    "start_end": False
+                },
+                {
+                    "id": 11,
+                    "name": "G. Wychowawcza",
+                    "hours": 1,
+                    "teacher_id": 32,
                     "start_end": False
                 },
                 {

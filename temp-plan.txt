@@ -202,6 +202,21 @@ Geografia - 1 - MiMa
 Biologia - 1 - GoKa
 Godzina Wychowawcza - 1 - CyJa
 
+6A
+Język Polski - 5 - BiBa
+Historia - 2 - PaPa
+Technika - 1 - MiIg
+Matematyka - 4 - SoBe
+WF - 4 - TK
+Muzyka - 1 - GąAg
+Plastyka - 1 - ByAl
+Religia - 2 - AlKa
+Informatyka - 1 - KaMa
+Język Angielski - 2 - WłAl
+Geografia - 1 - MiMa
+Biologia - 1 - AnMW
+Godzina Wychowawcza - 1 - WłAl
+
 6B
 Język Polski - 5 - BaKa
 Historia - 2 - BoBa
@@ -216,21 +231,6 @@ Język Angielski - 2 - SoGa
 Geografia - 1 - MiMa
 Biologia - 1 - AnMW
 Godzina Wychowawcza - 1 - SoGa
-
-6A
-Język Polski - 5 - BiBa
-Historia - 2 - PaPa
-Technika - 1 - MiIg
-Matematyka - 4 - SoBe
-WF - 4 - TK  
-Muzyka - 1 - GąAg
-Plastyka - 1 - ByAl
-Religia - 2 - AlKa
-Informatyka - 1 - KaMa
-Język Angielski - 2 - WłAl
-Geografia - 1 - MiMa
-Biologia - 1 - AnMW
-Godzina Wychowawcza - 1 - WłAl
 
 6C
 Język Polski - 5 - BaKa

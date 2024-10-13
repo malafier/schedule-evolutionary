@@ -1,5 +1,4 @@
 from enum import Enum
-from lib2to3.pgen2.tokenize import group
 
 WEEK_DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
 H_PER_DAY = 8

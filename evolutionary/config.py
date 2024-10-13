@@ -1,4 +1,5 @@
 from enum import Enum
+from lib2to3.pgen2.tokenize import group
 
 WEEK_DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
 H_PER_DAY = 8
@@ -44,6 +45,7 @@ class Config:
         self.population_size: int = population_size
         self.eval_criteria = eval_criteria
         self.cross_params = cross_params
+        self.group_to_id = {i: group for i, group in enumerate(subjects.keys())}
 
     def hours_by_id(self, name: str, subject_id: str) -> int:
         for subject in self.subjects[name]:

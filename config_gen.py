@@ -1,8 +1,8 @@
-from evolutionary.config import Config
+from evolutionary.config import MetaConfig
 
 
-def get_config() -> Config:
-    config = Config(
+def get_config() -> MetaConfig:
+    config = MetaConfig(
         population_size=100,
         teachers=[
             {

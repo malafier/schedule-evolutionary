@@ -5,7 +5,7 @@ import os
 import matplotlib.pyplot as plt
 from flask import render_template, Flask, request
 
-from evolutionary.config import Config
+from evolutionary.config import Config, MetaConfig
 from evolutionary.generation import Generation, ChampionCrossover, RouletteSinglePointCrossover, RouletteDayCrossover
 from config_gen import get_config
 
@@ -14,6 +14,7 @@ app = Flask(__name__, template_folder=templates_dir)
 
 generation: Generation | None = None
 config: Config | None = None
+mconfig: MetaConfig | None = None
 crossover_strategy = ChampionCrossover()
 scores = []
 
@@ -51,10 +52,11 @@ def add_cache_control_headers(response):
 
 @app.route('/', methods=['GET'])
 def get_school_plan():
-    global generation, scores, config
+    global generation, scores, config, mconfig
     scores = []
-    config = get_config()
-    generation = Generation(config)
+    mconfig = get_config()
+    config = Config(mconfig)
+    generation = Generation(config, mconfig)
     generation.evaluate()
     stats = generation.statistics()
     scores.append((generation.gen_no, stats["max"], stats["avg"], stats["min"]))
@@ -91,14 +93,14 @@ def make_next_n_gens():
 @app.route('/all', methods=['GET'])
 def show_all_plans():
     global generation
-    return render_template("all_plans.html", school_plans=generation.all(), config=generation.config)
+    return render_template("all_plans.html", school_plans=generation.all(), config=generation.meta)
 
 
 @app.route('/best-plan', methods=['GET'])
 def show_plan():
     global generation
-    school_plan: dict = generation.best_plan().as_dict()
-    return render_template("plan.html", school_plan=school_plan, config=generation.config)
+    school_plan: dict = generation.best_plan().as_dict(generation.meta)
+    return render_template("plan.html", school_plan=school_plan, config=generation.meta)
 
 
 @app.route('/config', methods=['POST'])
@@ -107,23 +109,25 @@ def alter_configuration():
 
     config.population_size = int(request.form.get('population_size'))
     config.elitism = request.form.get('elitism') == 'on'
-    config.cross_params['crossover_rate'] = float(request.form.get('crossover'))
-    config.cross_params['mutation_rate'] = float(request.form.get('mutation'))
+    config.cross\
+        .crossover(float(request.form.get('crossover')))\
+        .mutation(float(request.form.get('mutation')))
 
     crossover_strategy = RouletteSinglePointCrossover() \
         if request.form.get('crossover_strategy') == 'roulette_l' else ChampionCrossover()
     crossover_strategy = RouletteDayCrossover() \
         if request.form.get('crossover_strategy') == 'roulette_d' else crossover_strategy
 
-    config.eval_criteria['importance']['basic_evaluation'] = float(request.form.get('imp_basic'))
-    config.eval_criteria['importance']['blank_lessons_evaluation'] = float(request.form.get('imp_blank'))
-    config.eval_criteria['importance']['hours_per_day_evaluation'] = float(request.form.get('imp_hours_per_day'))
-    config.eval_criteria['importance']['subject_block_evaluation'] = float(request.form.get('imp_lesson_block'))
-    config.eval_criteria['importance']['teacher_block_evaluation'] = float(request.form.get('imp_teacher_block'))
-    config.eval_criteria['importance']['subject_at_end_or_start_evaluation'] = \
-        float(request.form.get('imp_start_end_day_subject'))
+    config.eval\
+        .basic_importance(float(request.form.get('basic')))\
+        .blank_lessons_importance(float(request.form.get('blank')))\
+        .hours_per_day_importance(float(request.form.get('hours_per_day')))\
+        .max_subject_hours_per_day_importance(float(request.form.get('max_hours_per_day')))\
+        .subject_block_importance(float(request.form.get('subject_block')))\
+        .teacher_block_importance(float(request.form.get('teacher_block')))\
+        .subject_at_end_or_start_importance(float(request.form.get('start_end_day_subject')))
 
-    generation = Generation(config)
+    generation = Generation(config) # FIXME: fix config
     generation.evaluate()
     scores.clear()
     stats = generation.statistics()

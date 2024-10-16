@@ -71,8 +71,7 @@ class SchoolPlan:
                                self.plans[gid][lesson1][1] == teacher2
 
             if teachers_ok:
-                self.plans[gid][lesson1], self.plans[gid][lesson2] = self.plans[gid][lesson2], self.plans[gid][
-                    lesson1]
+                self.plans[gid][lesson1], self.plans[gid][lesson2] = self.plans[gid][lesson2], self.plans[gid][lesson1]
             else:
                 i -= 1
 

@@ -105,11 +105,11 @@ def show_plan():
 
 @app.route('/config', methods=['POST'])
 def alter_configuration():
-    global generation, config, scores, crossover_strategy
+    global generation, mconfig, config, scores, crossover_strategy
 
-    config.population_size = int(request.form.get('population_size'))
-    config.elitism = request.form.get('elitism') == 'on'
-    config.cross\
+    mconfig.population_size = int(request.form.get('population_size'))
+    mconfig.elitism = request.form.get('elitism') == 'on'
+    mconfig.cross\
         .crossover(float(request.form.get('crossover')))\
         .mutation(float(request.form.get('mutation')))
 
@@ -118,7 +118,7 @@ def alter_configuration():
     crossover_strategy = RouletteDayCrossover() \
         if request.form.get('crossover_strategy') == 'roulette_d' else crossover_strategy
 
-    config.eval\
+    mconfig.eval\
         .basic_importance(float(request.form.get('basic')))\
         .blank_lessons_importance(float(request.form.get('blank')))\
         .hours_per_day_importance(float(request.form.get('hours_per_day')))\
@@ -127,7 +127,8 @@ def alter_configuration():
         .teacher_block_importance(float(request.form.get('teacher_block')))\
         .subject_at_end_or_start_importance(float(request.form.get('start_end_day_subject')))
 
-    generation = Generation(config) # FIXME: fix config
+    config = Config(mconfig)
+    generation = Generation(config, mconfig)
     generation.evaluate()
     scores.clear()
     stats = generation.statistics()

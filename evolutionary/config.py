@@ -101,7 +101,6 @@ class Config:
     def __init__(self, config: MetaConfig):
         self.teachers: list = config.teachers
         self.subjects: list = [None] * len(config.group_to_id.keys())
-        # print(self.subjects)
         for i in range(len(self.subjects)):
             self.subjects[i] = config.subjects[config.group_to_id[i]]
         self.no_groups: int = len(self.subjects)

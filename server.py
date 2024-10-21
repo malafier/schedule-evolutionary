@@ -119,13 +119,13 @@ def alter_configuration():
         if request.form.get('crossover_strategy') == 'roulette_d' else crossover_strategy
 
     mconfig.eval\
-        .basic_importance(float(request.form.get('basic')))\
-        .blank_lessons_importance(float(request.form.get('blank')))\
-        .hours_per_day_importance(float(request.form.get('hours_per_day')))\
-        .max_subject_hours_per_day_importance(float(request.form.get('max_hours_per_day')))\
-        .subject_block_importance(float(request.form.get('subject_block')))\
-        .teacher_block_importance(float(request.form.get('teacher_block')))\
-        .subject_at_end_or_start_importance(float(request.form.get('start_end_day_subject')))
+        .basic_importance(float(request.form.get('imp_basic')))\
+        .blank_lessons_importance(float(request.form.get('imp_blank')))\
+        .hours_per_day_importance(float(request.form.get('imp_hours_per_day')))\
+        .max_subject_hours_per_day_importance(float(request.form.get('imp_max_hours_per_day')))\
+        .subject_block_importance(float(request.form.get('imp_lesson_block')))\
+        .teacher_block_importance(float(request.form.get('imp_teacher_block')))\
+        .subject_at_end_or_start_importance(float(request.form.get('imp_start_end_day_subject')))
 
     config = Config(mconfig)
     generation = Generation(config, mconfig)

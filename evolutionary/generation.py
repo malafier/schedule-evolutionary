@@ -86,6 +86,13 @@ class Generation:
             plan.evaluate(self.config)
         self.population.sort(key=lambda x: x.fitness, reverse=True)
 
+        # scale
+        C_MAX = 1
+        for pop in self.population:
+            pop.fitness += C_MAX
+            if pop.fitness < 0:
+                pop.fitness = 0
+
     def best_plan(self) -> SchoolPlan:
         return max(self.population, key=lambda x: x.fitness)
 

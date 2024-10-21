@@ -45,7 +45,7 @@ cpdef double blank_lessons_evaluation(list plan):
                 for lesson_h in range(1, H_PER_DAY - empty_size):
                     if is_empty(plan, gid, day, lesson_h, empty_size):
                         score += empty_size
-    return -score
+    return 1 / score if score > 0 else 1
 
 cpdef double hours_per_day_evaluation(list plan):
     cdef double score = 0
@@ -59,7 +59,7 @@ cpdef double hours_per_day_evaluation(list plan):
                 lesson = plan[gid][day + i]
                 if lesson != (0, 0):
                     hours += 1
-            score += 1 if hours <= 6 else -hours
+            score += 1 if 3 <= hours <= 6 else -hours
     return score
 
 cpdef double max_subject_hours_per_day_evaluation(list plan, list subjects):

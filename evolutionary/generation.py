@@ -7,12 +7,12 @@ from evolutionary.school_plan import SchoolPlan
 
 
 class CrossoverStrategy(ABC):
-    def crossover(self, parents: list, best_plan: SchoolPlan, size: int, config: Config):
+    def crossover(self, parents: list, best_plan: SchoolPlan, size: int, config: Config) -> list[SchoolPlan]:
         pass
 
 
 class RouletteSinglePointCrossover(CrossoverStrategy):
-    def crossover(self, parents: list, best_plan: SchoolPlan, size: int, config: Config):
+    def crossover(self, parents: list, best_plan: SchoolPlan, size: int, config: Config) -> list[SchoolPlan]:
         children = []
         if config.elitism:
             children.append(best_plan)
@@ -32,7 +32,7 @@ class RouletteSinglePointCrossover(CrossoverStrategy):
 
 
 class RouletteDayCrossover(CrossoverStrategy):
-    def crossover(self, parents: list, best_plan: SchoolPlan, size: int, config: Config):
+    def crossover(self, parents: list, best_plan: SchoolPlan, size: int, config: Config) -> list[SchoolPlan]:
         children = []
         if config.elitism:
             children.append(best_plan)
@@ -52,7 +52,7 @@ class RouletteDayCrossover(CrossoverStrategy):
 
 
 class ChampionCrossover(CrossoverStrategy):
-    def crossover(self, parents: list, best_plan: SchoolPlan, size: int, config: Config):
+    def crossover(self, parents: list, best_plan: SchoolPlan, size: int, config: Config) -> list[SchoolPlan]:
         children = []
         if config.elitism:
             children.append(best_plan)

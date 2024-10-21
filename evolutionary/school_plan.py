@@ -27,7 +27,7 @@ class SchoolPlan:
         for idx in range(config.no_groups):
             generate_group_plan(idx)
 
-    def teacher_free_at(self, teacher_id: int, day, hour: int) -> bool:
+    def teacher_free_at(self, teacher_id: int, day: int, hour: int) -> bool:
         if isinstance(day, Day):
             day = day.value
         for plan in self.plans:
@@ -35,7 +35,7 @@ class SchoolPlan:
                 return False
         return True
 
-    def count_subject_hours(self, gid: int, subject_id: str) -> int:
+    def count_subject_hours(self, gid: int, subject_id: int) -> int:
         hours = 0
         for i in range(len(self.plans[gid])):
             if self.plans[gid][i][0] == subject_id:
@@ -82,7 +82,8 @@ class SchoolPlan:
 
         sub_config_hours = config.hours_by_id(gid, subject[0])
         sub_current_hours = self.count_subject_hours(gid, subject[0])
-        if self.plans[gid][day.value + hour] == (0, 0) and self.teacher_free_at(subject[1], day, hour) \
+        if self.plans[gid][day.value + hour] == (0, 0) \
+                and self.teacher_free_at(subject[1], day, hour) \
                 and sub_config_hours > sub_current_hours:
             self.plans[gid][day.value + hour] = (subject[0], subject[1])
 
@@ -101,11 +102,11 @@ class SchoolPlan:
         for gid in range(len(self.plans)):
             for day in list(Day):
                 for hour in range(H_PER_DAY):
-                    subject_id, teacher_id = self.plans[gid][day.value + hour]
+                    sub_id, teach_id = self.plans[gid][day.value + hour]
                     week_day = WEEK_DAYS[day.value // H_PER_DAY]
                     school_plan[config.group_to_id[gid]][week_day].append({
-                        "subject_id": subject_id,
-                        "teacher_id": teacher_id
+                        "subject_id": sub_id,
+                        "teacher_id": teach_id
                     })
         return school_plan
 

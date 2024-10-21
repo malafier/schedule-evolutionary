@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/sh
 
 # Clear previously generated libraries and create new
 # Needs to be in venv!!!

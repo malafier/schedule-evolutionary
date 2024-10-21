@@ -27,8 +27,8 @@ cdef tuple add_to_plan(list child_plan, int gid, int day, int hour, tuple lesson
     if lesson == (0, 0):
         return lesson
 
-    cdef bint teacher_free = any([child_plan[gid][day + hour][1] != lesson[1] for gid in range(len(child_plan))])
-    if not teacher_free:
+    cdef bint teacher_not_free = any([child_plan[gid][day + hour][1] == lesson[1] for gid in range(len(child_plan))])
+    if teacher_not_free:
         return 0, 0
 
     cdef int config_hours = sum([s["hours"] for s in group_subjects if s["id"] == lesson[0]])
@@ -40,14 +40,16 @@ cdef tuple add_to_plan(list child_plan, int gid, int day, int hour, tuple lesson
 
 cdef list fill_plan(list child_plan, int gid, list group_subjects):
     cdef dict subject
-    cdef int hours_needed, day, hour
+    cdef int hours_needed, day, hour, current_hours
     for subject in group_subjects:
         hours_needed = sum([s["hours"] for s in group_subjects if s["id"] == subject["id"]])
-        while hours_needed > sum([1 if child_plan[gid][i][0] == subject["id"] else 0 for i in range(5 * H_PER_DAY)]):
+        current_hours = sum([1 if child_plan[gid][i][0] == subject["id"] else 0 for i in range(5 * H_PER_DAY)])
+        while hours_needed > current_hours:
             day = random_day()
             hour = rand() % H_PER_DAY  # Random hour from 0 to 7
             if child_plan[gid][day + hour] == (0, 0):
                 child_plan[gid][day + hour] = (subject["id"], subject["teacher_id"])
+                current_hours += 1
     return child_plan
 
 cpdef list single_point_cross(list plan1, list plan2, int no_groups, list subjects):
@@ -75,7 +77,7 @@ cpdef list day_cross(list plan1, list plan2, int no_groups, list subjects):
 
     cdef list child_plan = [[(0, 0) for _ in range((H_PER_DAY * 5))] for _ in range(no_groups)]
     cdef int gid, day, hour
-    cdef dict plan
+    cdef list plan
     cdef tuple lesson
     for gid in range(no_groups):
         for day in Day():

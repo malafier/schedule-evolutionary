@@ -6,10 +6,6 @@ def get_config() -> MetaConfig:
         population_size=100,
         teachers=[
             {
-                "id": 1,
-                "name": "FiJu"
-            },
-            {
                 "id": 2,
                 "name": "KoWe"
             },
@@ -18,56 +14,16 @@ def get_config() -> MetaConfig:
                 "name": "JaIw"
             },
             {
-                "id": 4,
-                "name": "TrMa"
-            },
-            {
                 "id": 5,
                 "name": "SoJo"
-            },
-            {
-                "id": 6,
-                "name": "KiAn"
-            },
-            {
-                "id": 7,
-                "name": "WoAg"
-            },
-            {
-                "id": 8,
-                "name": "GrAg"
             },
             {
                 "id": 9,
                 "name": "WłAl"
             },
             {
-                "id": 10,
-                "name": "SzBa"
-            },
-            {
                 "id": 11,
                 "name": "KaKa"
-            },
-            {
-                "id": 12,
-                "name": "MiDo"
-            },
-            {
-                "id": 13,
-                "name": "KrKa"
-            },
-            {
-                "id": 14,
-                "name": "SzŻa"
-            },
-            {
-                "id": 15,
-                "name": "LeAg"
-            },
-            {
-                "id": 16,
-                "name": "JaJo"
             },
             {
                 "id": 17,

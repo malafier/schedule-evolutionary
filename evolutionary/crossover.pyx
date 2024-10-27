@@ -60,8 +60,8 @@ cpdef list single_point_cross(list plan1, list plan2, int no_groups, list subjec
     cdef int gid, day, hour
     cdef tuple lesson
     for gid in range(no_groups):
-        for day in Day():
-            for hour in range(H_PER_DAY):
+        for hour in range(H_PER_DAY):
+            for day in Day():
                 if float(rand() / RAND_MAX) < 0.5:
                     lesson = plan2[gid][day + hour]
                 else:

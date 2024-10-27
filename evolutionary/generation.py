@@ -1,5 +1,6 @@
 import random
 from abc import ABC
+from copy import deepcopy
 
 from evolutionary.config import Config, MetaConfig
 from evolutionary.crossover import single_point_cross, day_cross
@@ -15,7 +16,7 @@ class RouletteSinglePointCrossover(CrossoverStrategy):
     def crossover(self, parents: list, best_plan: SchoolPlan, size: int, config: Config) -> list[SchoolPlan]:
         children = []
         if config.elitism:
-            children.append(best_plan)
+            children.append(deepcopy(best_plan))
 
         crossover_rate = config.cross.crossover_rate
         sum_fitness = sum([plan.fitness for plan in parents])
@@ -35,7 +36,7 @@ class RouletteDayCrossover(CrossoverStrategy):
     def crossover(self, parents: list, best_plan: SchoolPlan, size: int, config: Config) -> list[SchoolPlan]:
         children = []
         if config.elitism:
-            children.append(best_plan)
+            children.append(deepcopy(best_plan))
 
         crossover_rate = config.cross.crossover_rate
         sum_fitness = sum([plan.fitness for plan in parents])
@@ -55,7 +56,7 @@ class ChampionCrossover(CrossoverStrategy):
     def crossover(self, parents: list, best_plan: SchoolPlan, size: int, config: Config) -> list[SchoolPlan]:
         children = []
         if config.elitism:
-            children.append(best_plan)
+            children.append(deepcopy(best_plan))
         crossover_rate = config.cross.crossover_rate
 
         while len(children) < size:

@@ -1,90 +1,3 @@
-1A
-WF - 3 - FiJu
-Edukacja Wczesnoszkolna - 14 - FiJu
-Religia - 2 - JaIw
-Informatyka - 1 - FiJu
-Język Angielski - 2 - KoWe
-
-1B
-WF - 3 - TrMa
-Edukacja Wczesnoszkolna - 14 - TrMa
-Religia - 2 - JaIw
-Informatyka - 1 - TrMa
-Język Angielski - 2 - SoJo
-
-1C
-WF - 3 - KiAn
-Edukacja Wczesnoszkolna - 14 - KiAn
-Religia - 2 - JaIw
-Informatyka - 1 - KiAn
-Język Angielski - 2 - KoWe
-
-1D
-WF - 3 - WoAg
-Edukacja Wczesnoszkolna - 14 - WoAg
-Religia - 2 - JaIw
-Informatyka - 1 - WoAg
-Język Angielski - 2 - SoGa
-
-#####################################
-
-2A
-Edukacja Wczesnoszkolna - 14 - GrAg
-Informatyka - 1 - GrAg
-WF - 3 - GrAg
-Język Angielski - 3 - WłAl
-Religia - JaIw
-
-2B
-Edukacja Wczesnoszkolna - 14 - SzBa
-Informatyka - 1 - SzBa
-WF - 3 - SzBa
-Język Angielski - 3 - KaKa
-Religia - JaIw
-
-2C
-Edukacja Wczesnoszkolna - 14 - MiDo
-Informatyka - 1 - MiDo
-WF - 3 - MiDo
-Język Angielski - 3 - KoWe
-Religia - JaIw
-
-2D
-Edukacja Wczesnoszkolna - 14 - KrKa
-Informatyka - 1 - KrKa
-WF - 3 - KrKa
-Język Angielski - 3 - KoWe
-Religia - JaIw
-
-3A
-Edukacja Wczesnoszkolna - 14 - SzŻa
-Informatyka - 1 - SzŻa
-WF - 3 - SzŻa
-Język Angielski - 3 - KoWe
-Religia - SoJo
-
-3B
-Edukacja Wczesnoszkolna - 14 - KoEw
-Informatyka - 1 - KoEw
-WF - 3 - KoEw
-Język Angielski - 3 - KoWe
-Religia - SoJo
-
-3C
-Edukacja Wczesnoszkolna - 14 - LeAg
-Informatyka - 1 - LeAg
-WF - 3 - LeAg
-Język Angielski - 3 - KoWe
-Religia - SoJo
-
-3D
-Edukacja Wczesnoszkolna - 14 - JaJo
-Informatyka - 1 - JaJo
-WF - 3 - JaJo
-Język Angielski - 3 - KoWe
-Religia - SoJo
-
-
 4A
 Język Polski - 5 - WrEl
 Historia - 1 - BoBa
@@ -247,3 +160,74 @@ Geografia - 1 - MiMa
 Biologia - 1 - AnMW
 Godzina Wychowawcza - 1 - BaKa
 
+7A
+Język Polski - 5 - BiBa
+Historia - 2 - BoBa
+Matematyka - 4 - WrJu
+WF - 4 - CyJa
+Muzyka - 1 - GąAg
+Plastyka - 1 - CiKa
+Religia - 1 - AlKa
+Informatyka - 1 - KaMa
+Język Angielski - 3 - ŻuHa
+Geografia - 1 - MiMa
+Biologia - 1 - AnKC
+Godzina Wychowawcza - 1 - WrJu
+Dor. Zawodowe - 1 - SoJo
+Język Niemiecki - 2 - KoAr
+Chemia - 1 - MaMa
+Fizyka - 1 - DD
+
+7B
+Język Polski - 5 - BaKa
+Historia - 2 - PaPa
+Matematyka - 4 - WrJu
+WF - 4 - CyJa
+Muzyka - 1 - GąAg
+Plastyka - 1 - CiKa
+Religia - 1 - AlKa
+Informatyka - 1 - KaMa
+Język Angielski - 3 - ŻuHa
+Geografia - 1 - MiMa
+Biologia - 1 - AnKC
+Godzina Wychowawcza - 1 - MaMa
+Dor. Zawodowe - 1 - WiJu
+Język Niemiecki - 2 - KoAr
+Chemia - 1 - MaMa
+Fizyka - 1 - DD
+
+7C
+Język Polski - 5 - TuEl
+Historia - 2 - BoBa
+Matematyka - 4 - MiMa
+WF - 4 - CyJa
+Muzyka - 1 - GąAg
+Plastyka - 1 - CiKa
+Religia - 1 - AlKa
+Informatyka - 1 - KaMa
+Język Angielski - 3 - KoOl
+Geografia - 1 - MiMa
+Biologia - 1 - AnKC
+Godzina Wychowawcza - 1 - MiMa
+Dor. Zawodowe - 1 - WiJu
+Język Hiszpański - 2 - ECz
+Chemia - 1 - MaMa
+Fizyka - 1 - DD
+
+8A
+Język Polski - 6 - BiBa
+Historia - 2 - BoBa
+Matematyka - 4 - MiMa
+WF - 4 - CyJa
+Muzyka - 1 - GąAg
+Plastyka - 1 - CiKa
+Religia - 1 - AlKa
+Informatyka - 1 - KaMa
+Język Angielski - 3 - KoOl
+Geografia - 1 - MiMa
+Biologia - 1 - AnKC
+Godzina Wychowawcza - 1 - MiMa
+Dor. Zawodowe - 1 - WiJu
+Język Hiszpański - 2 - ECz
+Chemia - 1 - MaMa
+Fizyka - 1 - DD

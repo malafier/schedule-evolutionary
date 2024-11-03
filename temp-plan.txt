@@ -215,19 +215,49 @@ Chemia - 1 - MaMa
 Fizyka - 1 - DD
 
 8A
-Język Polski - 6 - BiBa
+Język Polski - 5 - BiBa
 Historia - 2 - BoBa
-Matematyka - 4 - MiMa
+Matematyka - 4 - LaPi
 WF - 4 - CyJa
-Muzyka - 1 - GąAg
-Plastyka - 1 - CiKa
-Religia - 1 - AlKa
+Religia - 1 - SoJo
 Informatyka - 1 - KaMa
-Język Angielski - 3 - KoOl
+Język Angielski - 3 - GrHa
 Geografia - 1 - MiMa
-Biologia - 1 - AnKC
-Godzina Wychowawcza - 1 - MiMa
-Dor. Zawodowe - 1 - WiJu
+Biologia - 1 - AnMW
+Godzina Wychowawcza - 1 - BiBa
+Język Niemiecki - 2 - KoAr
+Chemia - 1 - MaMa
+Fizyka - 1 - DD
+WOS - 2 - PaPa
+
+8B
+Język Polski - 5 - BaKa
+Historia - 2 - PaPa
+Matematyka - 4 - WrJu
+WF - 4 - KuPi
+Religia - 1 - SoJo
+Informatyka - 1 - KaMa
+Język Angielski - 3 - GrHa
+Geografia - 1 - MiMa
+Biologia - 1 - AnMW
+Godzina Wychowawcza - 1 - KaMa
 Język Hiszpański - 2 - ECz
 Chemia - 1 - MaMa
 Fizyka - 1 - DD
+WOS - 2 - PaPa
+
+8C
+Język Polski - 5 - BiBa
+Historia - 2 - PaPa
+Matematyka - 4 - WrJu
+WF - 4 - CyJa
+Religia - 1 - AlKa
+Informatyka - 1 - KaMa
+Język Angielski - 3 - GrHa
+Geografia - 1 - MiMa
+Biologia - 1 - AnMW
+Godzina Wychowawcza - 1 - SoJo
+Język Hiszpański - 2 - ECz
+Chemia - 1 - MaMa
+Fizyka - 1 - DD
+WOS - 2 - PaPa

@@ -34,7 +34,7 @@ cdef bint is_empty(list plan, int gid, int x_day, int start_h, int h_span):
     cdef tuple lesson_after = plan[gid][x_day + start_h + h_span]
     return all(lesson == (0, 0) for lesson in lessons) and lesson_after != (0, 0) and lesson_before != (0, 0)
 
-cpdef double blank_lessons_evaluation(list plan):
+cpdef double gaps_evaluation(list plan):
     cdef double score = 0
     cdef int day_value, empty_size, lesson_h, i, j
     cdef tuple lesson, lesson_before, lesson_after

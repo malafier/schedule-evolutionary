@@ -40,7 +40,7 @@ class EvaluationCriteria:
             hours_weight = [1, 1, 1, 1, 1, 0.5, 0.1, -1]
         self.hours_weight: list = hours_weight
         self.basic_imp: float = basic_importance
-        self.blank_imp: float = blank_lessons_importance
+        self.gap_imp: float = blank_lessons_importance
         self.hpd_imp: float = hours_per_day_importance
         self.max_subj_hpd_imp: float = max_subject_hours_per_day_importance
         self.subj_block_imp: float = subject_block_importance
@@ -55,8 +55,8 @@ class EvaluationCriteria:
         self.basic_imp = importance
         return self
 
-    def blank_lessons_importance(self, importance: float):
-        self.blank_imp = importance
+    def gap_period_importance(self, importance: float):
+        self.gap_imp = importance
         return self
 
     def hours_per_day_importance(self, importance: float):

@@ -1,7 +1,7 @@
 import random
 
 from evolutionary.config import WEEK_DAYS, H_PER_DAY, Day, Config, MetaConfig
-from evolutionary.evaluation import basic_evaluation, blank_lessons_evaluation, hours_per_day_evaluation, \
+from evolutionary.evaluation import basic_evaluation, gaps_evaluation, hours_per_day_evaluation, \
     max_subject_hours_per_day_evaluation, subject_block_evaluation, teacher_block_evaluation, \
     subject_at_end_or_start_evaluation
 
@@ -50,7 +50,7 @@ class SchoolPlan:
             + config.eval.teach_block_imp * teacher_block_evaluation(self.plans, 1, -2, config.teachers)\
             + config.eval.subj_end_start_imp * subject_at_end_or_start_evaluation(self.plans, config.subjects)
 
-        score *= config.eval.blank_imp * blank_lessons_evaluation(self.plans)
+        score *= config.eval.gap_imp * gaps_evaluation(self.plans)
 
         self.fitness = score
 

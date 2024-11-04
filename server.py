@@ -120,7 +120,7 @@ def alter_configuration():
 
     mconfig.eval\
         .basic_importance(float(request.form.get('imp_basic')))\
-        .blank_lessons_importance(float(request.form.get('imp_blank')))\
+        .gap_period_importance(float(request.form.get('imp_gap')))\
         .hours_per_day_importance(float(request.form.get('imp_hours_per_day')))\
         .max_subject_hours_per_day_importance(float(request.form.get('imp_max_hours_per_day')))\
         .subject_block_importance(float(request.form.get('imp_lesson_block')))\

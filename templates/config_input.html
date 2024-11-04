@@ -12,7 +12,10 @@
       <label for="crossover_strategy" class="block text-gray-700 text-sm font-bold mr-2">Strategia krzyżowania</label>
       <select id="crossover_strategy" name="crossover_strategy"
               class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
-        <option value="tournament" {% if selection == 'ChampionCrossover' %}selected{% endif %}>Turniej</option>
+        <option value="tournament"
+                {% if selection == 'ChampionCrossover' %}selected{% endif %}
+        >Turniej
+        </option>
         <option value="roulette_l"
                 {% if selection == 'RouletteSinglePointCrossover' %}selected{% endif %}
         >Ruleta - lekcje

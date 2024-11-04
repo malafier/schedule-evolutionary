@@ -25,9 +25,12 @@ class RouletteSinglePointCrossover(CrossoverStrategy):
         while len(children) < size:
             parent1, parent2 = random.choices(parents, probabilities, k=2)
             if random.random() < crossover_rate:
-                child_plan = single_point_cross(parent1.plans, parent2.plans, config.no_groups, config.subjects)
-                if child_plan is not None:
-                    child = SchoolPlan(config.no_groups, child_plan)
+                child_plan_1, child_plan_2 = single_point_cross(parent1.plans, parent2.plans, config.no_groups, config.subjects)
+                if child_plan_1 is not None:
+                    child = SchoolPlan(config.no_groups, child_plan_1)
+                    children.append(child)
+                if child_plan_2 is not None:
+                    child = SchoolPlan(config.no_groups, child_plan_2)
                     children.append(child)
         return children
 
@@ -45,9 +48,12 @@ class RouletteDayCrossover(CrossoverStrategy):
         while len(children) < size:
             parent1, parent2 = random.choices(parents, probabilities, k=2)
             if random.random() < crossover_rate:
-                child_plan = day_cross(parent1.plans, parent2.plans, config.no_groups, config.subjects)
-                if child_plan is not None:
-                    child = SchoolPlan(config.no_groups, child_plan)
+                child_plan_1, child_plan_2 = day_cross(parent1.plans, parent2.plans, config.no_groups, config.subjects)
+                if child_plan_1 is not None:
+                    child = SchoolPlan(config.no_groups, child_plan_1)
+                    children.append(child)
+                if child_plan_2 is not None:
+                    child = SchoolPlan(config.no_groups, child_plan_2)
                     children.append(child)
         return children
 
@@ -62,9 +68,12 @@ class ChampionCrossover(CrossoverStrategy):
         while len(children) < size:
             parent2 = random.choice(parents)
             if random.random() < crossover_rate:
-                child_plan = single_point_cross(best_plan.plans, parent2.plans, config.no_groups, config.subjects)
-                if child_plan is not None:
-                    child = SchoolPlan(config.no_groups, child_plan)
+                child_plan_1, child_plan_2 = single_point_cross(best_plan.plans, parent2.plans, config.no_groups, config.subjects)
+                if child_plan_1 is not None:
+                    child = SchoolPlan(config.no_groups, child_plan_1)
+                    children.append(child)
+                if child_plan_2 is not None:
+                    child = SchoolPlan(config.no_groups, child_plan_2)
                     children.append(child)
         return children
 

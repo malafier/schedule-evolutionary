@@ -1,5 +1,6 @@
 import random
 from abc import ABC
+from concurrent.futures import ProcessPoolExecutor
 from copy import deepcopy
 
 from evolutionary.config import Config, MetaConfig
@@ -83,14 +84,18 @@ class Generation:
             self.population.append(plan)
 
     def evaluate(self):
-        for plan in self.population:
-            plan.evaluate(self.config)
+        def call_eval(o):
+            o.evaluate(self.config)
+        with ProcessPoolExecutor() as executor: # FIXME: This is not working
+            executor.map(call_eval, self.population)
+
+        # for plan in self.population:
+        #     plan.evaluate(self.config)
+
         self.population.sort(key=lambda x: x.fitness, reverse=True)
 
         # scale
-        C_MAX = 1
         for pop in self.population:
-            pop.fitness += C_MAX
             if pop.fitness < 0:
                 pop.fitness = 0
 
@@ -111,10 +116,9 @@ class Generation:
         # selection
         self.population.sort(key=lambda x: x.fitness)
         best_plan = self.best_plan()
-        parents = self.population[: self.size // 2]
 
         # crossover
-        self.population = strategy.crossover(parents, best_plan, self.size, self.config)
+        self.population = strategy.crossover(self.population, best_plan, self.size, self.config)
         self.gen_no += 1
 
     def mutate(self):

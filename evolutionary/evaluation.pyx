@@ -36,16 +36,33 @@ cdef bint is_gap(list plan, int gid, int x_day, int start_h, int h_span):
 
 cpdef double gaps_evaluation(list plan):
     cdef double score = 0
-    cdef int day_value, empty_size, lesson_h, i, j
+    cdef int day_value, start_h, end_h, gaps, day_len, i, j
     cdef tuple lesson
+    cdef list is_lesson
 
     for gid in range(len(plan)):
         for day in Day():
-            for empty_size in range(1, 7):
-                for lesson_h in range(1, H_PER_DAY - empty_size):
-                    if is_gap(plan, gid, day, lesson_h, empty_size):
-                        score += empty_size
-    return 1 / score if score > 0 else 1
+            is_lesson = []
+            for i in range(H_PER_DAY):
+                if plan[gid][day + i] == (0,0):
+                    is_lesson.append(0)
+                else:
+                    is_lesson.append(1)
+
+            for i in range(len(is_lesson)):
+                if is_lesson[i] != (0, 0):
+                    start_h = i
+                    break
+            for i in range(H_PER_DAY-1, 0, -1):
+                if is_lesson[i] != (0, 0):
+                    end_h = i
+                    break
+
+            gaps = is_lesson[start_h:end_h].count(0)
+            day_len = end_h - start_h + 1
+
+            score += (day_len/2 - gaps) / day_len
+    return score
 
 cpdef double hours_per_day_evaluation(list plan):
     cdef double score = 0

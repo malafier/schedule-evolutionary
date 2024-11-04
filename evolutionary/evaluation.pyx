@@ -28,7 +28,7 @@ cpdef double basic_evaluation(list plan, list weight_per_hour):
                 score += weight_per_hour[i % H_PER_DAY]
     return score
 
-cdef bint is_empty(list plan, int gid, int x_day, int start_h, int h_span):
+cdef bint is_gap(list plan, int gid, int x_day, int start_h, int h_span):
     cdef list lessons = plan[gid][x_day + start_h: x_day + start_h + h_span - 1]
     cdef tuple lesson_before = plan[gid][x_day + start_h - 1]
     cdef tuple lesson_after = plan[gid][x_day + start_h + h_span]
@@ -37,13 +37,13 @@ cdef bint is_empty(list plan, int gid, int x_day, int start_h, int h_span):
 cpdef double gaps_evaluation(list plan):
     cdef double score = 0
     cdef int day_value, empty_size, lesson_h, i, j
-    cdef tuple lesson, lesson_before, lesson_after
+    cdef tuple lesson
 
     for gid in range(len(plan)):
         for day in Day():
             for empty_size in range(1, 7):
                 for lesson_h in range(1, H_PER_DAY - empty_size):
-                    if is_empty(plan, gid, day, lesson_h, empty_size):
+                    if is_gap(plan, gid, day, lesson_h, empty_size):
                         score += empty_size
     return 1 / score if score > 0 else 1
 

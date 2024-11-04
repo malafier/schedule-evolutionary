@@ -102,6 +102,9 @@ class Generation:
     def best_plan(self) -> SchoolPlan:
         return max(self.population, key=lambda x: x.fitness)
 
+    def worst_plan(self) -> SchoolPlan:
+        return min(self.population, key=lambda x: x.fitness)
+
     def all(self):
         return [plan.as_dict() for plan in self.population]
 
@@ -109,7 +112,7 @@ class Generation:
         return {
             "max": self.best_plan().fitness,
             "avg": sum([plan.fitness for plan in self.population]) / self.size,
-            "min": self.population[-1].fitness
+            "min": self.worst_plan().fitness
         }
 
     def crossover(self, strategy: CrossoverStrategy = RouletteSinglePointCrossover()):

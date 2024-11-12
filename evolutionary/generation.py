@@ -29,7 +29,7 @@ class RouletteSinglePointCrossover(CrossoverStrategy):
                 if child_plan_1 is not None:
                     child = SchoolPlan(config.no_groups, child_plan_1)
                     children.append(child)
-                if child_plan_2 is not None:
+                if child_plan_2 is not None and len(children) < size:
                     child = SchoolPlan(config.no_groups, child_plan_2)
                     children.append(child)
         return children
@@ -52,7 +52,7 @@ class RouletteDayCrossover(CrossoverStrategy):
                 if child_plan_1 is not None:
                     child = SchoolPlan(config.no_groups, child_plan_1)
                     children.append(child)
-                if child_plan_2 is not None:
+                if child_plan_2 is not None and len(children) < size:
                     child = SchoolPlan(config.no_groups, child_plan_2)
                     children.append(child)
         return children
@@ -72,7 +72,7 @@ class ChampionCrossover(CrossoverStrategy):
                 if child_plan_1 is not None:
                     child = SchoolPlan(config.no_groups, child_plan_1)
                     children.append(child)
-                if child_plan_2 is not None:
+                if child_plan_2 is not None and len(children) < size:
                     child = SchoolPlan(config.no_groups, child_plan_2)
                     children.append(child)
         return children

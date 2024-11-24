@@ -56,8 +56,10 @@ def get_school_plan():
     scores = []
     mconfig = get_config()
     config = Config(mconfig)
+
     generation = Generation(config, mconfig)
     generation.evaluate()
+
     stats = generation.statistics()
     scores.append((generation.gen_no, stats["max"], stats["avg"], stats["min"]))
 
@@ -75,7 +77,6 @@ def make_next_n_gens():
 
     n = int(request.form.get('n'))
     for i in range(n):
-        generation.evaluate()
         generation.crossover(crossover_strategy)
         generation.mutate()
         generation.evaluate()

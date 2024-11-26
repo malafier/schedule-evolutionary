@@ -25,9 +25,12 @@ class RouletteSinglePointSelection(SelectionStrategy):
         while len(children) < size:
             parent1, parent2 = random.choices(parents, probabilities, k=2)
             if random.random() < crossover_rate:
-                child_plan = crossover(parent1.plans, parent2.plans, config.no_groups, config.subjects)
-                if child_plan is not None:
-                    child = SchoolPlan(config.no_groups, child_plan)
+                child_plan_1, child_plan_2 = crossover(parent1.plans, parent2.plans, config.no_groups, config.subjects)
+                if child_plan_1 is not None:
+                    child = SchoolPlan(config.no_groups, child_plan_1)
+                    children.append(child)
+                if child_plan_2 is not None and len(children) < size:
+                    child = SchoolPlan(config.no_groups, child_plan_2)
                     children.append(child)
         return children
 
@@ -42,9 +45,12 @@ class ChampionSelection(SelectionStrategy):
         while len(children) < size:
             parent2 = random.choice(parents)
             if random.random() < crossover_rate:
-                child_plan = crossover(best_plan.plans, parent2.plans, config.no_groups, config.subjects)
-                if child_plan is not None:
-                    child = SchoolPlan(config.no_groups, child_plan)
+                child_plan_1, child_plan_2 = crossover(best_plan.plans, parent2.plans, config.no_groups, config.subjects)
+                if child_plan_1 is not None:
+                    child = SchoolPlan(config.no_groups, child_plan_1)
+                    children.append(child)
+                if child_plan_2 is not None and len(children) < size:
+                    child = SchoolPlan(config.no_groups, child_plan_2)
                     children.append(child)
         return children
 

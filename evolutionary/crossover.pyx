@@ -52,21 +52,24 @@ cdef list fill_plan(list child_plan, int gid, list group_subjects):
                 current_hours += 1
     return child_plan
 
-cpdef list crossover(list plan1, list plan2, int no_groups, list subjects):
+cpdef tuple crossover(list plan1, list plan2, int no_groups, list subjects):
     if plan1 == plan2:
-        return None
+        return None, None
 
-    cdef list child_plan = [[(0, 0) for _ in range((H_PER_DAY * 5))] for _ in range(no_groups)]
+    cdef list child_plan_1 = [[(0, 0) for _ in range((H_PER_DAY * 5))] for _ in range(no_groups)], \
+        child_plan_2 = [[(0, 0) for _ in range((H_PER_DAY * 5))] for _ in range(no_groups)]
     cdef int gid, day, hour
-    cdef tuple lesson
+    cdef tuple lesson_1, lesson_2
     for gid in range(no_groups):
         for hour in range(H_PER_DAY):
             for day in Day():
                 if float(rand() / RAND_MAX) < 0.5:
-                    lesson = plan2[gid][day + hour]
+                    lesson_1, lesson_2 = plan1[gid][day + hour], plan2[gid][day + hour]
                 else:
-                    lesson = plan1[gid][day + hour]
-                child_plan[gid][day + hour] = add_to_plan(child_plan, gid, day, hour, lesson, subjects[gid])
+                    lesson_2, lesson_1 = plan1[gid][day + hour], plan2[gid][day + hour]
+                child_plan_1[gid][day + hour] = add_to_plan(child_plan_1, gid, day, hour, lesson_1, subjects[gid])
+                child_plan_2[gid][day + hour] = add_to_plan(child_plan_2, gid, day, hour, lesson_2, subjects[gid])
     for gid in range(no_groups):
-        child_plan = fill_plan(child_plan, gid, subjects[gid])
-    return child_plan
+        child_plan_1 = fill_plan(child_plan_1, gid, subjects[gid])
+        child_plan_2 = fill_plan(child_plan_2, gid, subjects[gid])
+    return child_plan_1, child_plan_2

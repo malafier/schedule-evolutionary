@@ -8,12 +8,12 @@ from evolutionary.school_plan import SchoolPlan
 
 
 class SelectionStrategy(ABC):
-    def crossover(self, parents: list, best_plan: SchoolPlan, size: int, config: Config) -> list[SchoolPlan]:
+    def select_and_cross(self, parents: list, best_plan: SchoolPlan, size: int, config: Config) -> list[SchoolPlan]:
         pass
 
 
 class RouletteSinglePointSelection(SelectionStrategy):
-    def crossover(self, parents: list, best_plan: SchoolPlan, size: int, config: Config) -> list[SchoolPlan]:
+    def select_and_cross(self, parents: list, best_plan: SchoolPlan, size: int, config: Config) -> list[SchoolPlan]:
         children = []
         if config.elitism:
             children.append(deepcopy(best_plan))
@@ -33,7 +33,7 @@ class RouletteSinglePointSelection(SelectionStrategy):
 
 
 class ChampionSelection(SelectionStrategy):
-    def crossover(self, parents: list, best_plan: SchoolPlan, size: int, config: Config) -> list[SchoolPlan]:
+    def select_and_cross(self, parents: list, best_plan: SchoolPlan, size: int, config: Config) -> list[SchoolPlan]:
         children = []
         if config.elitism:
             children.append(deepcopy(best_plan))
@@ -95,7 +95,7 @@ class Generation:
         best_plan = self.best_plan()
 
         # crossover
-        self.population = strategy.crossover(self.population, best_plan, self.size, self.config)
+        self.population = strategy.select_and_cross(self.population, best_plan, self.size, self.config)
         self.gen_no += 1
 
     def mutate(self):

@@ -5,6 +5,7 @@ from copy import deepcopy
 from evolutionary.config import Config, MetaConfig
 from evolutionary.crossover import crossover
 from evolutionary.school_plan import SchoolPlan
+from evolutionary.fixing_algorithm import fix_plan
 
 
 class SelectionStrategy(ABC):
@@ -27,10 +28,16 @@ class RouletteSinglePointSelection(SelectionStrategy):
             if random.random() < crossover_rate:
                 child_plan_1, child_plan_2 = crossover(parent1.plans, parent2.plans, config.no_groups, config.subjects)
                 if child_plan_1 is not None:
-                    child = SchoolPlan(config.no_groups, child_plan_1)
+                    child = SchoolPlan(
+                        config.no_groups,
+                        fix_plan(child_plan_1, child_plan_1, config.subjects)
+                    )
                     children.append(child)
                 if child_plan_2 is not None and len(children) < size:
-                    child = SchoolPlan(config.no_groups, child_plan_2)
+                    child = SchoolPlan(
+                        config.no_groups,
+                        fix_plan(child_plan_2, child_plan_2, config.subjects)
+                    )
                     children.append(child)
         return children
 
@@ -47,10 +54,16 @@ class ChampionSelection(SelectionStrategy):
             if random.random() < crossover_rate:
                 child_plan_1, child_plan_2 = crossover(best_plan.plans, parent2.plans, config.no_groups, config.subjects)
                 if child_plan_1 is not None:
-                    child = SchoolPlan(config.no_groups, child_plan_1)
+                    child = SchoolPlan(
+                        config.no_groups,
+                        fix_plan(child_plan_1, child_plan_1, config.subjects)
+                    )
                     children.append(child)
                 if child_plan_2 is not None and len(children) < size:
-                    child = SchoolPlan(config.no_groups, child_plan_2)
+                    child = SchoolPlan(
+                        config.no_groups,
+                        fix_plan(child_plan_2, child_plan_2, config.subjects)
+                    )
                     children.append(child)
         return children
 

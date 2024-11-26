@@ -1,4 +1,3 @@
-import cython
 from libc.stdlib cimport rand
 
 cdef int H_PER_DAY = 8
@@ -69,7 +68,7 @@ cpdef tuple crossover(list plan1, list plan2, int no_groups, list subjects):
                     lesson_2, lesson_1 = plan1[gid][day + hour], plan2[gid][day + hour]
                 child_plan_1[gid][day + hour] = add_to_plan(child_plan_1, gid, day, hour, lesson_1, subjects[gid])
                 child_plan_2[gid][day + hour] = add_to_plan(child_plan_2, gid, day, hour, lesson_2, subjects[gid])
-    for gid in range(no_groups):
-        child_plan_1 = fill_plan(child_plan_1, gid, subjects[gid])
-        child_plan_2 = fill_plan(child_plan_2, gid, subjects[gid])
+    # for gid in range(no_groups):
+    #     child_plan_1 = fill_plan(child_plan_1, gid, subjects[gid])
+    #     child_plan_2 = fill_plan(child_plan_2, gid, subjects[gid])
     return child_plan_1, child_plan_2

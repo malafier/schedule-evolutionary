@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 from flask import render_template, Flask, request
 
 from evolutionary.config import Config, MetaConfig
-from evolutionary.generation import Generation, ChampionCrossover, RouletteSinglePointCrossover, RouletteDayCrossover
+from evolutionary.generation import Generation, ChampionSelection, RouletteSinglePointSelection
 from config_gen import get_config
 
 templates_dir = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'templates')
@@ -15,7 +15,7 @@ app = Flask(__name__, template_folder=templates_dir)
 generation: Generation | None = None
 config: Config | None = None
 mconfig: MetaConfig | None = None
-crossover_strategy = ChampionCrossover()
+selection_strategy = ChampionSelection()
 scores = []
 
 
@@ -67,7 +67,7 @@ def get_school_plan():
         "main.html",
         score=scores[-1],
         config=config,
-        selection=crossover_strategy.__class__.__name__
+        selection=selection_strategy.__class__.__name__
     )
 
 
@@ -77,7 +77,7 @@ def make_next_n_gens():
 
     n = int(request.form.get('n'))
     for i in range(n):
-        generation.crossover(crossover_strategy)
+        generation.selection_crossover(selection_strategy)
         generation.mutate()
         generation.evaluate()
 
@@ -106,7 +106,7 @@ def show_plan():
 
 @app.route('/config', methods=['POST'])
 def alter_configuration():
-    global generation, mconfig, config, scores, crossover_strategy
+    global generation, mconfig, config, scores, selection_strategy
 
     mconfig.population_size = int(request.form.get('population_size'))
     mconfig.elitism = request.form.get('elitism') == 'on'
@@ -114,10 +114,8 @@ def alter_configuration():
         .crossover(float(request.form.get('crossover')))\
         .mutation(float(request.form.get('mutation')))
 
-    crossover_strategy = RouletteSinglePointCrossover() \
-        if request.form.get('crossover_strategy') == 'roulette_l' else ChampionCrossover()
-    crossover_strategy = RouletteDayCrossover() \
-        if request.form.get('crossover_strategy') == 'roulette_d' else crossover_strategy
+    selection_strategy = RouletteSinglePointSelection() \
+        if request.form.get('crossover_strategy') == 'roulette_l' else ChampionSelection()
 
     mconfig.eval\
         .basic_importance(float(request.form.get('imp_basic')))\
@@ -138,7 +136,7 @@ def alter_configuration():
     return render_template(
         "config_input.html",
         config=config,
-        selection=crossover_strategy.__class__.__name__
+        selection=selection_strategy.__class__.__name__
     )
 
 

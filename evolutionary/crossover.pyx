@@ -52,7 +52,7 @@ cdef list fill_plan(list child_plan, int gid, list group_subjects):
                 current_hours += 1
     return child_plan
 
-cpdef list single_point_cross(list plan1, list plan2, int no_groups, list subjects):
+cpdef list crossover(list plan1, list plan2, int no_groups, list subjects):
     if plan1 == plan2:
         return None
 
@@ -66,27 +66,6 @@ cpdef list single_point_cross(list plan1, list plan2, int no_groups, list subjec
                     lesson = plan2[gid][day + hour]
                 else:
                     lesson = plan1[gid][day + hour]
-                child_plan[gid][day + hour] = add_to_plan(child_plan, gid, day, hour, lesson, subjects[gid])
-    for gid in range(no_groups):
-        child_plan = fill_plan(child_plan, gid, subjects[gid])
-    return child_plan
-
-cpdef list day_cross(list plan1, list plan2, int no_groups, list subjects):
-    if plan1 == plan2:
-        return None
-
-    cdef list child_plan = [[(0, 0) for _ in range((H_PER_DAY * 5))] for _ in range(no_groups)]
-    cdef int gid, day, hour
-    cdef list plan
-    cdef tuple lesson
-    for gid in range(no_groups):
-        for day in Day():
-            if float(rand() / RAND_MAX) < 0.5:
-                plan = plan2
-            else:
-                plan = plan1
-            for hour in range(H_PER_DAY):
-                lesson = plan[gid][day + hour]
                 child_plan[gid][day + hour] = add_to_plan(child_plan, gid, day, hour, lesson, subjects[gid])
     for gid in range(no_groups):
         child_plan = fill_plan(child_plan, gid, subjects[gid])

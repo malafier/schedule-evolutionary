@@ -3,16 +3,16 @@ from abc import ABC
 from copy import deepcopy
 
 from evolutionary.config import Config, MetaConfig
-from evolutionary.crossover import single_point_cross, day_cross
+from evolutionary.crossover import crossover
 from evolutionary.school_plan import SchoolPlan
 
 
-class CrossoverStrategy(ABC):
+class SelectionStrategy(ABC):
     def crossover(self, parents: list, best_plan: SchoolPlan, size: int, config: Config) -> list[SchoolPlan]:
         pass
 
 
-class RouletteSinglePointCrossover(CrossoverStrategy):
+class RouletteSinglePointSelection(SelectionStrategy):
     def crossover(self, parents: list, best_plan: SchoolPlan, size: int, config: Config) -> list[SchoolPlan]:
         children = []
         if config.elitism:
@@ -25,34 +25,14 @@ class RouletteSinglePointCrossover(CrossoverStrategy):
         while len(children) < size:
             parent1, parent2 = random.choices(parents, probabilities, k=2)
             if random.random() < crossover_rate:
-                child_plan = single_point_cross(parent1.plans, parent2.plans, config.no_groups, config.subjects)
+                child_plan = crossover(parent1.plans, parent2.plans, config.no_groups, config.subjects)
                 if child_plan is not None:
                     child = SchoolPlan(config.no_groups, child_plan)
                     children.append(child)
         return children
 
 
-class RouletteDayCrossover(CrossoverStrategy):
-    def crossover(self, parents: list, best_plan: SchoolPlan, size: int, config: Config) -> list[SchoolPlan]:
-        children = []
-        if config.elitism:
-            children.append(deepcopy(best_plan))
-
-        crossover_rate = config.cross.crossover_rate
-        sum_fitness = sum([plan.fitness for plan in parents])
-        probabilities = [plan.fitness / sum_fitness for plan in parents]
-
-        while len(children) < size:
-            parent1, parent2 = random.choices(parents, probabilities, k=2)
-            if random.random() < crossover_rate:
-                child_plan = day_cross(parent1.plans, parent2.plans, config.no_groups, config.subjects)
-                if child_plan is not None:
-                    child = SchoolPlan(config.no_groups, child_plan)
-                    children.append(child)
-        return children
-
-
-class ChampionCrossover(CrossoverStrategy):
+class ChampionSelection(SelectionStrategy):
     def crossover(self, parents: list, best_plan: SchoolPlan, size: int, config: Config) -> list[SchoolPlan]:
         children = []
         if config.elitism:
@@ -62,7 +42,7 @@ class ChampionCrossover(CrossoverStrategy):
         while len(children) < size:
             parent2 = random.choice(parents)
             if random.random() < crossover_rate:
-                child_plan = single_point_cross(best_plan.plans, parent2.plans, config.no_groups, config.subjects)
+                child_plan = crossover(best_plan.plans, parent2.plans, config.no_groups, config.subjects)
                 if child_plan is not None:
                     child = SchoolPlan(config.no_groups, child_plan)
                     children.append(child)
@@ -109,7 +89,7 @@ class Generation:
             "min": self.worst_plan().fitness
         }
 
-    def crossover(self, strategy: CrossoverStrategy = RouletteSinglePointCrossover()):
+    def selection_crossover(self, strategy: SelectionStrategy = RouletteSinglePointSelection()):
         # selection
         self.population.sort(key=lambda x: x.fitness)
         best_plan = self.best_plan()

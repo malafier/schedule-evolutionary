@@ -78,7 +78,7 @@ def make_next_n_gens():
     n = int(request.form.get('n'))
     for i in range(n):
         generation.selection_crossover(selection_strategy)
-        generation.mutate()
+        # generation.mutate()
         generation.evaluate()
 
         if generation.gen_no % 20 == 0:
@@ -100,7 +100,7 @@ def show_all_plans():
 @app.route('/best-plan', methods=['GET'])
 def show_plan():
     global generation
-    school_plan: dict = generation.best_plan().as_dict(generation.meta)
+    school_plan: dict = generation.best_plan().as_dict(generation.config, generation.meta)
     return render_template("plan.html", school_plan=school_plan, config=generation.meta)
 
 

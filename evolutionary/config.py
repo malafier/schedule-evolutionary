@@ -99,18 +99,29 @@ class MetaConfig:
 
 class Config:
     def __init__(self, config: MetaConfig):
-        self.teachers: list = config.teachers
-        self.subjects: list = [None] * len(config.group_to_id.keys())
-        for i in range(len(self.subjects)):
-            self.subjects[i] = config.subjects[config.group_to_id[i]]
-        self.no_groups: int = len(self.subjects)
+        self.no_groups: int = len(config.group_to_id.keys())
         self.elitism: bool = config.elitism
         self.population_size: int = config.population_size
         self.eval = config.eval
         self.cross = config.cross
 
+        self.teachers: list = config.teachers
+        self.subjects: list = [None] * self.no_groups
+        for i in range(self.no_groups):
+            self.subjects[i] = config.subjects[config.group_to_id[i]]
+        self.sub_to_teach: list = [None] * self.no_groups
+        for i in range(self.no_groups):
+            self.sub_to_teach[i] = {subject["id"]: subject["teacher_id"] for subject in self.subjects[i]}
+
+
     def hours_by_id(self, group_id: int, subject_id: int) -> int:
         for subject in self.subjects[group_id]:
             if subject["id"] == subject_id:
                 return subject["hours"]
+        return -1
+
+    def teacher_by_subject(self, group_id: int, subject_id: int) -> int:
+        for subject in self.subjects[group_id]:
+            if subject["id"] == subject_id:
+                return subject["teacher_id"]
         return -1

@@ -1,5 +1,3 @@
-import cython
-
 cdef int H_PER_DAY = 8
 
 cdef class Day:
@@ -17,94 +15,92 @@ cdef class Day:
     def __iter__(self):
         return iter(self._days)
 
-cpdef double basic_evaluation(list plan, list weight_per_hour):
-    cdef double score = 0
-    cdef int i, j
-    cdef tuple lesson
-    for gid in range(len(plan)):
-        for i in range(len(plan[gid])):
-            lesson = plan[gid][i]
-            if lesson != (0, 0):
-                score += weight_per_hour[i % H_PER_DAY]
-    return score
+ctypedef list[list[int]] Matrix
 
-cdef bint is_gap(list plan, int gid, int x_day, int start_h, int h_span):
+cdef bint is_gap(Matrix plan, int gid, int x_day, int start_h, int h_span):
     cdef list lessons = plan[gid][x_day + start_h: x_day + start_h + h_span - 1]
-    cdef tuple lesson_before = plan[gid][x_day + start_h - 1]
-    cdef tuple lesson_after = plan[gid][x_day + start_h + h_span]
-    return all(lesson == (0, 0) for lesson in lessons) and lesson_after != (0, 0) and lesson_before != (0, 0)
+    cdef int lesson_before = plan[gid][x_day + start_h - 1]
+    cdef int lesson_after = plan[gid][x_day + start_h + h_span]
+    return all(lesson == 0 for lesson in lessons) and lesson_after != 0 and lesson_before != 0
 
-cpdef double gaps_evaluation(list plan):
-    cdef int day_value, start_h, end_h, gaps, day_len, i, j, gaps_sum, day_len_sum
-    cdef tuple lesson
-    cdef list is_lesson
+cpdef double gaps_evaluation(Matrix plan):
+    cdef int start_h, end_h, gaps, i, gaps_sum, day_len_sum
+    cdef int groups = len(plan)
 
-    for gid in range(len(plan)):
+    for gid in range(groups):
         for day in Day():
-            is_lesson = []
             for i in range(H_PER_DAY):
-                if plan[gid][day + i] == (0,0):
-                    is_lesson.append(0)
-                else:
-                    is_lesson.append(1)
-
-            for i in range(len(is_lesson)):
-                if is_lesson[i] != (0, 0):
+                if plan[gid][day + i] != 0:
                     start_h = i
                     break
             for i in range(H_PER_DAY-1, 0, -1):
-                if is_lesson[i] != (0, 0):
+                if plan[gid][day + i] != 0:
                     end_h = i
                     break
 
-            gaps = is_lesson[start_h:end_h].count(0)
-            day_len = end_h - start_h + 1
+            gaps = 0
+            for i in range(start_h, end_h):
+                if plan[gid][day + i] == 0:
+                    gaps += 1
 
             gaps_sum += gaps
-            day_len_sum += day_len
+            day_len_sum += end_h - start_h + 1
     return 1 #* (day_len_sum - gaps_sum) / day_len_sum FIXME
 
-cpdef double hours_per_day_evaluation(list plan):
+cpdef double basic_evaluation(Matrix plan, list[float] weight_per_hour):
+    cdef double score = 0
+    cdef int i, j, rows = len(plan), cols = len(plan[0])
+    cdef tuple lesson
+    for gid in range(rows):
+        for i in range(cols):
+            if plan[gid][i] != 0:
+                score += weight_per_hour[i % H_PER_DAY]
+    return score
+
+cpdef double hours_per_day_evaluation(Matrix plan):
     cdef double score = 0
     cdef int hours, i
     cdef tuple lesson
+    cdef int groups = len(plan)
 
-    for gid in range(len(plan)):
+    for gid in range(groups):
         for day in Day():
             hours = 0
             for i in range(H_PER_DAY):
-                lesson = plan[gid][day + i]
-                if lesson != (0, 0):
+                if plan[gid][day + i] != 0:
                     hours += 1
             score += 1 if 3 <= hours <= 6 else -hours
     return score
 
-cpdef double max_subject_hours_per_day_evaluation(list plan, list subjects):
+cpdef double max_subject_hours_per_day_evaluation(Matrix plan, list[dict] subjects):
     cdef double score = 0
     cdef int hours, gid, day
+    cdef int groups = len(plan)
     cdef dict subject
-    for gid in range(len(plan)):
+
+    for gid in range(groups):
         for day in Day():
             for subject in subjects[gid]:
                 hours = 0
                 for i in range(H_PER_DAY):
-                    if plan[gid][day + i][0] == subject["id"]:
+                    if plan[gid][day + i] == subject["id"]:
                         hours += 1
                 score += 1 if hours <= 2 else -hours
     return score
 
-cpdef double subject_block_evaluation(list plan, double reward, double punishment, list subjects):
+cpdef double subject_block_evaluation(Matrix plan, double reward, double punishment, list[dict] subjects):
     cdef double score = 0
-    cdef int i
     cdef list hours
-    cdef int day, gid
+    cdef int day, gid, i
+    cdef int groups = len(plan)
     cdef dict subject
-    for gid in range(len(plan)):
+
+    for gid in range(groups):
         for day in Day():
             for subject in subjects[gid]:
                 hours = []
                 for i in range(H_PER_DAY):
-                    if plan[gid][day + i][0] == subject["id"]:
+                    if plan[gid][day + i] == subject["id"]:
                         hours.append(i)
                 if len(hours) > 1:
                     for i in range(len(hours) - 1):
@@ -114,21 +110,21 @@ cpdef double subject_block_evaluation(list plan, double reward, double punishmen
                             score += punishment
     return score
 
-cpdef double teacher_block_evaluation(list plan, double reward, double punishment, list teachers):
+cpdef double teacher_block_evaluation(Matrix teacher_plan, double reward, double punishment, list[dict] teachers):
     cdef double score = 0
-    cdef int teacher_id
+    cdef int teacher_id, day, gid, i
     cdef list lessons
-    cdef int day, gid
-    cdef int i
     cdef dict teacher
     cdef list lesson
+    cdef int groups = len(teacher_plan)
+
     for teacher in teachers:
         teacher_id = teacher["id"]
         for day in Day():
             lessons = []
-            for gid in range(len(plan)):
+            for gid in range(groups):
                 for i in range(H_PER_DAY):
-                    if plan[gid][day + i][1] == teacher_id:
+                    if teacher_plan[gid][day + i] == teacher_id:
                         lessons.append((gid, i))
             if len(lessons) > 1:
                 for i in range(len(lessons) - 1):
@@ -138,14 +134,14 @@ cpdef double teacher_block_evaluation(list plan, double reward, double punishmen
                         score += punishment
     return score
 
-cpdef double subject_at_end_or_start_evaluation(list plan, list subjects):
+cpdef double subject_at_end_or_start_evaluation(Matrix plan, list[dict] subjects):
     cdef double score = 0
-    cdef int day, gid
-    cdef int i
+    cdef int day, gid, i, first_or_last
     cdef dict subject
     cdef list special_subjects
-    cdef int first_or_last
-    for gid in range(len(plan)):
+    cdef int groups = len(plan)
+
+    for gid in range(groups):
         special_subjects = [sub for sub in subjects[gid] if sub["start_end"]]
         for subject in special_subjects:
             for day in Day():
@@ -153,11 +149,11 @@ cpdef double subject_at_end_or_start_evaluation(list plan, list subjects):
                     first_or_last = (
                             i == 0 or
                             i == H_PER_DAY - 1 or
-                            all([plan[gid][day: day + i] == (0, 0)]) or
-                            all([plan[gid][day: day + i][0] == subject["id"]]) or
-                            all([plan[gid][day + i + 1: day + H_PER_DAY] == (0, 0)]) or
-                            all([plan[gid][day + i + 1: day + H_PER_DAY][0] == subject["id"]])
+                            all([plan[gid][day: day + i] == 0]) or
+                            all([plan[gid][day: day + i] == subject["id"]]) or
+                            all([plan[gid][day + i + 1: day + H_PER_DAY] == 0]) or
+                            all([plan[gid][day + i + 1: day + H_PER_DAY] == subject["id"]])
                     )
-                    if plan[gid][day + i][0] == subject["id"] and first_or_last:
+                    if plan[gid][day + i] == subject["id"] and first_or_last:
                         score += 1
     return score

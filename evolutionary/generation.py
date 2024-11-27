@@ -30,13 +30,13 @@ class RouletteSinglePointSelection(SelectionStrategy):
                 if child_plan_1 is not None:
                     child = SchoolPlan(
                         config.no_groups,
-                        fix_plan(child_plan_1, child_plan_1, config.subjects)
+                        fix_plan(child_plan_1, config.subjects, config.sub_to_teach)
                     )
                     children.append(child)
                 if child_plan_2 is not None and len(children) < size:
                     child = SchoolPlan(
                         config.no_groups,
-                        fix_plan(child_plan_2, child_plan_2, config.subjects)
+                        fix_plan(child_plan_2, config.subjects, config.sub_to_teach)
                     )
                     children.append(child)
         return children
@@ -52,17 +52,17 @@ class ChampionSelection(SelectionStrategy):
         while len(children) < size:
             parent2 = random.choice(parents)
             if random.random() < crossover_rate:
-                child_plan_1, child_plan_2 = crossover(best_plan.plans, parent2.plans, config.no_groups, config.subjects)
+                child_plan_1, child_plan_2 = crossover(best_plan.plans, parent2.plans, config.no_groups)
                 if child_plan_1 is not None:
                     child = SchoolPlan(
                         config.no_groups,
-                        fix_plan(child_plan_1, child_plan_1, config.subjects)
+                        fix_plan(child_plan_1, config.subjects, config.sub_to_teach)
                     )
                     children.append(child)
                 if child_plan_2 is not None and len(children) < size:
                     child = SchoolPlan(
                         config.no_groups,
-                        fix_plan(child_plan_2, child_plan_2, config.subjects)
+                        fix_plan(child_plan_2, config.subjects, config.sub_to_teach)
                     )
                     children.append(child)
         return children
@@ -120,4 +120,4 @@ class Generation:
     def mutate(self):
         for i in range(self.size - 1):
             if random.random() <= self.config.cross.mutation_rate:
-                self.population[i].swap(5)
+                self.population[i].swap(5, self.config)

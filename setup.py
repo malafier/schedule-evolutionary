@@ -5,6 +5,6 @@ setup(
     ext_modules=cythonize([
         "evolutionary/crossover.pyx",
         "evolutionary/evaluation.pyx",
-        "evolutionary/fixing_algorithm.pyx"
+        "evolutionary/fixing_algorithm.pyx",
     ]),
 )

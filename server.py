@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 from flask import render_template, Flask, request
 
 from evolutionary.config import Config, MetaConfig
-from evolutionary.generation import Generation, ChampionSelection, RouletteSinglePointSelection
+from evolutionary.generation import Generation, ChampionSelection, RouletteSelection
 from config_gen import get_config
 
 templates_dir = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'templates')
@@ -101,6 +101,16 @@ def show_all_plans():
 def show_plan():
     global generation
     school_plan: dict = generation.best_plan().as_dict(generation.config, generation.meta)
+
+    # teachers_to_h = {}
+    # for gplan in school_plan.values():
+    #     for day in gplan.values():
+    #         for lesson in day:
+    #             if lesson["teacher_id"] not in teachers_to_h:
+    #                 teachers_to_h[lesson["teacher_id"]] = 1
+    #             else:
+    #                 teachers_to_h[lesson["teacher_id"]] += 1
+    # print(teachers_to_h)
     return render_template("plan.html", school_plan=school_plan, config=generation.meta)
 
 
@@ -114,8 +124,8 @@ def alter_configuration():
         .crossover(float(request.form.get('crossover')))\
         .mutation(float(request.form.get('mutation')))
 
-    selection_strategy = RouletteSinglePointSelection() \
-        if request.form.get('crossover_strategy') == 'roulette_l' else ChampionSelection()
+    selection_strategy = RouletteSelection() \
+        if request.form.get('selection_strategy') == 'roulette' else ChampionSelection()
 
     mconfig.eval\
         .basic_importance(float(request.form.get('imp_basic')))\

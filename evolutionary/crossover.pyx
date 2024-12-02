@@ -21,32 +21,21 @@ cdef int RAND_MAX = 32767
 
 ctypedef list[list[int]] Matrix
 
-cdef int random_x(int no_groups):
-    return rand() % no_groups
-
-cdef int random_y():
-    return rand() % (5 * H_PER_DAY)
-
-cdef int random_dx(int no_groups, int x):
-    return rand() % (no_groups - x)
-
-cdef int random_dy(int y):
-    return rand() % (5 * H_PER_DAY - y)
-
-
 cpdef tuple crossover(Matrix plan1, Matrix plan2, int no_groups):
     if plan1 == plan2:
         return None, None
 
-    cdef int x1, y1, dx, dy
-    x1 = random_x(no_groups)
-    y1 = random_y()
-    dx = random_dx(no_groups, x1)
-    dy = random_dy(y1)
+    cdef int x, y, dx, dy
+    x = rand() % no_groups
+    y = rand() % (5 * H_PER_DAY)
+    dx = rand() % (no_groups - x)
+    dy = rand() % (5 * H_PER_DAY - y)
 
-    cdef int row, col
-    for row in range(x1, x1+dx):
-        for col in range(y1, y1+dy):
-            plan1[row][col], plan2[row][col] = plan2[row][col], plan1[row][col]
+    cdef int row, col, temp
+    for row in range(x, x+dx):
+        for col in range(y, y+dy):
+            temp = plan2[row][col]
+            plan2[row][col] = plan1[row][col]
+            plan1[row][col] = temp
 
     return plan1, plan2

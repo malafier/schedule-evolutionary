@@ -13,7 +13,7 @@ class SelectionStrategy(ABC):
         pass
 
 
-class RouletteSinglePointSelection(SelectionStrategy):
+class RouletteSelection(SelectionStrategy):
     def select_and_cross(self, parents: list, best_plan: SchoolPlan, size: int, config: Config) -> list[SchoolPlan]:
         children = []
         if config.elitism:
@@ -26,7 +26,7 @@ class RouletteSinglePointSelection(SelectionStrategy):
         while len(children) < size:
             parent1, parent2 = random.choices(parents, probabilities, k=2)
             if random.random() < crossover_rate:
-                child_plan_1, child_plan_2 = crossover(parent1.plans, parent2.plans, config.no_groups, config.subjects)
+                child_plan_1, child_plan_2 = crossover(parent1.plans, parent2.plans, config.no_groups)
                 if child_plan_1 is not None:
                     child = SchoolPlan(
                         config.no_groups,
@@ -108,7 +108,7 @@ class Generation:
             "min": self.worst_plan().fitness
         }
 
-    def selection_crossover(self, strategy: SelectionStrategy = RouletteSinglePointSelection()):
+    def selection_crossover(self, strategy: SelectionStrategy = RouletteSelection()):
         # selection
         self.population.sort(key=lambda x: x.fitness)
         best_plan = self.best_plan()

@@ -45,14 +45,16 @@ class SchoolPlan:
         return hours
 
     def evaluate(self, config: Config):
-        score = config.eval.basic_imp * basic_evaluation(self.plans, config.eval.hours_weight)\
-            + config.eval.hpd_imp * hours_per_day_evaluation(self.plans)\
-            + config.eval.max_subj_hpd_imp * max_subject_hours_per_day_evaluation(self.plans, config.subjects)\
-            + config.eval.subj_block_imp * subject_block_evaluation(self.plans, 0, -5, config.subjects)\
-            + config.eval.subj_end_start_imp * subject_at_end_or_start_evaluation(self.plans, config.subjects)\
+        score = (
+            config.eval.basic_imp * basic_evaluation(self.plans, config.eval.hours_weight)
+            + config.eval.hpd_imp * hours_per_day_evaluation(self.plans)
+            + config.eval.max_subj_hpd_imp * max_subject_hours_per_day_evaluation(self.plans, config.subjects)
+            + config.eval.subj_block_imp * subject_block_evaluation(self.plans, 0, -5, config.subjects)
+            + config.eval.subj_end_start_imp * subject_at_end_or_start_evaluation(self.plans, config.subjects)
             + config.eval.teach_block_imp * teacher_block_evaluation(
                 teacher_matrix(self.plans, config.sub_to_teach), 1, -2, config.teachers
             )
+        )
 
         score *= config.eval.gap_imp * gaps_evaluation(self.plans)
 

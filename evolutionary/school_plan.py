@@ -54,9 +54,7 @@ class SchoolPlan:
             + config.eval.teach_block_imp * teacher_block_evaluation(
                 teacher_matrix(self.plans, config.sub_to_teach), 1, -2, config.teachers
             )
-        )
-
-        score *= config.eval.gap_imp * gaps_evaluation(self.plans)
+        ) / (config.eval.gap_imp * gaps_evaluation(self.plans))
 
         self.fitness = score
 

@@ -51,7 +51,6 @@ cdef tuple move_lesson(Matrix plan, Matrix teachers, int lesson, int teacher, in
             plan[gid][i] = lesson
             teachers[gid][i] = teacher
             return move_lesson(plan, teachers, temp_lesson, temp_teacher, gid)
-    # return plan, teachers FIXME
 
 cdef list fix_subjects(Matrix plan, list[list[dict]] subjects):
     cdef int gid, expected_h, actual_h, i, sub_id, rows = len(plan), cols = len(plan[0])
@@ -93,7 +92,7 @@ cdef list fix_teachers(Matrix plan, Matrix teachers):
     for i in range(rows):
         for j in range(cols):
             cur_teach = teachers[i][j]
-            if count_teacher_lessons(teachers, cur_teach, j) < 2:
+            if cur_teach == 0 or count_teacher_lessons(teachers, cur_teach, j) < 2:
                 continue
 
             lesson = plan[i][j]
@@ -106,8 +105,6 @@ cpdef list fix_plan(Matrix plan, list[list[dict]] subjects, list[dict] subject_t
     plan = fix_subjects(plan, subjects)
 
     teachers = teacher_matrix(plan, subject_to_teacher)
-    print(plan)
-    print(teachers)
     plan = fix_teachers(plan, teachers)
 
     return plan

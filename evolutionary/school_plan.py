@@ -2,6 +2,7 @@ import random
 
 from evolutionary.config import WEEK_DAYS, H_PER_DAY, Day, Config, MetaConfig
 from evolutionary.fixing_algorithm import teacher_matrix
+from evolutionary.mutation import mutate
 from evolutionary.evaluation import basic_evaluation, gaps_evaluation, hours_per_day_evaluation, \
     max_subject_hours_per_day_evaluation, subject_block_evaluation, teacher_block_evaluation, \
     subject_at_end_or_start_evaluation
@@ -58,26 +59,8 @@ class SchoolPlan:
 
         self.fitness = score
 
-    def swap(self, config: Config, swaps=1): # TODO: fix mutation
-        for i in range(swaps):
-            lesson1 = random.choice(list(Day)).value + random.choice(range(H_PER_DAY))
-            lesson2 = random.choice(list(Day)).value + random.choice(range(H_PER_DAY))
-            gid = random.choice(range(len(self.plans)))
-
-            teachers_ok = True
-            if self.plans[gid][lesson1] != 0:
-                teacher1 = self.plans[gid][lesson1][1]
-                teachers_ok &= self.teacher_free_at(teacher1, lesson2 // H_PER_DAY, lesson2 % H_PER_DAY, config) or \
-                               self.plans[gid][lesson2][1] == teacher1
-            if self.plans[gid][lesson2] != 0:
-                teacher2 = self.plans[gid][lesson2][1]
-                teachers_ok &= self.teacher_free_at(teacher2, lesson1 // H_PER_DAY, lesson1 % H_PER_DAY, config) or \
-                               self.plans[gid][lesson1][1] == teacher2
-
-            if teachers_ok:
-                self.plans[gid][lesson1], self.plans[gid][lesson2] = self.plans[gid][lesson2], self.plans[gid][lesson1]
-            else:
-                i -= 1
+    def mutate(self, config: Config): # TODO: fix mutation
+        self.plans = mutate(self.plans, config.sub_to_teach)
 
     def add_to_plan(self, config: Config, gid: int, day: Day, hour: int, subject: int):
         if subject == (0, 0):

@@ -120,4 +120,4 @@ class Generation:
     def mutate(self):
         for i in range(self.size - 1):
             if random.random() <= self.config.cross.mutation_rate:
-                self.population[i].swap(5, self.config)
+                self.population[i].mutate(self.config)

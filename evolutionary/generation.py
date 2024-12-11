@@ -2,6 +2,8 @@ import random
 from abc import ABC
 from copy import deepcopy
 
+from numpy.distutils.command.config import config
+
 from evolutionary.config import Config, MetaConfig
 from evolutionary.crossover import crossover
 from evolutionary.school_plan import SchoolPlan
@@ -16,9 +18,6 @@ class SelectionStrategy(ABC):
 class RouletteSelection(SelectionStrategy):
     def select_and_cross(self, parents: list, best_plan: SchoolPlan, size: int, config: Config) -> list[SchoolPlan]:
         children = []
-        if config.elitism:
-            children.append(deepcopy(best_plan))
-
         crossover_rate = config.cross.crossover_rate
         sum_fitness = sum([plan.fitness for plan in parents])
         probabilities = [plan.fitness / sum_fitness for plan in parents]
@@ -45,8 +44,6 @@ class RouletteSelection(SelectionStrategy):
 class ChampionSelection(SelectionStrategy):
     def select_and_cross(self, parents: list, best_plan: SchoolPlan, size: int, config: Config) -> list[SchoolPlan]:
         children = []
-        if config.elitism:
-            children.append(deepcopy(best_plan))
         crossover_rate = config.cross.crossover_rate
 
         while len(children) < size:
@@ -108,16 +105,19 @@ class Generation:
             "min": self.worst_plan().fitness
         }
 
-    def selection_crossover(self, strategy: SelectionStrategy = RouletteSelection()):
-        # selection
-        self.population.sort(key=lambda x: x.fitness)
-        best_plan = self.best_plan()
+    def next_gen(self, strategy: SelectionStrategy = RouletteSelection()):
+        best_plan = deepcopy(self.best_plan())
 
-        # crossover
+        # selection and crossover
         self.population = strategy.select_and_cross(self.population, best_plan, self.size, self.config)
-        self.gen_no += 1
 
-    def mutate(self):
+        # mutation
         for i in range(self.size):
             if random.random() <= self.config.cross.mutation_rate:
                 self.population[i].mutate(self.config)
+
+        # elitism FIXME
+        if self.config.elitism:
+            self.population[0] = best_plan
+
+        self.gen_no += 1

@@ -45,7 +45,7 @@ cpdef double gaps_evaluation(Matrix plan):
 
             gaps_sum += gaps
             day_len_sum += end_h - start_h + 1
-    return 1 #* (day_len_sum - gaps_sum) / day_len_sum FIXME
+    return .01 * gaps_sum #* (day_len_sum - gaps_sum) / day_len_sum FIXME
 
 cpdef double basic_evaluation(Matrix plan, list[float] weight_per_hour):
     cdef double score = 0
@@ -88,7 +88,7 @@ cpdef double max_subject_hours_per_day_evaluation(Matrix plan, list[dict] subjec
                 score += 1 if hours <= 2 else -hours
     return score
 
-cpdef double subject_block_evaluation(Matrix plan, double reward, double punishment, list[dict] subjects):
+cpdef double subject_block_evaluation(Matrix plan, double reward, double punishment, list[dict] subjects): # TODO: rm punishment
     cdef double score = 0
     cdef list hours
     cdef int day, gid, i
@@ -110,7 +110,7 @@ cpdef double subject_block_evaluation(Matrix plan, double reward, double punishm
                             score += punishment
     return score
 
-cpdef double teacher_block_evaluation(Matrix teacher_plan, double reward, double punishment, list[dict] teachers):
+cpdef double teacher_block_evaluation(Matrix teacher_plan, double reward, double punishment, list[dict] teachers): # TODO: rm punishment
     cdef double score = 0
     cdef int teacher_id, day, gid, i
     cdef list lessons

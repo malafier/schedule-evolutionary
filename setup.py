@@ -6,5 +6,6 @@ setup(
         "evolutionary/crossover.pyx",
         "evolutionary/evaluation.pyx",
         "evolutionary/fixing_algorithm.pyx",
+        "evolutionary/mutation.pyx",
     ]),
 )

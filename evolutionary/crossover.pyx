@@ -34,8 +34,6 @@ cpdef tuple crossover(Matrix plan1, Matrix plan2, int no_groups):
     cdef int row, col, temp
     for row in range(x, x+dx):
         for col in range(y, y+dy):
-            temp = plan2[row][col]
-            plan2[row][col] = plan1[row][col]
-            plan1[row][col] = temp
+            plan1[row][col], plan2[row][col] = plan2[row][col], plan1[row][col]
 
     return plan1, plan2

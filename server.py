@@ -78,7 +78,7 @@ def make_next_n_gens():
     n = int(request.form.get('n'))
     for i in range(n):
         generation.selection_crossover(selection_strategy)
-        # generation.mutate()
+        generation.mutate()
         generation.evaluate()
 
         if generation.gen_no % 20 == 0:

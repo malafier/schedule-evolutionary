@@ -2,6 +2,8 @@ from libc.stdlib cimport rand
 
 cdef int H_PER_DAY = 8
 
+cdef int HOURS = 5 * H_PER_DAY
+
 cdef int RAND_MAX = 32767
 
 cdef int random_day():
@@ -10,7 +12,7 @@ cdef int random_day():
 ctypedef list[list[int]] Matrix
 
 cpdef Matrix teacher_matrix(Matrix plan, list[dict] subject_to_teacher):
-    cdef int rows = len(plan), cols = len(plan[0])
+    cdef int rows = len(plan), cols = HOURS
     cdef Matrix teachers = [[0 for _ in range(cols)] for _ in range(rows)]
 
     cdef int i, j
@@ -35,7 +37,7 @@ cdef int count_teacher_lessons(Matrix teacher_plan, int teacher, int hour):
     return count
 
 cdef tuple move_lesson(Matrix plan, Matrix teachers, int lesson, int teacher, int gid):
-    cdef int rows = len(plan), cols = len(plan[0]), i = 0, temp_lesson, temp_teacher
+    cdef int rows = len(plan), cols = HOURS, i = 0, temp_lesson, temp_teacher
 
     for i in range(cols):
         if plan[gid][i] == 0 and count_teacher_lessons(teachers, teacher, i) == 0:
@@ -53,7 +55,7 @@ cdef tuple move_lesson(Matrix plan, Matrix teachers, int lesson, int teacher, in
             return move_lesson(plan, teachers, temp_lesson, temp_teacher, gid)
 
 cdef list fix_subjects(Matrix plan, list[list[dict]] subjects):
-    cdef int gid, expected_h, actual_h, i, sub_id, rows = len(plan), cols = len(plan[0])
+    cdef int gid, expected_h, actual_h, i, sub_id, rows = len(plan), cols = HOURS
     cdef dict subject
 
     for gid in range(rows):
@@ -87,7 +89,7 @@ cdef list fix_subjects(Matrix plan, list[list[dict]] subjects):
     return plan
 
 cdef list fix_teachers(Matrix plan, Matrix teachers):
-    cdef int i, j, rows = len(plan), cols = len(plan[0]), cur_teach, lesson
+    cdef int i, j, rows = len(plan), cols = HOURS, cur_teach, lesson
 
     for i in range(rows):
         for j in range(cols):

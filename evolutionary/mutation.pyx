@@ -1,30 +1,79 @@
+from xmlrpc.client import boolean
+
 from libc.stdlib cimport rand
 
 cdef int H_PER_DAY = 8
 
+cdef int HOURS = 5 * H_PER_DAY
+
 cdef int RAND_MAX = 32767
 
-cdef bool random_direction():
-    return rand() % 2 == 1
+cdef list PREFERRED_HOURS = [2, 3, 4, 5, 10, 11, 12, 13, 18, 19, 20, 21, 26, 27, 28, 29, 34, 35, 36, 37]
 
-cdef int random_hour(int no_groups):
-    return rand() % (H_PER_DAY * no_groups)
+cdef list OTHER_HOURS = [0, 1, 6, 7, 8, 9, 14, 15, 16, 17, 22, 23, 24, 25, 30, 31, 32, 33, 38, 39]
+
+cdef int random_hour():
+    return rand() % HOURS
 
 ctypedef list[list[int]] Matrix
 
-cpdef Matrix mutate(Matrix plan, list[dict] subject_to_teacher):
-    cdef int i, gid, lesson_h, rows = len(plan), cols = len(plan[0])
-    cdef bool left
+cdef Matrix teacher_matrix(Matrix plan, list[dict] subject_to_teacher):
+    cdef int rows = len(plan), cols = HOURS
+    cdef Matrix teachers = [[0 for _ in range(cols)] for _ in range(rows)]
 
-    # TODO: here get teacher matrix
+    cdef int i, j
+    for i in range(rows):
+        for j in range(cols):
+            teachers[i][j] = 0 if plan[i][j] == 0 else subject_to_teacher[i][plan[i][j]]
+
+    return teachers
+
+cdef int count_teacher_lessons(Matrix teacher_plan, int teacher, int hour):
+    cdef int i, count = 0
+    for i in range(len(teacher_plan)):
+        if teacher_plan[i][hour] == teacher:
+            count += 1
+    return count
+
+cpdef Matrix mutate(Matrix plan, list[dict] subject_to_teacher):
+    cdef int i, gid, lesson_h, rows = len(plan), cols = HOURS
+    cdef int mutated = 0
+
+    cdef list preferred_hours = [i for i in range(HOURS)]
+
+    teachers = teacher_matrix(plan, subject_to_teacher)
 
     for gid in range(rows):
-        left = random_direction()
-        lesson_h = random_hour(rows)
+        lesson_h = random_hour()
         while plan[gid][lesson_h] == 0:
-            lesson_h = random_hour(rows)
+            lesson_h = random_hour()
 
-        # TODO: here traverse and search for suitable gap
-        # TODO: swap
+        for i in PREFERRED_HOURS:
+            if count_teacher_lessons(teachers, teachers[gid][lesson_h], i) == 0 and plan[gid][i] == 0:
+                plan[gid][i] = plan[gid][lesson_h]
+                teachers[gid][i] = teachers[gid][lesson_h]
+                plan[gid][lesson_h] = 0
+                teachers[gid][lesson_h] = 0
+                mutated = 1
+                break
+        if mutated == 1:
+            continue
+
+        for i in OTHER_HOURS:
+            if count_teacher_lessons(teachers, teachers[gid][lesson_h], i) == 0 and plan[gid][i] == 0:
+                plan[gid][i] = plan[gid][lesson_h]
+                teachers[gid][i] = teachers[gid][lesson_h]
+                plan[gid][lesson_h] = 0
+                teachers[gid][lesson_h] = 0
+                mutated = 1
+                break
+        if mutated == 1:
+            continue
+
+        for i in range(HOURS):
+            if count_teacher_lessons(teachers, teachers[gid][lesson_h], i) == 0 and count_teacher_lessons(teachers, teachers[gid][i], lesson_h) == 0:
+                plan[gid][i], plan[gid][lesson_h] = plan[gid][lesson_h], plan[gid][i]
+                teachers[gid][i], teachers[gid][lesson_h] = teachers[gid][lesson_h], teachers[gid][i]
+                break
 
     return plan

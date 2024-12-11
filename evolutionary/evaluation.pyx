@@ -24,7 +24,7 @@ cdef bint is_gap(Matrix plan, int gid, int x_day, int start_h, int h_span):
     return all(lesson == 0 for lesson in lessons) and lesson_after != 0 and lesson_before != 0
 
 cpdef double gaps_evaluation(Matrix plan):
-    cdef int start_h, end_h, gaps, i, gaps_sum, day_len_sum
+    cdef int start_h, end_h, gaps, i, gaps_sum #, day_len_sum
     cdef int groups = len(plan)
 
     for gid in range(groups):
@@ -44,7 +44,7 @@ cpdef double gaps_evaluation(Matrix plan):
                     gaps += 1
 
             gaps_sum += gaps
-            day_len_sum += end_h - start_h + 1
+            # day_len_sum += end_h - start_h + 1
     return .01 * gaps_sum #* (day_len_sum - gaps_sum) / day_len_sum FIXME
 
 cpdef double basic_evaluation(Matrix plan, list[float] weight_per_hour):
@@ -88,11 +88,10 @@ cpdef double max_subject_hours_per_day_evaluation(Matrix plan, list[dict] subjec
                 score += 1 if hours <= 2 else -hours
     return score
 
-cpdef double subject_block_evaluation(Matrix plan, double reward, double punishment, list[dict] subjects): # TODO: rm punishment
-    cdef double score = 0
+cpdef double subject_block_evaluation(Matrix plan, list[dict] subjects):
+    cdef double score = 0, reward = 1.0
     cdef list hours
-    cdef int day, gid, i
-    cdef int groups = len(plan)
+    cdef int day, gid, i, groups = len(plan)
     cdef dict subject
 
     for gid in range(groups):
@@ -106,17 +105,13 @@ cpdef double subject_block_evaluation(Matrix plan, double reward, double punishm
                     for i in range(len(hours) - 1):
                         if hours[i + 1] - hours[i] == 1:
                             score += reward
-                        else:
-                            score += punishment
     return score
 
-cpdef double teacher_block_evaluation(Matrix teacher_plan, double reward, double punishment, list[dict] teachers): # TODO: rm punishment
-    cdef double score = 0
-    cdef int teacher_id, day, gid, i
-    cdef list lessons
+cpdef double teacher_block_evaluation(Matrix teacher_plan, list[dict] teachers):
+    cdef double score = 0, reward = 1.0
+    cdef int teacher_id, day, gid, i, groups = len(teacher_plan)
+    cdef list lessons, lesson
     cdef dict teacher
-    cdef list lesson
-    cdef int groups = len(teacher_plan)
 
     for teacher in teachers:
         teacher_id = teacher["id"]
@@ -130,8 +125,7 @@ cpdef double teacher_block_evaluation(Matrix teacher_plan, double reward, double
                 for i in range(len(lessons) - 1):
                     if lessons[i + 1][1] - lessons[i][1] == 1:
                         score += reward
-                    else:
-                        score += punishment
+
     return score
 
 cpdef double subject_at_end_or_start_evaluation(Matrix plan, list[dict] subjects):

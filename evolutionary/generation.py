@@ -2,8 +2,6 @@ import random
 from abc import ABC
 from copy import deepcopy
 
-from numpy.distutils.command.config import config
-
 from evolutionary.config import Config, MetaConfig
 from evolutionary.crossover import crossover
 from evolutionary.school_plan import SchoolPlan

@@ -84,6 +84,7 @@ class MetaConfig:
     def __init__(self,
                  teachers: list,
                  subjects: dict,
+                 s: int = 5,
                  elitism: bool = True,
                  population_size: int = 100,
                  eval_criteria: EvaluationCriteria = EvaluationCriteria(),
@@ -94,6 +95,7 @@ class MetaConfig:
         self.population_size: int = population_size
         self.eval: EvaluationCriteria = eval_criteria
         self.cross: CrossParams = cross_params
+        self.S: int = s
         self.group_to_id = {i: group for i, group in enumerate(subjects.keys())}
 
 
@@ -104,6 +106,7 @@ class Config:
         self.population_size: int = config.population_size
         self.eval = config.eval
         self.cross = config.cross
+        self.S = config.S
 
         self.teachers: list = config.teachers
         self.subjects: list = [None] * self.no_groups

@@ -6,7 +6,8 @@ import matplotlib.pyplot as plt
 from flask import render_template, Flask, request
 
 from evolutionary.config import Config, MetaConfig
-from evolutionary.generation import Generation, ChampionSelection, RouletteSelection
+from evolutionary.generation import Generation
+from evolutionary.selection import ChampionSelection, RouletteSelection
 from config_gen import get_config
 
 templates_dir = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'templates')

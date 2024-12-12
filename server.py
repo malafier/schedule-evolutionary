@@ -5,19 +5,15 @@ import os
 import matplotlib.pyplot as plt
 from flask import render_template, Flask, request
 
-from evolutionary.config import Config, MetaConfig
+from evolutionary.config import Config
 from evolutionary.generation import Generation
 from evolutionary.selection import ChampionSelection, RouletteSelection
-from config_gen import get_config
+from state_manager import load_state, new_state
 
 templates_dir = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'templates')
 app = Flask(__name__, template_folder=templates_dir)
 
-generation: Generation | None = None
-config: Config | None = None
-mconfig: MetaConfig | None = None
-selection_strategy = ChampionSelection()
-scores = []
+generation, config, mconfig, scores = load_state()
 
 
 def generate_graph():
@@ -54,31 +50,37 @@ def add_cache_control_headers(response):
 @app.route('/', methods=['GET'])
 def get_school_plan():
     global generation, scores, config, mconfig
-    scores = []
-    mconfig = get_config()
-    config = Config(mconfig)
 
-    generation = Generation(config, mconfig)
     generation.evaluate()
-
     stats = generation.statistics()
     scores.append((generation.gen_no, stats["max"], stats["avg"], stats["min"]))
 
     return render_template(
         "main.html",
         score=scores[-1],
-        config=config,
-        selection=selection_strategy.__class__.__name__
+        config=config
     )
 
+@app.route('/new-plan', methods=['GET'])
+def regenerate_plan():
+    global generation, scores, config, mconfig
+
+    generation, config, mconfig = new_state()
+    scores = []
+
+    generation.evaluate()
+    stats = generation.statistics()
+    scores.append((generation.gen_no, stats["max"], stats["avg"], stats["min"]))
+
+    return render_template("statistics.html", score=scores[-1])
 
 @app.route('/next-n-gen', methods=['POST'])
-def make_next_n_gens():
+def next_n_gens():
     global generation, scores
 
     n = int(request.form.get('n'))
     for i in range(n):
-        generation.next_gen(selection_strategy)
+        generation.next_gen()
         generation.evaluate()
 
         if generation.gen_no % 20 == 0:
@@ -102,21 +104,12 @@ def show_plan():
     global generation
     school_plan: dict = generation.best_plan().as_dict(generation.config, generation.meta)
 
-    # teachers_to_h = {}
-    # for gplan in school_plan.values():
-    #     for day in gplan.values():
-    #         for lesson in day:
-    #             if lesson["teacher_id"] not in teachers_to_h:
-    #                 teachers_to_h[lesson["teacher_id"]] = 1
-    #             else:
-    #                 teachers_to_h[lesson["teacher_id"]] += 1
-    # print(teachers_to_h)
     return render_template("plan.html", school_plan=school_plan, config=generation.meta)
 
 
 @app.route('/config', methods=['POST'])
 def alter_configuration():
-    global generation, mconfig, config, scores, selection_strategy
+    global generation, mconfig, config, scores
 
     mconfig.population_size = int(request.form.get('population_size'))
     mconfig.elitism = request.form.get('elitism') == 'on'
@@ -124,7 +117,7 @@ def alter_configuration():
         .crossover(float(request.form.get('crossover')))\
         .mutation(float(request.form.get('mutation')))
 
-    selection_strategy = RouletteSelection() \
+    mconfig.selection_strategy = RouletteSelection() \
         if request.form.get('selection_strategy') == 'roulette' else ChampionSelection()
 
     mconfig.eval\
@@ -145,8 +138,7 @@ def alter_configuration():
 
     return render_template(
         "config_input.html",
-        config=config,
-        selection=selection_strategy.__class__.__name__
+        config=config
     )
 
 

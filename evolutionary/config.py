@@ -84,6 +84,7 @@ class MetaConfig:
     def __init__(self,
                  teachers: list,
                  subjects: dict,
+                 selection,
                  s: int = 5,
                  elitism: bool = True,
                  population_size: int = 100,
@@ -93,6 +94,7 @@ class MetaConfig:
         self.subjects: dict = subjects
         self.elitism: bool = elitism
         self.population_size: int = population_size
+        self.selection_strategy = selection
         self.eval: EvaluationCriteria = eval_criteria
         self.cross: CrossParams = cross_params
         self.S: int = s
@@ -104,6 +106,7 @@ class Config:
         self.no_groups: int = len(config.group_to_id.keys())
         self.elitism: bool = config.elitism
         self.population_size: int = config.population_size
+        self.selection_strategy = config.selection_strategy
         self.eval = config.eval
         self.cross = config.cross
         self.S = config.S

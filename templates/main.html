@@ -25,6 +25,11 @@
   >Konfiguracja
   </button>
 
+  <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+          hx-get="/new-plan" hx-swap="innerHTML" hx-target="#statistics"
+  >Nowy plan
+  </button>
+
   <form hx-post="/next-n-gen" hx-swap="innerHTML" hx-target="#statistics"
         class="flex items-center space-x-2">
     <div class="flex items-center">

@@ -13,11 +13,11 @@
       <select id="crossover_strategy" name="selection_strategy"
               class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
         <option value="tournament"
-                {% if selection == 'ChampionCrossover' %}selected{% endif %}
+                {% if config.selection_strategy == 'ChampionCrossover' %}selected{% endif %}
         >Turniej
         </option>
         <option value="roulette"
-                {% if selection == 'RouletteCrossover' %}selected{% endif %}
+                {% if config.selection_strategy == 'RouletteCrossover' %}selected{% endif %}
         >Ruleta
         </option>
       </select>

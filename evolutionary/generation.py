@@ -116,6 +116,7 @@ class Generation:
 
         # elitism FIXME
         if self.config.elitism:
+            # print(self.best_plan().fitness, best_plan.fitness)
             self.population[0] = best_plan
 
         self.gen_no += 1

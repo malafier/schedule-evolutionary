@@ -38,6 +38,9 @@ cpdef double gaps_evaluation(Matrix plan):
                     end_h = i
                     break
 
+            if start_h >= end_h:
+                continue
+
             gaps = 0
             for i in range(start_h, end_h):
                 if plan[gid][day + i] == 0:

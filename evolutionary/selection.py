@@ -9,6 +9,9 @@ class SelectionStrategy(ABC):
     def select(self, parents: list, config: Config) -> (SchoolPlan, SchoolPlan):
         pass
 
+    def __name__(self):
+        pass
+
 
 class RouletteSelection(SelectionStrategy):
     def select(self, parents: list[SchoolPlan], config: Config) -> (SchoolPlan, SchoolPlan):
@@ -19,6 +22,9 @@ class RouletteSelection(SelectionStrategy):
         probabilities = [plan.fitness / sum_fitness for plan in parents]
 
         return random.choices(parents, probabilities, k=2)
+
+    def __name__(self):
+        return "RouletteSelection"
 
 
 class ChampionSelection(SelectionStrategy):
@@ -33,3 +39,6 @@ class ChampionSelection(SelectionStrategy):
             max(arena1, key=lambda x: x.fitness),
             max(arena2, key=lambda x: x.fitness)
         )
+
+    def __name__(self):
+        return "ChampionSelection"

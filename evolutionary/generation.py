@@ -9,16 +9,19 @@ from evolutionary.selection import SelectionStrategy, RouletteSelection
 
 
 class Generation:
-    def __init__(self, config: Config, mconfig: MetaConfig):
-        self.gen_no: int = 0
+    def __init__(self, config: Config, mconfig: MetaConfig, plans: list[SchoolPlan] | None = None, gen_no: int = 0):
+        self.gen_no: int = gen_no
         self.size: int = config.population_size
         self.config: Config = config
         self.meta: MetaConfig = mconfig
-        self.population: list = []
-        for _ in range(self.size):
-            plan = SchoolPlan(config.no_groups)
-            plan.generate(config)
-            self.population.append(plan)
+
+        self.population: list = plans
+        if plans is None:
+            self.population = []
+            for _ in range(self.size):
+                plan = SchoolPlan(config.no_groups)
+                plan.generate(config)
+                self.population.append(plan)
 
     def evaluate(self):
         for plan in self.population:

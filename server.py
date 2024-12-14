@@ -8,7 +8,7 @@ from flask import render_template, Flask, request
 from evolutionary.config import Config
 from evolutionary.generation import Generation
 from evolutionary.selection import ChampionSelection, RouletteSelection
-from state_manager import load_state, new_state
+from state_manager import load_state, new_state, save_plans
 
 templates_dir = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'templates')
 app = Flask(__name__, template_folder=templates_dir)
@@ -49,16 +49,23 @@ def add_cache_control_headers(response):
 
 @app.route('/', methods=['GET'])
 def get_school_plan():
-    global generation, scores, config, mconfig
+    global generation, scores, config
 
-    generation.evaluate()
-    stats = generation.statistics()
-    scores.append((generation.gen_no, stats["max"], stats["avg"], stats["min"]))
+    if generation.gen_no == 0:
+        generation.evaluate()
+        stats = generation.statistics()
+        scores.append((generation.gen_no, stats["max"], stats["avg"], stats["min"]))
+
+    if len(scores) > 1:
+        graph = generate_graph()
+    else:
+        graph = None
 
     return render_template(
         "main.html",
         score=scores[-1],
-        config=config
+        config=config,
+        graph=graph
     )
 
 @app.route('/new-plan', methods=['GET'])
@@ -72,6 +79,7 @@ def regenerate_plan():
     stats = generation.statistics()
     scores.append((generation.gen_no, stats["max"], stats["avg"], stats["min"]))
 
+    save_plans(generation, stats)
     return render_template("statistics.html", score=scores[-1])
 
 @app.route('/next-n-gen', methods=['POST'])

@@ -86,6 +86,8 @@ def regenerate_plan():
 def next_n_gens():
     global generation, scores
 
+    generation.evaluate()
+
     n = int(request.form.get('n'))
     for i in range(n):
         generation.next_gen()

@@ -82,7 +82,7 @@ def regenerate_plan():
     save_plans(generation, stats)
     return render_template("statistics.html", score=scores[-1])
 
-@app.route('/next-n-gen', methods=['POST'])
+@app.route('/next-gens', methods=['POST'])
 def next_n_gens():
     global generation, scores
 
@@ -98,6 +98,7 @@ def next_n_gens():
     scores.append((generation.gen_no, stats["max"], stats["avg"], stats["min"]))
 
     graph = generate_graph()
+    save_plans(generation, scores)
     return render_template("statistics.html", score=scores[-1], graph=graph)
 
 

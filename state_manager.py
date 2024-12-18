@@ -37,7 +37,7 @@ def save_config(config: MetaConfig):
         "cross": config.cross.__dict__,
         "elitism": config.elitism,
         "selection": config.selection_strategy.__class__.__name__,
-        "s": config.S
+        "s": config.C
     }))
 
 
@@ -71,7 +71,7 @@ def load_config() -> MetaConfig:
         ),
         elitism=other_config["elitism"],
         selection=other_config["selection"],
-        s=other_config["s"],
+        c=other_config["s"],
         teachers=json.load(tf),
         subjects=json.load(sf),
     )

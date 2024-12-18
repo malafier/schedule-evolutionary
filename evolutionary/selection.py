@@ -6,7 +6,7 @@ from evolutionary.school_plan import SchoolPlan
 
 
 class SelectionStrategy(ABC):
-    def select(self, parents: list, config: Config) -> (SchoolPlan, SchoolPlan):
+    def select(self, parents: list[SchoolPlan], config: Config) -> (SchoolPlan, SchoolPlan):
         pass
 
     def __name__(self):
@@ -28,12 +28,12 @@ class RouletteSelection(SelectionStrategy):
 
 
 class ChampionSelection(SelectionStrategy):
-    def select(self, parents: list, config: Config) -> (SchoolPlan, SchoolPlan):
+    def select(self, parents: list[SchoolPlan], config: Config) -> (SchoolPlan, SchoolPlan):
         if random.random() < config.cross.crossover_rate:
             return None, None
 
-        arena1 = random.choices(parents, k=config.S)
-        arena2 = random.choices(parents, k=config.S)
+        arena1 = random.choices(parents, k=config.C)
+        arena2 = random.choices(parents, k=config.C)
 
         return (
             max(arena1, key=lambda x: x.fitness),

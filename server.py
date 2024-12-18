@@ -96,6 +96,7 @@ def next_n_gens():
         if generation.gen_no % 20 == 0:
             stats = generation.statistics()
             scores.append((generation.gen_no, stats["max"], stats["avg"], stats["min"]))
+            generation.evaluate()
     stats = generation.statistics()
     scores.append((generation.gen_no, stats["max"], stats["avg"], stats["min"]))
 

@@ -34,7 +34,7 @@ class Generation:
         return min(self.population, key=lambda x: x.fitness)
 
     def all(self):
-        return [plan.as_dict() for plan in self.population]
+        return [plan.as_dict(self.config, self.meta) for plan in self.population]
 
     def statistics(self) -> dict:
         return {
@@ -44,6 +44,30 @@ class Generation:
         }
 
     def next_gen(self, strategy: SelectionStrategy = RouletteSelection()):
+        # Fitness scaling
+        if isinstance(self.config.selection_strategy, RouletteSelection):
+            f_min = self.worst_plan().fitness
+            f_max =  self.best_plan().fitness
+            f_avg = sum(pop.fitness for pop in self.population) / self.config.no_groups
+            C = self.config.C
+
+            if C == 1:
+                self.config.C = 1.01
+                C = 1.01
+
+            if f_min > (C * f_avg - f_max) / (C - 1):
+                delta = f_max - f_avg
+                a = (C - 1) * f_avg / delta
+                b = f_avg * (f_max - C * f_avg) / delta
+            else:
+                delta = f_avg - f_min
+                a = f_avg / delta
+                b = - f_min * f_avg / delta
+
+            for plan in self.population:
+                plan.fitness = a * plan.fitness + b
+
+        # Evolutionary step
         best_plan = deepcopy(self.best_plan())
         children = []
 

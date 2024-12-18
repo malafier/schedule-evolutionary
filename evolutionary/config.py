@@ -85,7 +85,7 @@ class MetaConfig:
                  teachers: list,
                  subjects: dict,
                  selection,
-                 s: int = 5,
+                 c: float = 5,
                  elitism: bool = True,
                  population_size: int = 100,
                  eval_criteria: EvaluationCriteria = EvaluationCriteria(),
@@ -97,7 +97,7 @@ class MetaConfig:
         self.selection_strategy = selection
         self.eval: EvaluationCriteria = eval_criteria
         self.cross: CrossParams = cross_params
-        self.S: int = s
+        self.C: int | float = c
         self.group_to_id = {i: group for i, group in enumerate(subjects.keys())}
 
 
@@ -109,7 +109,7 @@ class Config:
         self.selection_strategy = config.selection_strategy
         self.eval = config.eval
         self.cross = config.cross
-        self.S = config.S
+        self.C = config.C
 
         self.teachers: list = config.teachers
         self.subjects: list = [None] * self.no_groups

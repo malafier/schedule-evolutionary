@@ -108,7 +108,7 @@ def next_n_gens():
 @app.route('/all', methods=['GET'])
 def show_all_plans():
     global generation
-    return render_template("all_plans.html", school_plans=generation.all(), config=generation.meta)
+    return render_template("teachers_plans.html", school_plans=generation.all(), config=generation.meta)
 
 
 @app.route('/best-plan', methods=['GET'])
@@ -151,9 +151,14 @@ def alter_configuration():
     return render_template("config_input.html", config=config)
 
 
-@app.route('/teacher-plans', methods=['GET'])
+@app.route('/teachers-plans', methods=['GET'])
 def teacher_plans():
-    pass
+    global generation, config
+    return render_template(
+        "teachers_plans.html",
+        t_plans=generation.best_plan().teachers_plans(config),
+        config=config
+    )
 
 
 @app.route('/teachers', methods=['GET'])

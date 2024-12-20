@@ -1,0 +1,16 @@
+{% from "macros.html" import teacher_plan_view %}
+
+{% block teacher_plans %}
+  <h2 class="text-lg font-bold mb-4">Plan nauczycieli</h2>
+
+  {% for i in range(1, t_plans|length) %}
+    {% set teacher_name = config.teachers | selectattr("id", "equalto", i) | map(attribute="name") | first %}
+
+    {% if teacher_name %}
+      <h3 class="text-lg mb-4">Plan {{ teacher_name }}</h3>
+      {{ teacher_plan_view(t_plans[i], config.teachers) }}
+    {% endif %}
+
+    <br>
+  {% endfor %}
+{% endblock %}

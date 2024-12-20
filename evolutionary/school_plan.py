@@ -98,5 +98,23 @@ class SchoolPlan:
                     })
         return school_plan
 
+    def teachers_plans(self, config: Config):
+        matrix = teacher_matrix(self.plans, config.sub_to_teach)
+        max_idx = max([t["id"] for t in config.teachers])
+        teachers = [{day: [] for day in WEEK_DAYS} for _ in range(max_idx)]
+
+        for i in range(1, max_idx):
+            for day in list(Day):
+                for hour in range(H_PER_DAY):
+                    is_teaching = False
+                    for gid in range(config.no_groups):
+                        if matrix[gid][day.value + hour] == i:
+                            is_teaching = True
+                            break
+
+                    week_day = WEEK_DAYS[day.value // H_PER_DAY]
+                    teachers[i][week_day].append(is_teaching)
+        return teachers
+
     def __str__(self):
         return str(self.plans)

@@ -49,7 +49,7 @@
 
 
 {% macro teacher_plan_cell(is_teaching) %}
-  <div class="text-sm">{{ is_teaching }}</div>
+  <div class="text-sm">{% if is_teaching %} X {% endif %}</div>
 {% endmacro %}
 
 

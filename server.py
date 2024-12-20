@@ -171,6 +171,8 @@ def teachers():
 def teacher():
     if request.method == 'GET':
         return render_template("teacher.html")
+    else:
+        pass
 
 
 @app.route('/subjects', methods=['GET'])
@@ -183,6 +185,8 @@ def subjects():
 def subject():
     if request.method == 'GET':
         return render_template("subject.html")
+    else:
+        pass
 
 
 if __name__ == '__main__':

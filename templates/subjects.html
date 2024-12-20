@@ -1,0 +1,24 @@
+<div class="overflow-x-auto">
+  {% set table_style = "px-4 py-2 border border-gray-300" %}
+  {% for group, plans in subjects.items() %}
+    <h2>Plan {{ group }}</h2>
+    <table class="table-auto border-collapse border border-gray-300">
+      <tr>
+        <th class="{{ table_style }} bg-gray-100">ID</th>
+        <th class="{{ table_style }} bg-gray-100">Przedmiot</th>
+        <th class="{{ table_style }} bg-gray-100">Liczba godzin</th>
+        <th class="{{ table_style }} bg-gray-100">Powinien być na początku/końcu</th>
+        <th class="{{ table_style }} bg-gray-100">Actions</th>
+      </tr>
+      {% for subject in plans %}
+        <tr>
+          <td class="{{ table_style }}">{{ subject["id"] }}</td>
+          <td class="{{ table_style }}">{{ subject["name"] }}</td>
+          <td class="{{ table_style }}">{{ subject["hours"] }}</td>
+          <td class="{{ table_style }}">{{ subject["start_end"] }}</td>
+          <td class="{{ table_style }}">{{ "buttons" }}</td>
+        </tr>
+      {% endfor %}
+    </table>
+  {% endfor %}
+</div>

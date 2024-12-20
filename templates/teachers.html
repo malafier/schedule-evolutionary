@@ -1,0 +1,22 @@
+<div class="overflow-x-auto">
+  <button type="submit" hx-get="/teacher" hx-swap="innerHTML" hx-target="#plan-target"
+          class="bg-blue-500 hover:bg-blue-700 text-white font-semibold py-1 px-3 rounded focus:outline-none focus:shadow-outline"
+  >Nowy nauczyciel
+  </button>
+
+  {% set table_style = "px-4 py-2 border border-gray-300" %}
+  <table class="table-auto border-collapse border border-gray-300">
+    <tr>
+      <th class="{{ table_style }} bg-gray-100">ID</th>
+      <th class="{{ table_style }} bg-gray-100">Imię i nazwisko</th>
+      <th class="{{ table_style }} bg-gray-100">Akcje</th>
+    </tr>
+    {% for teacher in teachers %}
+      <tr>
+        <td class="{{ table_style }}">{{ teacher["id"] }}</td>
+        <td class="{{ table_style }}">{{ teacher["name"] }}</td>
+        <td class="{{ table_style }}">{{ "buttons" }}</td>
+      </tr>
+    {% endfor %}
+  </table>
+</div>

@@ -148,10 +148,36 @@ def alter_configuration():
     stats = generation.statistics()
     scores.append((generation.gen_no, stats["max"], stats["avg"], stats["min"]))
 
-    return render_template(
-        "config_input.html",
-        config=config
-    )
+    return render_template("config_input.html", config=config)
+
+
+@app.route('/teacher-plans', methods=['GET'])
+def teacher_plans():
+    pass
+
+
+@app.route('/teachers', methods=['GET'])
+def teachers():
+    global mconfig
+    return render_template("teachers.html", teachers=mconfig.teachers)
+
+
+@app.route('/teacher', methods=['GET', 'POST'])
+def teacher():
+    if request.method == 'GET':
+        return render_template("teacher.html")
+
+
+@app.route('/subjects', methods=['GET'])
+def subjects():
+    global mconfig
+    return render_template("subjects.html", subjects=mconfig.subjects)
+
+
+@app.route('/subject', methods=['GET', 'POST'])
+def subject():
+    if request.method == 'GET':
+        return render_template("subject.html")
 
 
 if __name__ == '__main__':

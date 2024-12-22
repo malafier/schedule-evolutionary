@@ -5,14 +5,19 @@ import os
 import matplotlib.pyplot as plt
 from flask import render_template, Flask, request
 
-from evolutionary.config import Config
+from data_manager import new_teacher_id, find_teacher
+from evolutionary.config import Config, MetaConfig
 from evolutionary.generation import Generation
 from evolutionary.selection import ChampionSelection, RouletteSelection
-from state_manager import load_state, new_state, save_plans
+from state_manager import load_state, new_state, save_plans, save_config
 
 templates_dir = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'templates')
 app = Flask(__name__, template_folder=templates_dir)
 
+generation: Generation
+config: Config
+mconfig: MetaConfig
+scores: list[dict]
 generation, config, mconfig, scores = load_state()
 
 
@@ -98,8 +103,9 @@ def next_n_gens():
             stats = generation.statistics()
             scores.append((generation.gen_no, stats["max"], stats["avg"], stats["min"]))
             generation.evaluate()
-    stats = generation.statistics()
-    scores.append((generation.gen_no, stats["max"], stats["avg"], stats["min"]))
+    if generation.gen_no % 25 != 0:
+        stats = generation.statistics()
+        scores.append((generation.gen_no, stats["max"], stats["avg"], stats["min"]))
 
     graph = generate_graph()
     save_plans(generation, scores)
@@ -173,7 +179,40 @@ def teacher():
     if request.method == 'GET':
         return render_template("teacher.html")
     else:
+        global mconfig, config
+        teacher_name = request.form.get('t-name')
+        mconfig.teachers.append({"id": new_teacher_id(mconfig), "name": teacher_name})
+        mconfig.teachers.sort(key=lambda x: x["id"])
+
+        save_config(mconfig)
+        config = Config(mconfig)
+        return render_template("teachers.html", teachers=mconfig.teachers)
+
+@app.route('/teacher/<idx>', methods=['GET', 'PATCH', 'DELETE'])
+def teacher(idx): # TODO
+    global mconfig
+    if request.method == 'GET':
+        teacher = find_teacher(idx, mconfig)
+        if teacher is None:
+            return render_template("teachers.html", teachers=mconfig.teachers)
+        return render_template("teacher.html", teacher=teacher)
+    if request.method == 'PATCH':
         pass
+    if request.method == 'DELETE':
+        pass
+
+
+@app.route('/group/<name>', methods=['POST', 'DELETE'])
+def group(name):
+    global mconfig, config
+    if request.method == 'POST': # TODO
+        pass
+    else:
+        if name in mconfig.subjects.keys():
+            mconfig.subjects.pop(name)
+        save_config(mconfig)
+        config = Config(mconfig)
+    return render_template("subjects.html", subjects=mconfig.subjects)
 
 
 @app.route('/subjects', methods=['GET'])
@@ -182,10 +221,20 @@ def subjects():
     return render_template("subjects.html", subjects=mconfig.subjects)
 
 
-@app.route('/subject', methods=['GET', 'POST'])
-def subject():
+@app.route('/subject/<group>', methods=['GET', 'POST'])
+def new_subject(group): # TODO
+    if request.method == 'GET': # form
+        return render_template("subject.html", group=group)
+    else: # new
+        pass
+
+
+@app.route('/subject/<group>/<idx>', methods=['GET', 'PATCH', 'DELETE'])
+def subject(group, idx): # TODO
     if request.method == 'GET':
-        return render_template("subject.html")
+        return render_template("subject.html", group=group)
+    elif request.method == 'PATCH':
+        pass
     else:
         pass
 

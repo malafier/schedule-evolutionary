@@ -1,0 +1,33 @@
+{% from "macros.html" import input %}
+
+{# New subject form #}
+{% macro new_teacher_form() %}
+	<h3>Nowy nauczyciel</h3>
+  <form hx-post="/config" hx-swap="innerHTML" hx-target="#plan-target">
+    {{ input("t-name", "Imię i nazwisko nauczyciela", None) }}
+
+    <button type="submit" hx-post="/teacher" hx-swap="innerHTML" hx-target="#plan-target"
+            class="bg-blue-500 hover:bg-blue-700 text-white font-semibold py-1 px-3 rounded focus:outline-none focus:shadow-outline"
+    >Dodaj
+    </button>
+  </form>
+{% endmacro %}
+
+{# Edit subject form #}
+{% macro teacher_form() %}
+	<h3>Nowy nauczyciel</h3>
+  <form hx-post="/config" hx-swap="innerHTML" hx-target="#plan-target">
+    {{ input("t-name", "Imię i nazwisko nauczyciela", teacher["name"]) }}
+
+    <button type="submit" hx-get="/teacher/{{ teacher["id"] }}" hx-swap="innerHTML" hx-target="#plan-target"
+            class="bg-blue-500 hover:bg-blue-700 text-white font-semibold py-1 px-3 rounded focus:outline-none focus:shadow-outline"
+    >Zapisz
+    </button>
+  </form>
+{% endmacro %}
+
+{% if teacher %}
+  {{ teacher_form() }}
+{% else %}
+  {{ new_teacher_form() }}
+{% endif %}

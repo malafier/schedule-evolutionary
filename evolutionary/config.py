@@ -90,7 +90,7 @@ class MetaConfig:
                  population_size: int = 100,
                  eval_criteria: EvaluationCriteria = EvaluationCriteria(),
                  cross_params: CrossParams = CrossParams()):
-        self.teachers: list = teachers
+        self.teachers: list[dict] = teachers
         self.subjects: dict = subjects
         self.elitism: bool = elitism
         self.population_size: int = population_size

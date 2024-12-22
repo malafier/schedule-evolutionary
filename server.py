@@ -22,6 +22,7 @@ def generate_graph():
     y_max = [s[1] for s in scores]
     y_avg = [s[2] for s in scores]
     y_min = [s[3] for s in scores]
+    plt.figure(figsize=(10,5))
     plt.plot(x, y_min, label='Min')
     plt.plot(x, y_avg, label='Avg')
     plt.plot(x, y_max, label='Max')
@@ -93,7 +94,7 @@ def next_n_gens():
         generation.next_gen()
         generation.evaluate()
 
-        if generation.gen_no % 20 == 0:
+        if generation.gen_no % 25 == 0:
             stats = generation.statistics()
             scores.append((generation.gen_no, stats["max"], stats["avg"], stats["min"]))
             generation.evaluate()

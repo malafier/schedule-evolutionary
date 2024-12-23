@@ -27,7 +27,7 @@ def generate_graph():
     y_max = [s[1] for s in scores]
     y_avg = [s[2] for s in scores]
     y_min = [s[3] for s in scores]
-    plt.figure(figsize=(10,5))
+    plt.figure(figsize=(10, 5))
     plt.plot(x, y_min, label='Min')
     plt.plot(x, y_avg, label='Avg')
     plt.plot(x, y_max, label='Max')
@@ -75,6 +75,7 @@ def get_school_plan():
         graph=graph
     )
 
+
 @app.route('/new-plan', methods=['GET'])
 def regenerate_plan():
     global generation, scores, config, mconfig
@@ -88,6 +89,7 @@ def regenerate_plan():
 
     save_plans(generation, stats)
     return render_template("statistics.html", score=scores[-1])
+
 
 @app.route('/next-gens', methods=['POST'])
 def next_n_gens():
@@ -133,20 +135,20 @@ def alter_configuration():
 
     mconfig.population_size = int(request.form.get('population_size'))
     mconfig.elitism = request.form.get('elitism') == 'on'
-    mconfig.cross\
-        .crossover(float(request.form.get('crossover')))\
+    mconfig.cross \
+        .crossover(float(request.form.get('crossover'))) \
         .mutation(float(request.form.get('mutation')))
 
     mconfig.selection_strategy = RouletteSelection() \
         if request.form.get('selection_strategy') == 'roulette' else ChampionSelection()
 
-    mconfig.eval\
-        .basic_importance(float(request.form.get('imp_basic')))\
-        .gap_period_importance(float(request.form.get('imp_gap')))\
-        .hours_per_day_importance(float(request.form.get('imp_hours_per_day')))\
-        .max_subject_hours_per_day_importance(float(request.form.get('imp_max_hours_per_day')))\
-        .subject_block_importance(float(request.form.get('imp_lesson_block')))\
-        .teacher_block_importance(float(request.form.get('imp_teacher_block')))\
+    mconfig.eval \
+        .basic_importance(float(request.form.get('imp_basic'))) \
+        .gap_period_importance(float(request.form.get('imp_gap'))) \
+        .hours_per_day_importance(float(request.form.get('imp_hours_per_day'))) \
+        .max_subject_hours_per_day_importance(float(request.form.get('imp_max_hours_per_day'))) \
+        .subject_block_importance(float(request.form.get('imp_lesson_block'))) \
+        .teacher_block_importance(float(request.form.get('imp_teacher_block'))) \
         .subject_at_end_or_start_importance(float(request.form.get('imp_start_end_day_subject')))
 
     config = Config(mconfig)
@@ -189,6 +191,7 @@ def teacher():
         config = Config(mconfig)
         return render_template("teachers.html", teachers=mconfig.teachers)
 
+
 @app.route('/teacher/<idx>', methods=['GET', 'PATCH', 'DELETE'])
 def teacher_mod(idx):
     global mconfig, config
@@ -209,15 +212,24 @@ def teacher_mod(idx):
     return render_template("teachers.html", teachers=mconfig.teachers)
 
 
-@app.route('/group/<name>', methods=['POST', 'DELETE'])
-def group(name):
+@app.route('/group', methods=['POST'])
+def add_group():
     global mconfig, config
-    if request.method == 'POST':
-        if name not in mconfig.subjects.keys():
-            mconfig.subjects[name] = []
-    else:
-        if name in mconfig.subjects.keys():
-            mconfig.subjects.pop(name)
+    group_name = request.form.get('g-name')
+    if group_name not in mconfig.subjects.keys():
+        mconfig.subjects[group_name] = []
+
+    save_config(mconfig)
+    config = Config(mconfig)
+    return render_template("subjects.html", subjects=mconfig.subjects)
+
+
+@app.route('/group/<name>', methods=['DELETE'])
+def delete_group(name):
+    global mconfig, config
+    if name in mconfig.subjects.keys():
+        mconfig.subjects.pop(name)
+
     save_config(mconfig)
     config = Config(mconfig)
     return render_template("subjects.html", subjects=mconfig.subjects)
@@ -230,15 +242,15 @@ def subjects():
 
 
 @app.route('/subject/<group>', methods=['GET', 'POST'])
-def new_subject(group): # TODO
-    if request.method == 'GET': # form
+def new_subject(group):  # TODO
+    if request.method == 'GET':  # form
         return render_template("subject.html", group=group)
-    else: # new
+    else:  # new
         pass
 
 
 @app.route('/subject/<group>/<idx>', methods=['GET', 'PATCH', 'DELETE'])
-def subject(group, idx): # TODO
+def subject(group, idx):  # TODO
     if request.method == 'GET':
         return render_template("subject.html", group=group)
     elif request.method == 'PATCH':

@@ -5,7 +5,7 @@ import os
 import matplotlib.pyplot as plt
 from flask import render_template, Flask, request
 
-from data_manager import new_teacher_id, find_teacher
+from data_manager import new_teacher_id, find_teacher, teacher_idx
 from evolutionary.config import Config, MetaConfig
 from evolutionary.generation import Generation
 from evolutionary.selection import ChampionSelection, RouletteSelection
@@ -181,6 +181,7 @@ def teacher():
     else:
         global mconfig, config
         teacher_name = request.form.get('t-name')
+        print(teacher_name)
         mconfig.teachers.append({"id": new_teacher_id(mconfig), "name": teacher_name})
         mconfig.teachers.sort(key=lambda x: x["id"])
 
@@ -189,29 +190,36 @@ def teacher():
         return render_template("teachers.html", teachers=mconfig.teachers)
 
 @app.route('/teacher/<idx>', methods=['GET', 'PATCH', 'DELETE'])
-def teacher(idx): # TODO
-    global mconfig
+def teacher_mod(idx):
+    global mconfig, config
     if request.method == 'GET':
         teacher = find_teacher(idx, mconfig)
         if teacher is None:
             return render_template("teachers.html", teachers=mconfig.teachers)
         return render_template("teacher.html", teacher=teacher)
     if request.method == 'PATCH':
-        pass
+        teacher_name = request.form.get('t-name')
+        teacher_id = teacher_idx(idx, mconfig)
+        mconfig.teachers[teacher_id]["name"] = teacher_name
     if request.method == 'DELETE':
-        pass
+        teacher_id = teacher_idx(idx, mconfig)
+        mconfig.teachers.pop(teacher_id)
+    save_config(mconfig)
+    config = Config(mconfig)
+    return render_template("teachers.html", teachers=mconfig.teachers)
 
 
 @app.route('/group/<name>', methods=['POST', 'DELETE'])
 def group(name):
     global mconfig, config
-    if request.method == 'POST': # TODO
-        pass
+    if request.method == 'POST':
+        if name not in mconfig.subjects.keys():
+            mconfig.subjects[name] = []
     else:
         if name in mconfig.subjects.keys():
             mconfig.subjects.pop(name)
-        save_config(mconfig)
-        config = Config(mconfig)
+    save_config(mconfig)
+    config = Config(mconfig)
     return render_template("subjects.html", subjects=mconfig.subjects)
 
 

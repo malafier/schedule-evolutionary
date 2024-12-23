@@ -15,3 +15,9 @@ def find_teacher(idx, config: MetaConfig):
         if t["id"] == idx:
             return t
     return None
+
+def teacher_idx(idx, config: MetaConfig):
+    for i in range(len(config.teachers)):
+        if config.teachers[i]["id"] == idx:
+            return i
+    return None

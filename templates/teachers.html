@@ -1,11 +1,10 @@
+{% from "macros/buttons.html" import Button %}
+
 <div class="overflow-x-auto">
 
   <h2 class="text-lg font-bold mb-4">Nauczyciele</h2>
 
-  <button type="submit" hx-get="/teacher" hx-swap="innerHTML" hx-target="#plan-target"
-          class="bg-blue-500 hover:bg-blue-700 text-white font-semibold py-1 px-3 rounded focus:outline-none focus:shadow-outline"
-  >Nowy nauczyciel
-  </button>
+  {{ Button(url="/teacher", target="#plan-target", text="Nowy nauczyciel") }}
 
   {% set table_style = "px-4 py-2 border border-gray-300" %}
   <table class="table-auto border-collapse border border-gray-300">

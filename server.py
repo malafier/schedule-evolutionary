@@ -182,7 +182,6 @@ def teacher():
     else:
         global mconfig, config
         teacher_name = request.form.get('t-name')
-        print(teacher_name)
         mconfig.teachers.append({"id": new_teacher_id(mconfig), "name": teacher_name})
         mconfig.teachers.sort(key=lambda x: x["id"])
 

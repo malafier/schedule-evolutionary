@@ -1,20 +1,25 @@
-{% from "macros.html" import input %}
+{% from "macros/input_fields.html" import TxtInput %}
 
 {# New subject form #}
-{% macro new_teacher_form() %}
-	<h3>Nowy nauczyciel</h3>
-  <form hx-post="/config" hx-swap="innerHTML" hx-target="#plan-target">
-    {{ input("t-name", "Imię i nazwisko nauczyciela", None) }}
+{% macro new_subject_form() %}
+	<h3>Nowy przedmiot dla klasy {{ group }}</h3>
+  <form>
+    {{ TxtInput("s-name", "Nazwa", None) }}
+    {{ NumInput("s-hours", "Liczba godzin", None) }}
+    {# nauczyciel #}
+    {# start/end checkbox #}
 
     <button type="submit" hx-post="/teacher" hx-swap="innerHTML" hx-target="#plan-target"
             class="bg-blue-500 hover:bg-blue-700 text-white font-semibold py-1 px-3 rounded focus:outline-none focus:shadow-outline"
     >Dodaj
     </button>
+    {% set url = "/" %}
+  {{ PostButton(url="/config", target="#config", text="Dodaj") }}
   </form>
 {% endmacro %}
 
 {# Edit subject form #}
-{% macro teacher_form() %}
+{% macro edit_subject_form() %}
 	<h3>Nowy nauczyciel</h3>
   <form hx-post="/config" hx-swap="innerHTML" hx-target="#plan-target">
     {{ input("t-name", "Imię i nazwisko nauczyciela", teacher["name"]) }}
@@ -26,8 +31,8 @@
   </form>
 {% endmacro %}
 
-{% if teacher %}
-  {{ teacher_form() }}
+{% if subject %}
+  {{ edit_subject_form() }}
 {% else %}
-  {{ new_teacher_form() }}
+  {{ new_subject_form() }}
 {% endif %}

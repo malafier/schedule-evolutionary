@@ -1,12 +1,12 @@
-{% from "macros.html" import input %}
+{% from "macros/buttons.html" import PostButton %}
+{% from "macros/input_fields.html" import NumInput %}
 
 {% block config %}
-  <form hx-post="/config" hx-swap="innerHTML" hx-target="#config"
-        class="bg-white border-blue-500 border-2 shadow-md rounded px-8 pt-6 pb-8 mb-4">
+  <form class="bg-white border-blue-500 border-2 shadow-md rounded px-8 pt-6 pb-8 mb-4">
     <h4 class="text-xl font-bold mb-4">Konfiguracja</h4>
-    {{ input("population_size", "Rozmiar populacji", config.population_size) }}
-    {{ input("mutation", "Mutacja", config.cross.crossover_rate) }}
-    {{ input("crossover", "Krzyżowanie", config.cross.mutation_rate) }}
+    {{ NumInput("population_size", "Rozmiar populacji", config.population_size) }}
+    {{ NumInput("mutation", "Mutacja", config.cross.crossover_rate) }}
+    {{ NumInput("crossover", "Krzyżowanie", config.cross.mutation_rate) }}
 
     <div class="mb-4 flex items-center">
       <label for="crossover_strategy" class="block text-gray-700 text-sm font-bold mr-2">Strategia selekcji</label>
@@ -30,17 +30,15 @@
     </div>
 
     <h6 class="text-lg font-bold mb-4">Kryteria oceny</h6>
-    {{ input("imp_basic", "Współczynnik wpływu ewaluacji podstawowej", config.eval.basic_imp) }}
-    {{ input("imp_gap", "Współczynnik wpływu pustych lekcji", config.eval.gap_imp) }}
-    {{ input("imp_hours_per_day", "Współczynnik wpływu maksymalnej liczby godzin dziennie", config.eval.hpd_imp) }}
-    {{ input("imp_max_hours_per_day", "Współczynnik wpływu maksymalnej liczby godzin z przedmiotu jednego dnia", config.eval.max_subj_hpd_imp) }}
-    {{ input("imp_lesson_block", "Współczynnik wpływu lekcji w blokach", config.eval.subj_block_imp) }}
-    {{ input("imp_teacher_block", "Współczynnik wpływu planu nauczycieli", config.eval.teach_block_imp) }}
-    {{ input("imp_start_end_day_subject", "Współczynnik wpływu przedmiotów na początek/koniec dnia", config.eval.subj_end_start_imp) }}
+    {{ NumInput("imp_basic", "Współczynnik wpływu ewaluacji podstawowej", config.eval.basic_imp) }}
+    {{ NumInput("imp_gap", "Współczynnik wpływu pustych lekcji", config.eval.gap_imp) }}
+    {{ NumInput("imp_hours_per_day", "Współczynnik wpływu maksymalnej liczby godzin dziennie", config.eval.hpd_imp) }}
+    {{ NumInput("imp_max_hours_per_day", "Współczynnik wpływu maksymalnej liczby godzin z przedmiotu jednego dnia", config.eval.max_subj_hpd_imp) }}
+    {{ NumInput("imp_lesson_block", "Współczynnik wpływu lekcji w blokach", config.eval.subj_block_imp) }}
+    {{ NumInput("imp_teacher_block", "Współczynnik wpływu planu nauczycieli", config.eval.teach_block_imp) }}
+    {{ NumInput("imp_start_end_day_subject", "Współczynnik wpływu przedmiotów na początek/koniec dnia", config.eval.subj_end_start_imp) }}
 
-    <button type="submit"
-            class="bg-blue-500 hover:bg-blue-700 text-white font-semibold py-1 px-3 rounded focus:outline-none focus:shadow-outline"
-    >Zapisz
-    </button>
+
+    {{ PostButton(url="/config", target="#config", text="Zapisz") }}
   </form>
 {% endblock %}

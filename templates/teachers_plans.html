@@ -1,4 +1,34 @@
-{% from "macros.html" import teacher_plan_view %}
+{% macro teacher_plan_cell(is_teaching) %}
+  <div class="text-sm">{% if is_teaching %} X {% endif %}</div>
+{% endmacro %}
+
+{# Teacher Plan #}
+{% macro teacher_plan_view(class_plan, teachers) %}
+  <div class="overflow-x-auto">
+    {% set table_style = "px-4 py-2 border border-gray-300" %}
+    <table class="table-auto border-collapse border border-gray-300">
+      <tr>
+        <th class="{{ table_style }} bg-gray-100">No.</th>
+        <th class="{{ table_style }} bg-gray-100">Poniedziałek</th>
+        <th class="{{ table_style }} bg-gray-100">Wtorek</th>
+        <th class="{{ table_style }} bg-gray-100">Środa</th>
+        <th class="{{ table_style }} bg-gray-100">Czwartek</th>
+        <th class="{{ table_style }} bg-gray-100">Piątek</th>
+      </tr>
+      {% for i in range(8) %}
+        <tr>
+          <td class="{{ table_style }}">{{ i + 1 }}</td>
+          <td class="{{ table_style }}">{{ teacher_plan_cell(class_plan['Monday'][i]) }}</td>
+          <td class="{{ table_style }}">{{ teacher_plan_cell(class_plan['Tuesday'][i]) }}</td>
+          <td class="{{ table_style }}">{{ teacher_plan_cell(class_plan['Wednesday'][i]) }}</td>
+          <td class="{{ table_style }}">{{ teacher_plan_cell(class_plan['Thursday'][i]) }}</td>
+          <td class="{{ table_style }}">{{ teacher_plan_cell(class_plan['Friday'][i]) }}</td>
+        </tr>
+      {% endfor %}
+    </table>
+  </div>
+{% endmacro %}
+
 
 {% block teacher_plans %}
   <h2 class="text-lg font-bold mb-4">Plan nauczycieli</h2>

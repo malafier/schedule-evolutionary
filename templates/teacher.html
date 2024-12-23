@@ -1,26 +1,28 @@
-{% from "macros.html" import txt_input %}
+{% from "macros/input_fields.html" import TxtInput %}
 {% from "macros/buttons.html" import PostButton, PatchButton %}
 
 {# New teacher form #}
 {% macro new_teacher_form() %}
   <h3>Nowy nauczyciel</h3>
-  <form hx-post="/config" hx-swap="innerHTML" hx-target="#plan-target">
-    {{ txt_input("t-name", "Imię i nazwisko nauczyciela", None) }}
+  <form>
+    {{ TxtInput("t-name", "Imię i nazwisko nauczyciela", None) }}
 
     {{ PostButton(url="/teacher", target="#plan-target", text="Dodaj") }}
   </form>
 {% endmacro %}
 
+
 {# Edit teacher form #}
 {% macro teacher_form() %}
   <h3>Nowy nauczyciel</h3>
-  <form hx-post="/config" hx-swap="innerHTML" hx-target="#plan-target">
-    {{ txt_input("t-name", "Imię i nazwisko nauczyciela", teacher["name"]) }}
+  <form>
+    {{ TxtInput("t-name", "Imię i nazwisko nauczyciela", teacher["name"]) }}
 
     {% set url = "/teacher/{{ teacher['id'] }}" %}
     {{ PatchButton(url=url, target="#plan-target", text="Zapisz") }}
   </form>
 {% endmacro %}
+
 
 {% if teacher %}
   {{ teacher_form() }}

@@ -17,7 +17,7 @@ app = Flask(__name__, template_folder=templates_dir)
 generation: Generation
 config: Config
 mconfig: MetaConfig
-scores: list[dict]
+scores: list
 generation, config, mconfig, scores = load_state()
 
 
@@ -60,6 +60,7 @@ def get_school_plan():
     if generation.gen_no == 0:
         generation.evaluate()
         stats = generation.statistics()
+        print(scores)
         scores.append((generation.gen_no, stats["max"], stats["avg"], stats["min"]))
 
     if len(scores) > 1:

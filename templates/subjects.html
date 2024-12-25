@@ -1,4 +1,4 @@
-{% from "macros/buttons.html" import Button, DeleteButton %}
+{% from "macros/buttons.html" import Button, DeleteButton, InputButton %}
 
 <div class="overflow-x-auto">
   <h2 class="text-lg font-bold mb-4">Przedmioty</h2>
@@ -32,4 +32,6 @@
       {% endfor %}
     </table>
   {% endfor %}
+
+  {{ InputButton(url="/group", target="#plan-target", text="Dodaj kalsę", field="g-name", field_type="text") }}
 </div>

@@ -231,6 +231,7 @@ def delete_group(name):
         mconfig.subjects.pop(name)
 
     save_config(mconfig)
+    del config
     config = Config(mconfig)
     return render_template("subjects.html", subjects=mconfig.subjects)
 

@@ -7,7 +7,7 @@
   {% for group, plans in subjects.items() %}
     <h2>Plan {{ group }}</h2>
 
-    {% set url = "/group/{{ group }}" %}
+    {% set url = "/group/" ~ group %}
 
     {{ Button(url=url, target="#plan-target", text="Dodaj przedmiot") }}
 

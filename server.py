@@ -96,7 +96,7 @@ def regenerate_plan():
 
 
 @app.route('/next-gens', methods=['POST'])
-def next_n_gens():
+def next_gens():
     global generation, scores
 
     generation.evaluate()
@@ -115,12 +115,6 @@ def next_n_gens():
     graph = generate_graph()
     save_plans(generation, scores)
     return render_template("statistics.html", score=scores[-1], graph=graph)
-
-
-@app.route('/all', methods=['GET'])
-def show_all_plans():
-    global generation
-    return render_template("teachers_plans.html", school_plans=generation.all(), config=generation.meta)
 
 
 @app.route('/best-plan', methods=['GET'])

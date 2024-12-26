@@ -1,4 +1,4 @@
-{% from "macros/buttons.html" import Button, DeleteButton, InputButton %}
+{% from "macros/buttons.html" import Button, DeleteButton, EditButton, InputButton %}
 
 <div class="overflow-x-auto">
   <h2 class="text-lg font-bold mb-4">Przedmioty</h2>
@@ -22,12 +22,16 @@
         <th class="{{ table_style }} bg-gray-100">Actions</th>
       </tr>
       {% for subject in plans %}
+        {% set url = "/subject/" ~ group ~ "/" ~ subject["id"] %}
         <tr>
           <td class="{{ table_style }}">{{ subject["id"] }}</td>
           <td class="{{ table_style }}">{{ subject["name"] }}</td>
           <td class="{{ table_style }}">{{ subject["hours"] }}</td>
           <td class="{{ table_style }}">{% if subject["start_end"] %} Tak {% else %} Nie {% endif %}</td>
-          <td class="{{ table_style }}">{{ "buttons" }}</td>
+          <td class="{{ table_style }}">
+            {{ EditButton(url=url, target="#plan-target", text="Edytuj") }}
+            {{ DeleteButton(url=url, target="#plan-target", text="Usuń", confirm_text="Na pewno usunąć ten przedmiot?") }}
+          </td>
         </tr>
       {% endfor %}
     </table>

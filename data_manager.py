@@ -1,5 +1,3 @@
-from tokenize import group
-
 from evolutionary.config import MetaConfig
 
 
@@ -12,17 +10,24 @@ def new_teacher_id(config: MetaConfig):
             break
     return idx
 
-def find_teacher(idx, config: MetaConfig):
+def find_teacher(idx: int, config: MetaConfig):
     for t in config.teachers:
         if t["id"] == idx:
             return t
     return None
 
-def teacher_idx(idx, config: MetaConfig):
+def teacher_idx(idx: int, config: MetaConfig):
     for i in range(len(config.teachers)):
         if config.teachers[i]["id"] == idx:
             return i
     return None
+
+def teacher_occupied(teacher_id: int, mconfig: MetaConfig):
+    for group in mconfig.subjects.values():
+        for subject in group:
+            if teacher_id == subject["teacher_id"]:
+                return True
+    return False
 
 def new_subject_id(config: MetaConfig, group):
     idx = 1
@@ -33,13 +38,13 @@ def new_subject_id(config: MetaConfig, group):
             break
     return idx
 
-def find_subject(idx, config: MetaConfig, group):
+def find_subject(idx: int, config: MetaConfig, group):
     for s in config.subjects[group]:
         if s["id"] == idx:
             return s
     return None
 
-def subject_idx(idx, config: MetaConfig, group):
+def subject_idx(idx: int, config: MetaConfig, group):
     for i in range(len(config.subjects[group])):
         if config.subjects[group][i]["id"] == idx:
             return i

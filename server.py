@@ -1,7 +1,6 @@
 import base64
 import io
 import os
-from xxlimited_35 import error
 
 import matplotlib.pyplot as plt
 from flask import render_template, Flask, request
@@ -202,6 +201,8 @@ def teacher_mod(idx):
         mconfig.teachers[teacher_id]["name"] = teacher_name
     if request.method == 'DELETE':
         teacher_id = data_manager.teacher_idx(idx, mconfig)
+        if data_manager.teacher_occupied(idx, mconfig):
+            return render_template("teachers.html", teachers=mconfig.teachers)
         mconfig.teachers.pop(teacher_id)
     save_config(mconfig)
     config = Config(mconfig)
@@ -245,9 +246,9 @@ def new_subject(group):
         return render_template("forms/new_subject.html", group=group, teachers=mconfig.teachers)
     else:
         subject_name = request.form.get('s-name')
-        subject_hours = request.form.get('s-hours')
-        subject_teacher = request.form.get('s-teacher')
-        subject_start_end = request.form.get('s-sted')
+        subject_hours = int(request.form.get('s-hours'))
+        subject_teacher = int(request.form.get('s-teacher'))
+        subject_start_end = request.form.get('s-sted') == "on"
 
         mconfig.subjects[group].append({
             "id": data_manager.new_subject_id(mconfig, group),
@@ -260,7 +261,7 @@ def new_subject(group):
 
         save_config(mconfig)
         config = Config(mconfig)
-        return render_template("teachers.html", teachers=mconfig.teachers)
+        return render_template("subjects.html", subjects=mconfig.subjects)
 
 
 @app.route('/subject/<group>/<idx>', methods=['GET', 'PATCH', 'DELETE'])
@@ -269,13 +270,19 @@ def subject(group, idx):
     idx = int(idx)
 
     if request.method == 'GET':
-        return render_template("forms/edit_subject.html", group=group)
+        subject = data_manager.find_subject(idx, mconfig, group)
+        return render_template(
+            "forms/edit_subject.html",
+            group=group,
+            subject=subject,
+            teachers=mconfig.teachers
+        )
 
     elif request.method == 'PATCH':
         subject_name = request.form.get('s-name')
-        subject_hours = request.form.get('s-hours')
-        subject_teacher = request.form.get('s-teacher')
-        subject_start_end = request.form.get('s-sted')
+        subject_hours = int(request.form.get('s-hours'))
+        subject_teacher = int(request.form.get('s-teacher'))
+        subject_start_end = request.form.get('s-sted') == "on"
 
         subject_id = data_manager.subject_idx(idx, mconfig, group)
 

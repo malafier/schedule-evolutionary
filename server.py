@@ -62,10 +62,7 @@ def get_school_plan():
         stats = generation.statistics()
         scores.append((generation.gen_no, stats["max"], stats["avg"], stats["min"]))
 
-    if len(scores) > 1:
-        graph = generate_graph()
-    else:
-        graph = None
+    graph = generate_graph() if len(scores) > 1 else None
 
     return render_template(
         "main.html",

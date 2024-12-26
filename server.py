@@ -47,6 +47,13 @@ def generate_graph():
     return 'data:image/png;base64,{}'.format(plot_url)
 
 
+def reset_and_save_config():
+    global mconfig, config
+    del config
+    config = Config(mconfig)
+    save_config(mconfig)
+
+
 @app.after_request
 def add_cache_control_headers(response):
     response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
@@ -180,8 +187,7 @@ def teacher():
         mconfig.teachers.append({"id": data_manager.new_teacher_id(mconfig), "name": teacher_name})
         mconfig.teachers.sort(key=lambda x: x["id"])
 
-        save_config(mconfig)
-        config = Config(mconfig)
+        reset_and_save_config()
         return render_template("teachers.html", teachers=mconfig.teachers)
 
 
@@ -195,17 +201,19 @@ def teacher_mod(idx):
         if teacher is None:
             return render_template("teachers.html", teachers=mconfig.teachers)
         return render_template("forms/edit_teacher.html", teacher=teacher)
+
     if request.method == 'PATCH':
         teacher_name = request.form.get('t-name')
         teacher_id = data_manager.teacher_idx(idx, mconfig)
         mconfig.teachers[teacher_id]["name"] = teacher_name
+
     if request.method == 'DELETE':
         teacher_id = data_manager.teacher_idx(idx, mconfig)
         if data_manager.teacher_occupied(idx, mconfig):
             return render_template("teachers.html", teachers=mconfig.teachers)
         mconfig.teachers.pop(teacher_id)
-    save_config(mconfig)
-    config = Config(mconfig)
+
+    reset_and_save_config()
     return render_template("teachers.html", teachers=mconfig.teachers)
 
 
@@ -216,8 +224,7 @@ def add_group():
     if group_name not in mconfig.subjects.keys():
         mconfig.subjects[group_name] = []
 
-    save_config(mconfig)
-    config = Config(mconfig)
+    reset_and_save_config()
     return render_template("subjects.html", subjects=mconfig.subjects)
 
 
@@ -227,9 +234,7 @@ def delete_group(name):
     if name in mconfig.subjects.keys():
         mconfig.subjects.pop(name)
 
-    save_config(mconfig)
-    del config
-    config = Config(mconfig)
+    reset_and_save_config()
     return render_template("subjects.html", subjects=mconfig.subjects)
 
 
@@ -259,8 +264,7 @@ def new_subject(group):
         })
         mconfig.subjects[group].sort(key=lambda x: x["id"])
 
-        save_config(mconfig)
-        config = Config(mconfig)
+        reset_and_save_config()
         return render_template("subjects.html", subjects=mconfig.subjects)
 
 
@@ -294,8 +298,8 @@ def subject(group, idx):
     else:
         subject_id = data_manager.subject_idx(idx, mconfig, group)
         mconfig.subjects[group].pop(subject_id)
-    save_config(mconfig)
-    config = Config(mconfig)
+
+    reset_and_save_config()
     return render_template("subjects.html", subjects=mconfig.subjects)
 
 

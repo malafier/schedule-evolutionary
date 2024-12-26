@@ -26,7 +26,7 @@
           <td class="{{ table_style }}">{{ subject["id"] }}</td>
           <td class="{{ table_style }}">{{ subject["name"] }}</td>
           <td class="{{ table_style }}">{{ subject["hours"] }}</td>
-          <td class="{{ table_style }}">{{ subject["start_end"] }}</td>
+          <td class="{{ table_style }}">{% if subject["start_end"] %} Tak {% else %} Nie {% endif %}</td>
           <td class="{{ table_style }}">{{ "buttons" }}</td>
         </tr>
       {% endfor %}

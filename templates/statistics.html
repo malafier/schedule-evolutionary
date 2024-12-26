@@ -1,9 +1,9 @@
 {% block statistics %}
   <div class="bg-white border-blue-500 border-2 shadow-md rounded px-8 pt-6 pb-8 mb-4">
-    <h4 class="text-lg font-bold mb-4">Generacja {{ score[0] }}</h4>
-    <p>Wynik maksymalny: {{ score[1]|round(5) }}</p>
-    <p>Wynik średni: {{ score[2]|round(5) }}</p>
-    <p>Wynik minimalny: {{ score[3]|round(5) }}</p>
+    <h4 class="text-lg font-bold mb-4">Generacja {{ score["gen"] }}</h4>
+    <p>Wynik maksymalny: {{ score["max"]|round(5) }}</p>
+    <p>Wynik średni: {{ score["avg"]|round(5) }}</p>
+    <p>Wynik minimalny: {{ score["min"]|round(5) }}</p>
 
     {% if graph %}
       <h5 class="text-lg font-bold mb-4">Graf</h5>

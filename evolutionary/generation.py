@@ -38,6 +38,7 @@ class Generation:
 
     def statistics(self) -> dict:
         return {
+            "gen": self.gen_no,
             "max": self.best_plan().fitness,
             "avg": sum([plan.fitness for plan in self.population]) / self.size,
             "min": self.worst_plan().fitness

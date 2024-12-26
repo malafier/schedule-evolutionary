@@ -14,6 +14,8 @@ from state_manager import load_state, new_state, save_plans, save_config
 templates_dir = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'templates')
 app = Flask(__name__, template_folder=templates_dir)
 
+SAMPLING = 25
+
 generation: Generation
 config: Config
 mconfig: MetaConfig
@@ -23,10 +25,10 @@ generation, config, mconfig, scores = load_state()
 
 def generate_graph():
     global scores
-    x = [s[0] for s in scores]
-    y_max = [s[1] for s in scores]
-    y_avg = [s[2] for s in scores]
-    y_min = [s[3] for s in scores]
+    x = [s["gen"] for s in scores]
+    y_max = [s["max"] for s in scores]
+    y_avg = [s["avg"] for s in scores]
+    y_min = [s["min"] for s in scores]
     plt.figure(figsize=(10, 5))
     plt.plot(x, y_min, label='Min')
     plt.plot(x, y_avg, label='Avg')
@@ -34,7 +36,7 @@ def generate_graph():
     plt.ylabel('Przystosowanie')
     plt.xlabel('Generacje')
     plt.legend()
-    # plt.title('Scores over generations')
+    plt.title('Przystosowanie przez generacje')
 
     img = io.BytesIO()
     plt.savefig(img, format='png')
@@ -59,8 +61,8 @@ def get_school_plan():
 
     if generation.gen_no == 0 and len(scores) < 1:
         generation.evaluate()
-        stats = generation.statistics()
-        scores.append((generation.gen_no, stats["max"], stats["avg"], stats["min"]))
+        scores.append(generation.statistics())
+        save_plans(generation, scores)
 
     graph = generate_graph() if len(scores) > 1 else None
 
@@ -80,10 +82,9 @@ def regenerate_plan():
     scores = []
 
     generation.evaluate()
-    stats = generation.statistics()
-    scores.append((generation.gen_no, stats["max"], stats["avg"], stats["min"]))
+    scores.append(generation.statistics())
 
-    save_plans(generation, stats)
+    save_plans(generation, scores)
     return render_template("statistics.html", score=scores[-1])
 
 
@@ -98,13 +99,11 @@ def next_n_gens():
         generation.next_gen()
         generation.evaluate()
 
-        if generation.gen_no % 25 == 0:
-            stats = generation.statistics()
-            scores.append((generation.gen_no, stats["max"], stats["avg"], stats["min"]))
-            generation.evaluate()
-    if generation.gen_no % 25 != 0:
-        stats = generation.statistics()
-        scores.append((generation.gen_no, stats["max"], stats["avg"], stats["min"]))
+        if generation.gen_no % SAMPLING == 0:
+            scores.append(generation.statistics())
+    if generation.gen_no % SAMPLING != 0:
+        generation.evaluate()
+        scores.append(generation.statistics())
 
     graph = generate_graph()
     save_plans(generation, scores)
@@ -150,9 +149,7 @@ def alter_configuration():
     config = Config(mconfig)
     generation = Generation(config, mconfig)
     generation.evaluate()
-    scores.clear()
-    stats = generation.statistics()
-    scores.append((generation.gen_no, stats["max"], stats["avg"], stats["min"]))
+    scores = [generation.statistics()]
 
     return render_template("config_input.html", config=config)
 
@@ -241,7 +238,7 @@ def subjects():
 @app.route('/subject/<group>', methods=['GET', 'POST'])
 def new_subject(group):  # TODO
     global mconfig
-    if request.method == 'GET':  # form
+    if request.method == 'GET':
         return render_template("forms/new_subject.html", group=group, teachers=mconfig.teachers)
     else:  # new
         pass

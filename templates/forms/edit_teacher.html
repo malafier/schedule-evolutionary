@@ -5,6 +5,6 @@
 <form>
   {{ TxtInput("t-name", "Imię i nazwisko nauczyciela", teacher["name"]) }}
 
-  {% set url = "/teacher/{{ teacher['id'] }}" %}
+  {% set url = "/teacher/" ~ teacher['id'] %}
   {{ PatchButton(url=url, target="#plan-target", text="Zapisz") }}
 </form>

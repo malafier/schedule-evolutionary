@@ -1,11 +1,12 @@
 import base64
 import io
 import os
+from xxlimited_35 import error
 
 import matplotlib.pyplot as plt
 from flask import render_template, Flask, request
 
-from data_manager import new_teacher_id, find_teacher, teacher_idx
+import data_manager
 from evolutionary.config import Config, MetaConfig
 from evolutionary.generation import Generation
 from evolutionary.selection import ChampionSelection, RouletteSelection
@@ -14,7 +15,7 @@ from state_manager import load_state, new_state, save_plans, save_config
 templates_dir = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'templates')
 app = Flask(__name__, template_folder=templates_dir)
 
-SAMPLING = 25
+SAMPLING_INTERVAL = 25
 
 generation: Generation
 config: Config
@@ -99,9 +100,9 @@ def next_n_gens():
         generation.next_gen()
         generation.evaluate()
 
-        if generation.gen_no % SAMPLING == 0:
+        if generation.gen_no % SAMPLING_INTERVAL == 0:
             scores.append(generation.statistics())
-    if generation.gen_no % SAMPLING != 0:
+    if generation.gen_no % SAMPLING_INTERVAL != 0:
         generation.evaluate()
         scores.append(generation.statistics())
 
@@ -177,7 +178,7 @@ def teacher():
     else:
         global mconfig, config
         teacher_name = request.form.get('t-name')
-        mconfig.teachers.append({"id": new_teacher_id(mconfig), "name": teacher_name})
+        mconfig.teachers.append({"id": data_manager.new_teacher_id(mconfig), "name": teacher_name})
         mconfig.teachers.sort(key=lambda x: x["id"])
 
         save_config(mconfig)
@@ -188,17 +189,19 @@ def teacher():
 @app.route('/teacher/<idx>', methods=['GET', 'PATCH', 'DELETE'])
 def teacher_mod(idx):
     global mconfig, config
+    idx = int(idx)
+
     if request.method == 'GET':
-        teacher = find_teacher(idx, mconfig)
+        teacher = data_manager.find_teacher(idx, mconfig)
         if teacher is None:
             return render_template("teachers.html", teachers=mconfig.teachers)
         return render_template("forms/edit_teacher.html", teacher=teacher)
     if request.method == 'PATCH':
         teacher_name = request.form.get('t-name')
-        teacher_id = teacher_idx(idx, mconfig)
+        teacher_id = data_manager.teacher_idx(idx, mconfig)
         mconfig.teachers[teacher_id]["name"] = teacher_name
     if request.method == 'DELETE':
-        teacher_id = teacher_idx(idx, mconfig)
+        teacher_id = data_manager.teacher_idx(idx, mconfig)
         mconfig.teachers.pop(teacher_id)
     save_config(mconfig)
     config = Config(mconfig)
@@ -236,22 +239,57 @@ def subjects():
 
 
 @app.route('/subject/<group>', methods=['GET', 'POST'])
-def new_subject(group):  # TODO
-    global mconfig
+def new_subject(group):
+    global mconfig, config
     if request.method == 'GET':
         return render_template("forms/new_subject.html", group=group, teachers=mconfig.teachers)
-    else:  # new
-        pass
+    else:
+        subject_name = request.form.get('s-name')
+        subject_hours = request.form.get('s-hours')
+        subject_teacher = request.form.get('s-teacher')
+        subject_start_end = request.form.get('s-sted')
+
+        mconfig.subjects[group].append({
+            "id": data_manager.new_subject_id(mconfig, group),
+            "name": subject_name,
+            "hours": subject_hours,
+            "teacher_id": subject_teacher,
+            "start_end": subject_start_end
+        })
+        mconfig.subjects[group].sort(key=lambda x: x["id"])
+
+        save_config(mconfig)
+        config = Config(mconfig)
+        return render_template("teachers.html", teachers=mconfig.teachers)
 
 
 @app.route('/subject/<group>/<idx>', methods=['GET', 'PATCH', 'DELETE'])
-def subject(group, idx):  # TODO
+def subject(group, idx):
+    global mconfig, config
+    idx = int(idx)
+
     if request.method == 'GET':
         return render_template("forms/edit_subject.html", group=group)
+
     elif request.method == 'PATCH':
-        pass
+        subject_name = request.form.get('s-name')
+        subject_hours = request.form.get('s-hours')
+        subject_teacher = request.form.get('s-teacher')
+        subject_start_end = request.form.get('s-sted')
+
+        subject_id = data_manager.subject_idx(idx, mconfig, group)
+
+        mconfig.subjects[group][subject_id]["name"] = subject_name
+        mconfig.subjects[group][subject_id]["hours"] = subject_hours
+        mconfig.subjects[group][subject_id]["teacher_id"] = subject_teacher
+        mconfig.subjects[group][subject_id]["start_end"] = subject_start_end
+
     else:
-        pass
+        subject_id = data_manager.subject_idx(idx, mconfig, group)
+        mconfig.subjects[group].pop(subject_id)
+    save_config(mconfig)
+    config = Config(mconfig)
+    return render_template("subjects.html", subjects=mconfig.subjects)
 
 
 if __name__ == '__main__':

@@ -1,4 +1,4 @@
-{% from "macros/buttons.html" import Button %}
+{% from "macros/buttons.html" import Button, DeleteButton, EditButton %}
 
 <div class="overflow-x-auto">
 
@@ -14,10 +14,15 @@
       <th class="{{ table_style }} bg-gray-100">Akcje</th>
     </tr>
     {% for teacher in teachers %}
+      {% set url = "/teacher/" ~ teacher["id"] %}
+
       <tr>
         <td class="{{ table_style }}">{{ teacher["id"] }}</td>
         <td class="{{ table_style }}">{{ teacher["name"] }}</td>
-        <td class="{{ table_style }}">{{ "buttons" }}</td>
+        <td class="{{ table_style }}">
+          {{ EditButton(url=url, target="#plan-target", text="Edytuj") }}
+          {{ DeleteButton(url=url, target="#plan-target", text="Usuń", confirm_text="Na pewno usunąć tego nauczyciela?") }}
+        </td>
       </tr>
     {% endfor %}
   </table>

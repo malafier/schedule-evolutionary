@@ -19,36 +19,39 @@ def get_default_config() -> MetaConfig:
     return MetaConfig(
         population_size=100,
         selection=RouletteSelection(),
+        c=2.0,
+        k=5,
         teachers=json.load(tf),
         subjects=json.load(sf),
     )
 
 
-def save_config(config: MetaConfig):
+def save_mconfig(mconfig: MetaConfig):
     sf = open(DATA_DIR + SUBJECTS, "w")
     tf = open(DATA_DIR + TEACHERS, "w")
     of = open(DATA_DIR + OTHER_CONFIG, "w")
 
-    sf.write(json.dumps(config.subjects))
-    tf.write(json.dumps(config.teachers))
+    sf.write(json.dumps(mconfig.subjects))
+    tf.write(json.dumps(mconfig.teachers))
     of.write(json.dumps({
-        "size": config.population_size,
-        "eval": config.eval.__dict__,
-        "cross": config.cross.__dict__,
-        "elitism": config.elitism,
-        "selection": config.selection_strategy.__class__.__name__,
-        "s": config.C
+        "size": mconfig.population_size,
+        "eval": mconfig.eval.__dict__,
+        "cross": mconfig.cross.__dict__,
+        "elitism": mconfig.elitism,
+        "selection": mconfig.selection_strategy.__class__.__name__,
+        "c": mconfig.C,
+        "k": mconfig.k
     }))
 
 
-def load_config() -> MetaConfig:
+def load_mconfig() -> MetaConfig:
     try:
         sf = open(DATA_DIR + SUBJECTS, "r")
         tf = open(DATA_DIR + TEACHERS, "r")
         of = open(DATA_DIR + OTHER_CONFIG, "r")
     except FileNotFoundError:
         config = get_default_config()
-        save_config(config)
+        save_mconfig(config)
         return config
 
     other_config = json.load(of)
@@ -71,7 +74,8 @@ def load_config() -> MetaConfig:
         ),
         elitism=other_config["elitism"],
         selection=other_config["selection"],
-        c=other_config["s"],
+        c=other_config["c"],
+        k=other_config["k"],
         teachers=json.load(tf),
         subjects=json.load(sf),
     )
@@ -93,7 +97,7 @@ def load_plans() -> (list[SchoolPlan], list, int):
         pf = open(DATA_DIR + PLANS, "r")
         stf = open(DATA_DIR + STATS, "r")
     except FileNotFoundError:
-        mconfig = load_config()
+        mconfig = load_mconfig()
         gen = Generation(Config(mconfig), mconfig)
         save_plans(gen, [])
         return gen.population, [], 0
@@ -108,7 +112,7 @@ def load_plans() -> (list[SchoolPlan], list, int):
 
 
 def load_state() -> (Generation, Config, MetaConfig, list):
-    mconfig = load_config()
+    mconfig = load_mconfig()
     config = Config(mconfig)
     plans, stats, gen_no = load_plans()
 
@@ -123,7 +127,7 @@ def load_state() -> (Generation, Config, MetaConfig, list):
 
 
 def new_state() -> (Generation, Config, MetaConfig):
-    mconfig = load_config()
+    mconfig = load_mconfig()
     config = Config(mconfig)
     gen = Generation(config, mconfig)
 

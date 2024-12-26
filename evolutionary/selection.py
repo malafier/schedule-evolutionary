@@ -32,8 +32,8 @@ class ChampionSelection(SelectionStrategy):
         if random.random() < config.cross.crossover_rate:
             return None, None
 
-        arena1 = random.choices(parents, k=config.C)
-        arena2 = random.choices(parents, k=config.C)
+        arena1 = random.choices(parents, k=config.k)
+        arena2 = random.choices(parents, k=config.k)
 
         return (
             max(arena1, key=lambda x: x.fitness),

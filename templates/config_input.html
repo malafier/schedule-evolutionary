@@ -22,6 +22,10 @@
         </option>
       </select>
     </div>
+
+  {{ NumInput("c", "Zmianna C (metoda rulety)", config.C) }}
+  {{ NumInput("k", "Zmienna k (metoda turniejowa)", config.k) }}
+
     <div class="mb-4 flex items-center">
       <label for="elitism" class="block text-gray-700 text-sm font-bold mr-2">Elityzm</label>
       <input type="checkbox" id="elitism" name="elitism"

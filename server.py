@@ -9,7 +9,7 @@ import data_manager
 from evolutionary.config import Config, MetaConfig
 from evolutionary.generation import Generation
 from evolutionary.selection import ChampionSelection, RouletteSelection
-from state_manager import load_state, new_state, save_plans, save_config
+from state_manager import load_state, new_state, save_plans, save_mconfig
 
 templates_dir = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'templates')
 app = Flask(__name__, template_folder=templates_dir)
@@ -48,10 +48,16 @@ def generate_graph():
 
 
 def reset_and_save_config():
-    global mconfig, config
+    global mconfig, config, generation, scores
     del config
     config = Config(mconfig)
-    save_config(mconfig)
+    save_mconfig(mconfig)
+
+    generation = Generation(config, mconfig)
+    generation.evaluate()
+    scores = [generation.statistics()]
+
+    save_plans(generation, scores)
 
 
 @app.after_request
@@ -126,7 +132,7 @@ def show_plan():
 
 
 @app.route('/config', methods=['POST'])
-def alter_configuration():
+def alter_configuration():                          # TODO: hourly weights
     global generation, mconfig, config, scores
 
     mconfig.population_size = int(request.form.get('population_size'))
@@ -137,6 +143,9 @@ def alter_configuration():
 
     mconfig.selection_strategy = RouletteSelection() \
         if request.form.get('selection_strategy') == 'roulette' else ChampionSelection()
+
+    mconfig.C = float(request.form.get("c"))
+    mconfig.k = int(request.form.get("k"))
 
     mconfig.eval \
         .basic_importance(float(request.form.get('imp_basic'))) \
@@ -152,6 +161,8 @@ def alter_configuration():
     generation.evaluate()
     scores = [generation.statistics()]
 
+    save_mconfig(mconfig)
+    save_plans(generation, scores)
     return render_template("config_input.html", config=config)
 
 

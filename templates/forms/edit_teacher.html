@@ -1,0 +1,10 @@
+{% from "macros/input_fields.html" import TxtInput %}
+{% from "macros/buttons.html" import PatchButton %}
+
+<h3>Nowy nauczyciel</h3>
+<form>
+  {{ TxtInput("t-name", "Imię i nazwisko nauczyciela", teacher["name"]) }}
+
+  {% set url = "/teacher/{{ teacher['id'] }}" %}
+  {{ PatchButton(url=url, target="#plan-target", text="Zapisz") }}
+</form>

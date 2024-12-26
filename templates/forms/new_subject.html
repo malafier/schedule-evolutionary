@@ -1,0 +1,30 @@
+{% from "macros/buttons.html" import Button, PatchButton, PostButton %}
+{% from "macros/input_fields.html" import TxtInput, NumInput %}
+
+<h3>Nowy przedmiot dla klasy {{ group }}</h3>
+<form>
+  {{ TxtInput("s-name", "Nazwa", None) }}
+
+  {{ NumInput("s-hours", "Liczba godzin", None) }}
+
+  <div>
+    <label for="s-teacher" class="block text-gray-700 text-sm font-bold mr-2">Nauczyciel</label>
+    <select id="s-teacher" name="s-teacher"
+            class="shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+      {% for t in teachers %}
+        <option value="{{ t['id'] }}">{{ t['name'] }}</option>
+      {% endfor %}
+    </select>
+  </div>
+
+  <div class="mb-4 flex items-center">
+    <label for="s-sted" class="block text-gray-700 text-sm font-bold mr-2">Czy przedmiot powinien być na
+      początku/końcu dnia?</label>
+    <input type="checkbox" id="s-sted" name="s-sted"
+           class="form-checkbox h-5 w-5 text-blue-600"
+    >
+  </div>
+
+  {% set url = "/subject/" ~ group %}
+  {{ PostButton(url=url, target="#plan-target", text="Dodaj") }}
+</form>

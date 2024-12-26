@@ -1,0 +1,9 @@
+{% from "macros/input_fields.html" import TxtInput %}
+{% from "macros/buttons.html" import PostButton %}
+
+<h3>Nowy nauczyciel</h3>
+<form>
+  {{ TxtInput("t-name", "Imię i nazwisko nauczyciela", None) }}
+
+  {{ PostButton(url="/teacher", target="#plan-target", text="Dodaj") }}
+</form>

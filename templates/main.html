@@ -5,6 +5,7 @@
   <meta charset="utf-8">
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/htmx.org@1.9.11"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <style>
       /* Custom CSS to remove number input arrows */
       input[type=number]::-webkit-outer-spin-button,
@@ -66,13 +67,32 @@
     </div>
   </div>
 
-  <div id="plan-target" class="flex-1"></div>
+  <div id="plan-target" class="flex-1 m-4"></div>
 </div>
 
 <script>
+    // Collapsing config
     let config = document.getElementById("config");
     document.getElementById("config_btn").addEventListener("click", () => {
         config.style.display = config.style.display === "none" ? "block" : "none";
+    });
+
+    // Confirmation for deleting
+    // example from https://htmx.org/examples/confirm/
+    document.addEventListener("htmx:confirm", function (e) {
+        if (!e.detail.target.hasAttribute('hx-confirm')) return;
+
+        e.preventDefault()
+
+        Swal.fire({
+            title: "Usunąć?",
+            text: `${e.detail.question}`
+        }).then(function (result) {
+            if (result.isConfirmed) {
+                // If the user confirms, we manually issue the request
+                e.detail.issueRequest(true); // true to skip the built-in window.confirm()
+            }
+        });
     });
 </script>
 </body>

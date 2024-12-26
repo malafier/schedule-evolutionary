@@ -31,10 +31,10 @@ def generate_graph():
     plt.plot(x, y_min, label='Min')
     plt.plot(x, y_avg, label='Avg')
     plt.plot(x, y_max, label='Max')
-    plt.ylabel('Score')
-    plt.xlabel('Generation')
+    plt.ylabel('Przystosowanie')
+    plt.xlabel('Generacje')
     plt.legend()
-    plt.title('Scores over generations')
+    # plt.title('Scores over generations')
 
     img = io.BytesIO()
     plt.savefig(img, format='png')
@@ -57,10 +57,9 @@ def add_cache_control_headers(response):
 def get_school_plan():
     global generation, scores, config
 
-    if generation.gen_no == 0:
+    if generation.gen_no == 0 and len(scores) < 1:
         generation.evaluate()
         stats = generation.statistics()
-        print(scores)
         scores.append((generation.gen_no, stats["max"], stats["avg"], stats["min"]))
 
     if len(scores) > 1:
@@ -180,7 +179,7 @@ def teachers():
 @app.route('/teacher', methods=['GET', 'POST'])
 def teacher():
     if request.method == 'GET':
-        return render_template("teacher.html")
+        return render_template("forms/new_teacher.html")
     else:
         global mconfig, config
         teacher_name = request.form.get('t-name')
@@ -199,7 +198,7 @@ def teacher_mod(idx):
         teacher = find_teacher(idx, mconfig)
         if teacher is None:
             return render_template("teachers.html", teachers=mconfig.teachers)
-        return render_template("teacher.html", teacher=teacher)
+        return render_template("forms/edit_teacher.html", teacher=teacher)
     if request.method == 'PATCH':
         teacher_name = request.form.get('t-name')
         teacher_id = teacher_idx(idx, mconfig)
@@ -244,8 +243,9 @@ def subjects():
 
 @app.route('/subject/<group>', methods=['GET', 'POST'])
 def new_subject(group):  # TODO
+    global mconfig
     if request.method == 'GET':  # form
-        return render_template("subject.html", group=group)
+        return render_template("forms/new_subject.html", group=group, teachers=mconfig.teachers)
     else:  # new
         pass
 
@@ -253,7 +253,7 @@ def new_subject(group):  # TODO
 @app.route('/subject/<group>/<idx>', methods=['GET', 'PATCH', 'DELETE'])
 def subject(group, idx):  # TODO
     if request.method == 'GET':
-        return render_template("subject.html", group=group)
+        return render_template("forms/edit_subject.html", group=group)
     elif request.method == 'PATCH':
         pass
     else:

@@ -7,7 +7,7 @@ from evolutionary.config import MetaConfig, Config, EvaluationCriteria, CrossPar
 from evolutionary.generation import Generation
 from evolutionary.selection import RouletteSelection, TournamentSelection
 
-NO_GENERATIONS = 2_000  # Number of generations algorithm should go through
+NO_GENERATIONS = 1_000  # Number of generations algorithm should go through
 SAMPLING_INTERVAL = 25
 
 # Loading data sets

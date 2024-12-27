@@ -8,7 +8,7 @@ from flask import render_template, Flask, request
 import data_manager
 from evolutionary.config import Config, MetaConfig
 from evolutionary.generation import Generation
-from evolutionary.selection import ChampionSelection, RouletteSelection
+from evolutionary.selection import TournamentSelection, RouletteSelection
 from state_manager import load_state, new_state, save_plans, save_mconfig
 
 templates_dir = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'templates')
@@ -142,7 +142,7 @@ def alter_configuration():
         .mutation(float(request.form.get('mutation')))
 
     mconfig.selection_strategy = RouletteSelection() \
-        if request.form.get('selection_strategy') == 'roulette' else ChampionSelection()
+        if request.form.get('selection_strategy') == 'roulette' else TournamentSelection()
 
     mconfig.C = float(request.form.get("c"))
     mconfig.k = int(request.form.get("k"))

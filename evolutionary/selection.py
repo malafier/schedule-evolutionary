@@ -27,7 +27,7 @@ class RouletteSelection(SelectionStrategy):
         return "RouletteSelection"
 
 
-class ChampionSelection(SelectionStrategy):
+class TournamentSelection(SelectionStrategy):
     def select(self, parents: list[SchoolPlan], config: Config) -> (SchoolPlan, SchoolPlan):
         if random.random() < config.cross.crossover_rate:
             return None, None
@@ -41,4 +41,4 @@ class ChampionSelection(SelectionStrategy):
         )
 
     def __name__(self):
-        return "ChampionSelection"
+        return "TournamentSelection"

@@ -37,7 +37,7 @@ def run_engine(gen: Generation) -> list[dict]:
 
         if gen.gen_no % 50 == 0:
             stats.append(gen.statistics())
-            print(gen.gen_no) # FIXME: delete when ok
+            # print(gen.gen_no, stats[-1]) # FIXME: delete when ok
     return stats
 
 

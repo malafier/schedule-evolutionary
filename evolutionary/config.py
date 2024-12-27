@@ -29,15 +29,15 @@ class CrossParams:
 class EvaluationCriteria:
     def __init__(self,
                  hours_weight=None,
-                 basic_importance: float = 1,
-                 blank_lessons_importance: float = 1,
-                 hours_per_day_importance: float = 1,
-                 max_subject_hours_per_day_importance: float = 1,
-                 subject_block_importance: float = 1,
-                 teacher_block_importance: float = 1,
-                 subject_at_end_or_start_importance: float = 1):
+                 basic_importance: float = 1.0,
+                 blank_lessons_importance: float = 1.0,
+                 hours_per_day_importance: float = 1.0,
+                 max_subject_hours_per_day_importance: float = 1.0,
+                 subject_block_importance: float = 1.0,
+                 teacher_block_importance: float = 1.0,
+                 subject_at_end_or_start_importance: float = 1.0):
         if hours_weight is None:
-            hours_weight = [1, 1, 1, 1, 1, 0.5, 0.1, -1]
+            hours_weight = [1.0, 1.0, 1.0, 1.0, 1.0, 0.5, 0.1, -1.0]
         self.hours_weight: list = hours_weight
         self.basic_imp: float = basic_importance
         self.gap_imp: float = blank_lessons_importance
@@ -85,7 +85,8 @@ class MetaConfig:
                  teachers: list,
                  subjects: dict,
                  selection,
-                 c: float = 5,
+                 c: float = 2.0,
+                 k: int = 5,
                  elitism: bool = True,
                  population_size: int = 100,
                  eval_criteria: EvaluationCriteria = EvaluationCriteria(),
@@ -97,7 +98,8 @@ class MetaConfig:
         self.selection_strategy = selection
         self.eval: EvaluationCriteria = eval_criteria
         self.cross: CrossParams = cross_params
-        self.C: int | float = c
+        self.C: float = c
+        self.k: int = k
         self.group_to_id = {i: group for i, group in enumerate(subjects.keys())}
 
 
@@ -109,6 +111,7 @@ class Config:
         self.selection_strategy = config.selection_strategy
         self.eval = config.eval
         self.cross = config.cross
+        self.k = config.k
         self.C = config.C
 
         self.teachers: list = config.teachers

@@ -1,9 +1,11 @@
-{% from "macros/buttons.html" import PostButton %}
+{% from "macros/buttons.html" import PatchButton %}
 {% from "macros/input_fields.html" import NumInput %}
 
 {% block config %}
   <form class="bg-white border-blue-500 border-2 shadow-md rounded px-8 pt-6 pb-8 mb-4">
     <h4 class="text-xl font-bold mb-4">Konfiguracja</h4>
+
+    <h6 class="text-lg font-bold mb-4">Ustawienia ogólne</h6>
     {{ NumInput("population_size", "Rozmiar populacji", config.population_size) }}
     {{ NumInput("mutation", "Mutacja", config.cross.crossover_rate) }}
     {{ NumInput("crossover", "Krzyżowanie", config.cross.mutation_rate) }}
@@ -22,6 +24,10 @@
         </option>
       </select>
     </div>
+
+    {{ NumInput("c", "Zmianna C (metoda rulety)", config.C) }}
+    {{ NumInput("k", "Zmienna k (metoda turniejowa)", config.k) }}
+
     <div class="mb-4 flex items-center">
       <label for="elitism" class="block text-gray-700 text-sm font-bold mr-2">Elityzm</label>
       <input type="checkbox" id="elitism" name="elitism"
@@ -38,7 +44,14 @@
     {{ NumInput("imp_teacher_block", "Współczynnik wpływu planu nauczycieli", config.eval.teach_block_imp) }}
     {{ NumInput("imp_start_end_day_subject", "Współczynnik wpływu przedmiotów na początek/koniec dnia", config.eval.subj_end_start_imp) }}
 
+    <h6 class="text-lg font-bold mb-4">Ocena godzin</h6>
+    {% for i in range(8) %}
+      {% set id = i %}
+      {% set text = "Preferencja " ~ (i+1) ~ "-tej godziny lekcyjnej" %}
+      {{ NumInput(id, text, config.eval.hours_weight[i]) }}
+    {% endfor %}
 
-    {{ PostButton(url="/config", target="#config", text="Zapisz") }}
+
+    {{ PatchButton(url="/config", target="#config", text="Zapisz") }}
   </form>
 {% endblock %}

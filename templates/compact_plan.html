@@ -1,0 +1,50 @@
+{% macro plan_cell(lesson, teachers, subjects) %}
+  {% set teacher_name = teachers | selectattr("id", "equalto", lesson.teacher_id) | map(attribute="name") | first %}
+  {% set subject_name = subjects | selectattr("id", "equalto", lesson.subject_id) | map(attribute="name") | first | truncate(7, True, '', 0) %}
+  <div class="flex flex-col justify-between items-center">
+    <div class="text-sm">{{ subject_name }}</div>
+    <div class="text-sm">{{ teacher_name }}</div>
+  </div>
+{% endmacro %}
+
+
+{% block plan %}
+  <h2 class="text-lg font-bold mb-4">Plan szkolny</h2>
+
+  {% set teachers = config.teachers %}
+  {% set subjects = config.subjects %}
+
+  <div class="overflow-x-auto">
+    {% set table_style = "px-2 py-1 border border-gray-300 w-[50px] h-[30px]" %}
+    {% set day_cell_style = "px-1 py-1 border border-gray-300 w-[20px] h-[30px]" %}
+    {% set rotated_text_style = "rotate-90 transform text-sm" %}
+    {% set thick_border_style = "border-t-4 border-gray-500" %}
+
+    <table class="border-collapse border border-gray-300">
+      <tr>
+        <th colspan="2" class="{{ table_style }} bg-gray-100">Dzień</th>
+        {% for class_name in school_plan.keys() %}
+          <th class="{{ table_style }} bg-gray-100">{{ class_name }}</th>
+        {% endfor %}
+      </tr>
+
+      {% for day in [("Poniedziałek", "Monday"), ("Wtorek", "Tuesday"), ("Środa", "Wednesday"), ("Czwartek", "Thursday"), ("Piątek", "Friday")] %}
+        <tr>
+          <th rowspan="9" class="{{ day_cell_style }} bg-gray-100 {{ thick_border_style }}">
+            <div class="{{ rotated_text_style }}">{{ day[0] }}</div>
+          </th>
+        </tr>
+
+        {% for i in range(8) %}
+          <tr {% if i == 0 %} class="{{ thick_border_style }}" {% endif %}>
+            <td class="{{ table_style }} bg-gray-100">{{ i + 1 }}</td>
+
+            {% for class_name in school_plan.keys() %}
+              <td class="{{ table_style }}">{{ plan_cell(school_plan[class_name][day[1]][i],    teachers, subjects[class_name]) }}</td>
+            {% endfor %}
+          </tr>
+        {% endfor %}
+      {% endfor %}
+    </table>
+  </div>
+{% endblock %}

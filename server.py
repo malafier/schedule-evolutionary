@@ -131,6 +131,14 @@ def show_plan():
     return render_template("plan.html", school_plan=school_plan, config=generation.meta)
 
 
+@app.route('/compact-plan', methods=['GET'])
+def show_compact_plan():
+    global generation
+    school_plan: dict = generation.best_plan().as_dict(generation.config, generation.meta)
+
+    return render_template("compact_plan.html", school_plan=school_plan, config=generation.meta)
+
+
 @app.route('/config', methods=['PATCH'])
 def alter_configuration():
     global generation, mconfig, config, scores

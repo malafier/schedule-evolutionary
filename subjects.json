@@ -902,7 +902,7 @@
     },
     {
       "id": 13,
-      "name": "Dor. Zawodowe",
+      "name": "D. Zawodowe",
       "hours": 1,
       "teacher_id": 5,
       "start_end": false
@@ -1016,7 +1016,7 @@
     },
     {
       "id": 13,
-      "name": "Dor. Zawodowe",
+      "name": "D. Zawodowe",
       "hours": 1,
       "teacher_id": 53,
       "start_end": false
@@ -1130,7 +1130,7 @@
     },
     {
       "id": 13,
-      "name": "Dor. Zawodowe",
+      "name": "D. Zawodowe",
       "hours": 1,
       "teacher_id": 53,
       "start_end": false

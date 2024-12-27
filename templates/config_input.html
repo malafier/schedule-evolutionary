@@ -4,6 +4,8 @@
 {% block config %}
   <form class="bg-white border-blue-500 border-2 shadow-md rounded px-8 pt-6 pb-8 mb-4">
     <h4 class="text-xl font-bold mb-4">Konfiguracja</h4>
+
+    <h6 class="text-lg font-bold mb-4">Ustawienia ogólne</h6>
     {{ NumInput("population_size", "Rozmiar populacji", config.population_size) }}
     {{ NumInput("mutation", "Mutacja", config.cross.crossover_rate) }}
     {{ NumInput("crossover", "Krzyżowanie", config.cross.mutation_rate) }}
@@ -41,6 +43,13 @@
     {{ NumInput("imp_lesson_block", "Współczynnik wpływu lekcji w blokach", config.eval.subj_block_imp) }}
     {{ NumInput("imp_teacher_block", "Współczynnik wpływu planu nauczycieli", config.eval.teach_block_imp) }}
     {{ NumInput("imp_start_end_day_subject", "Współczynnik wpływu przedmiotów na początek/koniec dnia", config.eval.subj_end_start_imp) }}
+
+    <h6 class="text-lg font-bold mb-4">Ocena godzin</h6>
+    {% for i in range(8) %}
+      {% set id = i %}
+      {% set text = "Preferencja " ~ (i+1) ~ "-tej godziny lekcyjnej" %}
+      {{ NumInput(id, text, config.eval.hours_weight[i]) }}
+    {% endfor %}
 
 
     {{ PatchButton(url="/config", target="#config", text="Zapisz") }}

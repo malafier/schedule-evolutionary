@@ -37,7 +37,7 @@ class EvaluationCriteria:
                  teacher_block_importance: float = 1.0,
                  subject_at_end_or_start_importance: float = 1.0):
         if hours_weight is None:
-            hours_weight = [1, 1, 1, 1, 1, 0.5, 0.1, -1]
+            hours_weight = [1.0, 1.0, 1.0, 1.0, 1.0, 0.5, 0.1, -1.0]
         self.hours_weight: list = hours_weight
         self.basic_imp: float = basic_importance
         self.gap_imp: float = blank_lessons_importance

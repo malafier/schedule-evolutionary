@@ -132,7 +132,7 @@ def show_plan():
 
 
 @app.route('/config', methods=['PATCH'])
-def alter_configuration():                          # TODO: hourly weights
+def alter_configuration():
     global generation, mconfig, config, scores
 
     mconfig.population_size = int(request.form.get('population_size'))
@@ -155,6 +155,9 @@ def alter_configuration():                          # TODO: hourly weights
         .subject_block_importance(float(request.form.get('imp_lesson_block'))) \
         .teacher_block_importance(float(request.form.get('imp_teacher_block'))) \
         .subject_at_end_or_start_importance(float(request.form.get('imp_start_end_day_subject')))
+
+    for i in range(8):
+        mconfig.eval.hours_weight[i] = float(request.form.get(str(i)))
 
     config = Config(mconfig)
     generation = Generation(config, mconfig)

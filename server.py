@@ -131,7 +131,7 @@ def show_plan():
     return render_template("plan.html", school_plan=school_plan, config=generation.meta)
 
 
-@app.route('/config', methods=['POST'])
+@app.route('/config', methods=['PATCH'])
 def alter_configuration():                          # TODO: hourly weights
     global generation, mconfig, config, scores
 

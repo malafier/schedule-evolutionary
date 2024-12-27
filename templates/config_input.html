@@ -1,4 +1,4 @@
-{% from "macros/buttons.html" import PostButton %}
+{% from "macros/buttons.html" import PatchButton %}
 {% from "macros/input_fields.html" import NumInput %}
 
 {% block config %}
@@ -23,8 +23,8 @@
       </select>
     </div>
 
-  {{ NumInput("c", "Zmianna C (metoda rulety)", config.C) }}
-  {{ NumInput("k", "Zmienna k (metoda turniejowa)", config.k) }}
+    {{ NumInput("c", "Zmianna C (metoda rulety)", config.C) }}
+    {{ NumInput("k", "Zmienna k (metoda turniejowa)", config.k) }}
 
     <div class="mb-4 flex items-center">
       <label for="elitism" class="block text-gray-700 text-sm font-bold mr-2">Elityzm</label>
@@ -43,6 +43,6 @@
     {{ NumInput("imp_start_end_day_subject", "Współczynnik wpływu przedmiotów na początek/koniec dnia", config.eval.subj_end_start_imp) }}
 
 
-    {{ PostButton(url="/config", target="#config", text="Zapisz") }}
+    {{ PatchButton(url="/config", target="#config", text="Zapisz") }}
   </form>
 {% endblock %}

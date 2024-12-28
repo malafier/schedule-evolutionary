@@ -102,6 +102,81 @@ class MetaConfig:
         self.k: int = k
         self.group_to_id = {i: group for i, group in enumerate(subjects.keys())}
 
+    def new_teacher(self, name: str):
+        idx = 1
+        for t in self.teachers:
+            if t["id"] == idx:
+                idx += 1
+            else:
+                break
+
+        self.teachers.append({"id": idx, "name": name})
+        self.teachers.sort(key=lambda x: x["id"])
+
+    def find_teacher(self, idx: int):
+        for t in self.teachers:
+            if t["id"] == idx:
+                return t
+        return None
+
+    def update_teacher(self, idx: int, name: str):
+        for i in range(len(self.teachers)):
+            if self.teachers[i]["id"] == idx:
+                self.teachers[i]["name"] = name
+                return
+
+    def delete_teacher(self, idx: int):
+        for i in range(len(self.teachers)):
+            if self.teachers[i]["id"] == idx:
+                self.teachers.pop(i)
+                return
+
+    def teacher_occupied(self, teacher_id: int):
+        for group in self.subjects.values():
+            for subject in group:
+                if teacher_id == subject["teacher_id"]:
+                    return True
+        return False
+
+    def new_subject(self, group: str, **kwargs):
+        idx = 1
+        for s in self.subjects[group]:
+            if s["id"] == idx:
+                idx += 1
+            else:
+                break
+
+        self.subjects[group].append({
+            "id": idx,
+            "name": kwargs["subject_name"],
+            "hours": kwargs["subject_hours"],
+            "teacher_id": kwargs["subject_teacher"],
+            "start_end": kwargs["subject_start_end"]
+        })
+        self.subjects[group].sort(key=lambda x: x["id"])
+
+    def find_subject(self, idx: int, group):
+        for s in self.subjects[group]:
+            if s["id"] == idx:
+                return s
+        return None
+
+    def update_subject(self, group: str, subject_id: int, **kwargs):
+        for i in range(len(self.subjects[group])):
+            if self.subjects[group][i]["id"] == subject_id:
+                self.subjects[group][i]["name"] = kwargs["subject_name"]
+                self.subjects[group][i]["hours"] = kwargs["subject_hours"]
+                self.subjects[group][i]["teacher_id"] = kwargs["subject_teacher"]
+                self.subjects[group][i]["start_end"] = kwargs["subject_start_end"]
+                self.subjects[group].sort(key=lambda x: x["id"])
+                return
+
+    def delete_subject(self, group: str, idx: int):
+        for i in range(len(self.subjects[group])):
+            if self.subjects[group][i]["id"] == idx:
+                self.subjects[group].pop(i)
+                return
+
 
 class Config:
     def __init__(self, config: MetaConfig):
@@ -121,7 +196,6 @@ class Config:
         self.sub_to_teach: list = [None] * self.no_groups
         for i in range(self.no_groups):
             self.sub_to_teach[i] = {subject["id"]: subject["teacher_id"] for subject in self.subjects[i]}
-
 
     def hours_by_id(self, group_id: int, subject_id: int) -> int:
         for subject in self.subjects[group_id]:

@@ -5,11 +5,10 @@ import os
 import matplotlib.pyplot as plt
 from flask import render_template, Flask, request
 
-import data_manager
+import state_io
 from evolutionary.config import Config, MetaConfig
 from evolutionary.generation import Generation
 from evolutionary.selection import TournamentSelection, RouletteSelection
-from state_manager import load_state, new_state, save_plans, save_mconfig
 
 templates_dir = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'templates')
 app = Flask(__name__, template_folder=templates_dir)
@@ -20,7 +19,7 @@ generation: Generation
 config: Config
 mconfig: MetaConfig
 scores: list
-generation, config, mconfig, scores = load_state()
+generation, config, mconfig, scores = state_io.load_state()
 
 
 def generate_graph():
@@ -51,13 +50,13 @@ def reset_and_save_config():
     global mconfig, config, generation, scores
     del config
     config = Config(mconfig)
-    save_mconfig(mconfig)
+    state_io.save_mconfig(mconfig)
 
     generation = Generation(config, mconfig)
     generation.evaluate()
     scores = [generation.statistics()]
 
-    save_plans(generation, scores)
+    state_io.save_plans(generation, scores)
 
 
 @app.after_request
@@ -75,7 +74,7 @@ def get_school_plan():
     if generation.gen_no == 0 and len(scores) < 1:
         generation.evaluate()
         scores.append(generation.statistics())
-        save_plans(generation, scores)
+        state_io.save_plans(generation, scores)
 
     graph = generate_graph() if len(scores) > 1 else None
 
@@ -91,13 +90,13 @@ def get_school_plan():
 def regenerate_plan():
     global generation, scores, config, mconfig
 
-    generation, config, mconfig = new_state()
+    generation, config, mconfig = state_io.new_state()
     scores = []
 
     generation.evaluate()
     scores.append(generation.statistics())
 
-    save_plans(generation, scores)
+    state_io.save_plans(generation, scores)
     return render_template("statistics.html", score=scores[-1])
 
 
@@ -119,7 +118,7 @@ def next_gens():
         scores.append(generation.statistics())
 
     graph = generate_graph()
-    save_plans(generation, scores)
+    state_io.save_plans(generation, scores)
     return render_template("statistics.html", score=scores[-1], graph=graph)
 
 
@@ -172,8 +171,8 @@ def alter_configuration():
     generation.evaluate()
     scores = [generation.statistics()]
 
-    save_mconfig(mconfig)
-    save_plans(generation, scores)
+    state_io.save_mconfig(mconfig)
+    state_io.save_plans(generation, scores)
     return render_template("config_input.html", config=config)
 
 
@@ -200,8 +199,7 @@ def teacher():
     else:
         global mconfig, config
         teacher_name = request.form.get('t-name')
-        mconfig.teachers.append({"id": data_manager.new_teacher_id(mconfig), "name": teacher_name})
-        mconfig.teachers.sort(key=lambda x: x["id"])
+        mconfig.new_teacher(teacher_name)
 
         reset_and_save_config()
         return render_template("teachers.html", teachers=mconfig.teachers)
@@ -213,21 +211,17 @@ def teacher_mod(idx):
     idx = int(idx)
 
     if request.method == 'GET':
-        teacher = data_manager.find_teacher(idx, mconfig)
+        teacher = mconfig.find_teacher(idx)
         if teacher is None:
             return render_template("teachers.html", teachers=mconfig.teachers)
         return render_template("forms/edit_teacher.html", teacher=teacher)
-
     if request.method == 'PATCH':
         teacher_name = request.form.get('t-name')
-        teacher_id = data_manager.teacher_idx(idx, mconfig)
-        mconfig.teachers[teacher_id]["name"] = teacher_name
-
+        mconfig.update_teacher(idx, teacher_name)
     if request.method == 'DELETE':
-        teacher_id = data_manager.teacher_idx(idx, mconfig)
-        if data_manager.teacher_occupied(idx, mconfig):
+        if mconfig.teacher_occupied(idx):
             return render_template("teachers.html", teachers=mconfig.teachers)
-        mconfig.teachers.pop(teacher_id)
+        mconfig.delete_teacher(idx)
 
     reset_and_save_config()
     return render_template("teachers.html", teachers=mconfig.teachers)
@@ -271,14 +265,13 @@ def new_subject(group):
         subject_teacher = int(request.form.get('s-teacher'))
         subject_start_end = request.form.get('s-sted') == "on"
 
-        mconfig.subjects[group].append({
-            "id": data_manager.new_subject_id(mconfig, group),
-            "name": subject_name,
-            "hours": subject_hours,
-            "teacher_id": subject_teacher,
-            "start_end": subject_start_end
-        })
-        mconfig.subjects[group].sort(key=lambda x: x["id"])
+        mconfig.new_subject(
+            group,
+            subject_name=subject_name,
+            subject_hours=subject_hours,
+            subject_teacher=subject_teacher,
+            subject_start_end=subject_start_end
+        )
 
         reset_and_save_config()
         return render_template("subjects.html", subjects=mconfig.subjects)
@@ -290,30 +283,29 @@ def subject(group, idx):
     idx = int(idx)
 
     if request.method == 'GET':
-        subject = data_manager.find_subject(idx, mconfig, group)
+        subject = mconfig.find_subject(idx, group)
         return render_template(
             "forms/edit_subject.html",
             group=group,
             subject=subject,
             teachers=mconfig.teachers
         )
-
     elif request.method == 'PATCH':
         subject_name = request.form.get('s-name')
         subject_hours = int(request.form.get('s-hours'))
         subject_teacher = int(request.form.get('s-teacher'))
         subject_start_end = request.form.get('s-sted') == "on"
 
-        subject_id = data_manager.subject_idx(idx, mconfig, group)
-
-        mconfig.subjects[group][subject_id]["name"] = subject_name
-        mconfig.subjects[group][subject_id]["hours"] = subject_hours
-        mconfig.subjects[group][subject_id]["teacher_id"] = subject_teacher
-        mconfig.subjects[group][subject_id]["start_end"] = subject_start_end
-
+        mconfig.update_subject(
+            group,
+            idx,
+            subject_name=subject_name,
+            subject_hours=subject_hours,
+            subject_teacher=subject_teacher,
+            subject_start_end=subject_start_end
+        )
     else:
-        subject_id = data_manager.subject_idx(idx, mconfig, group)
-        mconfig.subjects[group].pop(subject_id)
+        mconfig.delete_subject(group, idx)
 
     reset_and_save_config()
     return render_template("subjects.html", subjects=mconfig.subjects)

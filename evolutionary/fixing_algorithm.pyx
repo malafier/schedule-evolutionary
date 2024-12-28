@@ -1,3 +1,4 @@
+cimport cython
 from libc.stdlib cimport rand
 
 cdef int H_PER_DAY = 8
@@ -11,6 +12,8 @@ cdef int random_day():
 
 ctypedef list[list[int]] Matrix
 
+@cython.boundscheck(False)
+@cython.wraparound(False)
 cpdef Matrix teacher_matrix(Matrix plan, list[dict] subject_to_teacher):
     cdef int rows = len(plan), cols = HOURS
     cdef Matrix teachers = [[0 for _ in range(cols)] for _ in range(rows)]
@@ -22,6 +25,8 @@ cpdef Matrix teacher_matrix(Matrix plan, list[dict] subject_to_teacher):
 
     return teachers
 
+@cython.boundscheck(False)
+@cython.wraparound(False)
 cdef int count_lessons_per_class(list[int] group_plan, int sub):
     cdef int i, count = 0
     for i in range(len(group_plan)):
@@ -29,6 +34,8 @@ cdef int count_lessons_per_class(list[int] group_plan, int sub):
             count += 1
     return count
 
+@cython.boundscheck(False)
+@cython.wraparound(False)
 cdef int count_teacher_lessons(Matrix teacher_plan, int teacher, int hour):
     cdef int i, count = 0
     for i in range(len(teacher_plan)):
@@ -36,6 +43,8 @@ cdef int count_teacher_lessons(Matrix teacher_plan, int teacher, int hour):
             count += 1
     return count
 
+@cython.boundscheck(False)
+@cython.wraparound(False)
 cdef tuple move_lesson(Matrix plan, Matrix teachers, int lesson, int teacher, int gid):
     cdef int rows = len(plan), cols = HOURS, i = 0, temp_lesson, temp_teacher
 
@@ -54,6 +63,8 @@ cdef tuple move_lesson(Matrix plan, Matrix teachers, int lesson, int teacher, in
             teachers[gid][i] = teacher
             return move_lesson(plan, teachers, temp_lesson, temp_teacher, gid)
 
+@cython.boundscheck(False)
+@cython.wraparound(False)
 cdef list fix_subjects(Matrix plan, list[list[dict]] subjects):
     cdef int gid, expected_h, actual_h, i, sub_id, rows = len(plan), cols = HOURS
     cdef dict subject
@@ -88,6 +99,8 @@ cdef list fix_subjects(Matrix plan, list[list[dict]] subjects):
                             break
     return plan
 
+@cython.boundscheck(False)
+@cython.wraparound(False)
 cdef list fix_teachers(Matrix plan, Matrix teachers):
     cdef int i, j, rows = len(plan), cols = HOURS, cur_teach, lesson
 

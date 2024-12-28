@@ -1,3 +1,5 @@
+cimport cython
+
 cdef int H_PER_DAY = 8
 
 cdef class Day:
@@ -23,8 +25,10 @@ cdef bint is_gap(Matrix plan, int gid, int x_day, int start_h, int h_span):
     cdef int lesson_after = plan[gid][x_day + start_h + h_span]
     return all(lesson == 0 for lesson in lessons) and lesson_after != 0 and lesson_before != 0
 
+@cython.boundscheck(False)
+@cython.wraparound(False)
 cpdef double gaps_evaluation(Matrix plan):
-    cdef int start_h, end_h, gaps, i, gaps_sum #, day_len_sum
+    cdef int start_h, end_h, gaps, i, gaps_sum  #, day_len_sum
     cdef int groups = len(plan)
 
     for gid in range(groups):
@@ -33,7 +37,7 @@ cpdef double gaps_evaluation(Matrix plan):
                 if plan[gid][day + i] != 0:
                     start_h = i
                     break
-            for i in range(H_PER_DAY-1, 0, -1):
+            for i in range(H_PER_DAY - 1, 0, -1):
                 if plan[gid][day + i] != 0:
                     end_h = i
                     break
@@ -48,8 +52,10 @@ cpdef double gaps_evaluation(Matrix plan):
 
             gaps_sum += gaps
             # day_len_sum += end_h - start_h + 1
-    return .01 * gaps_sum #* (day_len_sum - gaps_sum) / day_len_sum FIXME
+    return .01 * gaps_sum
 
+@cython.boundscheck(False)
+@cython.wraparound(False)
 cpdef double basic_evaluation(Matrix plan, list[float] weight_per_hour):
     cdef double score = 0
     cdef int i, j, rows = len(plan), cols = len(plan[0])
@@ -60,6 +66,8 @@ cpdef double basic_evaluation(Matrix plan, list[float] weight_per_hour):
                 score += weight_per_hour[i % H_PER_DAY]
     return score
 
+@cython.boundscheck(False)
+@cython.wraparound(False)
 cpdef double hours_per_day_evaluation(Matrix plan):
     cdef double score = 0
     cdef int hours, i
@@ -75,6 +83,8 @@ cpdef double hours_per_day_evaluation(Matrix plan):
             score += 1 if 3 <= hours <= 6 else -hours
     return score
 
+@cython.boundscheck(False)
+@cython.wraparound(False)
 cpdef double max_subject_hours_per_day_evaluation(Matrix plan, list[dict] subjects):
     cdef double score = 0
     cdef int hours, gid, day
@@ -91,6 +101,8 @@ cpdef double max_subject_hours_per_day_evaluation(Matrix plan, list[dict] subjec
                 score += 1 if hours <= 2 else -hours
     return score
 
+@cython.boundscheck(False)
+@cython.wraparound(False)
 cpdef double subject_block_evaluation(Matrix plan, list[dict] subjects):
     cdef double score = 0, reward = 1.0
     cdef list hours
@@ -110,6 +122,8 @@ cpdef double subject_block_evaluation(Matrix plan, list[dict] subjects):
                             score += reward
     return score
 
+@cython.boundscheck(False)
+@cython.wraparound(False)
 cpdef double teacher_block_evaluation(Matrix teacher_plan, list[dict] teachers):
     cdef double score = 0, reward = 1.0
     cdef int teacher_id, day, gid, i, groups = len(teacher_plan)
@@ -131,6 +145,8 @@ cpdef double teacher_block_evaluation(Matrix teacher_plan, list[dict] teachers):
 
     return score
 
+@cython.boundscheck(False)
+@cython.wraparound(False)
 cpdef double subject_at_end_or_start_evaluation(Matrix plan, list[dict] subjects):
     cdef double score = 0
     cdef int day, gid, i, first_or_last

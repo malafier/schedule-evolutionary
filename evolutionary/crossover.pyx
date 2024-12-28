@@ -1,3 +1,4 @@
+cimport cython
 from libc.stdlib cimport rand
 
 cdef int H_PER_DAY = 8
@@ -21,6 +22,8 @@ cdef int RAND_MAX = 32767
 
 ctypedef list[list[int]] Matrix
 
+@cython.boundscheck(False)
+@cython.wraparound(False)
 cpdef tuple crossover(Matrix plan1, Matrix plan2, int no_groups):
     if plan1 == plan2:
         return None, None
@@ -32,8 +35,8 @@ cpdef tuple crossover(Matrix plan1, Matrix plan2, int no_groups):
     dy = rand() % (5 * H_PER_DAY - y)
 
     cdef int row, col, temp
-    for row in range(x, x+dx):
-        for col in range(y, y+dy):
+    for row in range(x, x + dx):
+        for col in range(y, y + dy):
             temp = plan1[row][col]
             plan1[row][col] = plan2[row][col]
             plan2[row][col] = temp

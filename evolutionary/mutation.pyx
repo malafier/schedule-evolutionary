@@ -1,3 +1,4 @@
+cimport cython
 from libc.stdlib cimport rand
 
 ctypedef list[list[int]] Matrix
@@ -15,6 +16,8 @@ cdef list[int] OTHER_HOURS = [0, 1, 6, 7, 8, 9, 14, 15, 16, 17, 22, 23, 24, 25, 
 cdef int random_hour():
     return rand() % HOURS
 
+@cython.boundscheck(False)
+@cython.wraparound(False)
 cdef list[int] shuffle(list[int] arr):
     cdef int n = len(arr)
     cdef int i, j
@@ -24,6 +27,8 @@ cdef list[int] shuffle(list[int] arr):
         arr[i], arr[j] = arr[j], arr[i]
     return arr
 
+@cython.boundscheck(False)
+@cython.wraparound(False)
 cdef Matrix teacher_matrix(Matrix plan, list[dict] subject_to_teacher):
     cdef int rows = len(plan), cols = HOURS
     cdef Matrix teachers = [[0 for _ in range(cols)] for _ in range(rows)]
@@ -35,6 +40,8 @@ cdef Matrix teacher_matrix(Matrix plan, list[dict] subject_to_teacher):
 
     return teachers
 
+@cython.boundscheck(False)
+@cython.wraparound(False)
 cdef int count_teacher_lessons(Matrix teacher_plan, int teacher, int hour):
     cdef int i, count = 0
     for i in range(len(teacher_plan)):
@@ -42,6 +49,8 @@ cdef int count_teacher_lessons(Matrix teacher_plan, int teacher, int hour):
             count += 1
     return count
 
+@cython.boundscheck(False)
+@cython.wraparound(False)
 cpdef Matrix mutate(Matrix plan, list[dict] subject_to_teacher):
     cdef int i, gid, lesson_h, rows = len(plan), cols = HOURS
     cdef int mutated = 0

@@ -1,19 +1,25 @@
 {% from "macros/buttons.html" import Button, DeleteButton, EditButton, InputButton %}
 
-<div class="overflow-x-auto">
+<div class="overflow-x-auto w-2/3">
   <h2 class="text-lg font-bold mb-4">Przedmioty</h2>
+
+  {{ InputButton(url="/group", target="#plan-target", text="Dodaj kalsę", field="g-name", field_type="text") }}
 
   {% set table_style = "px-4 py-2 border border-gray-300" %}
   {% for group, plans in subjects.items() %}
-    <h2>Plan {{ group }}</h2>
+    <div class="flex justify-between items-center mt-8 mb-4">
+      <h2 class="text-left text-lg font-bold">Plan {{ group }}</h2>
 
-    {% set url1 = "/subject/" ~ group %}
-    {{ Button(url=url1, target="#plan-target", text="Dodaj przedmiot") }}
+      <div class="space-x-4 mr-20">
+        {% set url1 = "/subject/" ~ group %}
+        {{ Button(url=url1, target="#plan-target", text="Dodaj przedmiot") }}
 
-    {% set url2 = "/group/" ~ group %}
-    {{ DeleteButton(url=url2, target="#plan-target", text="Usuń klase", confirm_text="Czy napewno chcesz usunąć tę klasę?") }}
+        {% set url2 = "/group/" ~ group %}
+        {{ DeleteButton(url=url2, target="#plan-target", text="Usuń klase", confirm_text="Czy napewno chcesz usunąć tę klasę?") }}
+      </div>
+    </div>
 
-    <table class="table-auto border-collapse">
+    <table class="table-auto border-collapse w-full">
       <tr>
         <th class="{{ table_style }} bg-gray-100">ID</th>
         <th class="{{ table_style }} bg-gray-100">Przedmiot</th>
@@ -36,6 +42,4 @@
       {% endfor %}
     </table>
   {% endfor %}
-
-  {{ InputButton(url="/group", target="#plan-target", text="Dodaj kalsę", field="g-name", field_type="text") }}
 </div>

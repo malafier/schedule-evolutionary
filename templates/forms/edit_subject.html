@@ -1,13 +1,13 @@
 {% from "macros/buttons.html" import Button, PatchButton, PostButton %}
 {% from "macros/input_fields.html" import TxtInput, NumInput %}
 
-<h3>Nowy przedmiot dla klasy {{ group }}</h3>
+<h3 class="mb-2">Nowy przedmiot dla klasy {{ group }}</h3>
 <form hx-post="/config" hx-swap="innerHTML" hx-target="#plan-target">
   {{ TxtInput("s-name", "Nazwa", subject["name"]) }}
 
   {{ NumInput("s-hours", "Liczba godzin", subject["hours"]) }}
 
-  <div>
+  <div class="flex items-center mb-2">
     <label for="s-teacher" class="block text-gray-700 text-sm font-bold mr-2">Nauczyciel</label>
     <select id="s-teacher" name="s-teacher"
             class="shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">

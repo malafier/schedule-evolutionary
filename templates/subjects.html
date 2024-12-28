@@ -13,13 +13,13 @@
     {% set url2 = "/group/" ~ group %}
     {{ DeleteButton(url=url2, target="#plan-target", text="Usuń klase", confirm_text="Czy napewno chcesz usunąć tę klasę?") }}
 
-    <table class="table-auto border-collapse border border-gray-300">
+    <table class="table-auto border-collapse">
       <tr>
         <th class="{{ table_style }} bg-gray-100">ID</th>
         <th class="{{ table_style }} bg-gray-100">Przedmiot</th>
         <th class="{{ table_style }} bg-gray-100">Liczba godzin</th>
         <th class="{{ table_style }} bg-gray-100">Na początku/końcu</th>
-        <th class="{{ table_style }} bg-gray-100">Actions</th>
+        <th class="px-4 py-2"></th>
       </tr>
       {% for subject in plans %}
         {% set url = "/subject/" ~ group ~ "/" ~ subject["id"] %}
@@ -28,7 +28,7 @@
           <td class="{{ table_style }}">{{ subject["name"] }}</td>
           <td class="{{ table_style }}">{{ subject["hours"] }}</td>
           <td class="{{ table_style }}">{% if subject["start_end"] %} Tak {% else %} Nie {% endif %}</td>
-          <td class="{{ table_style }}">
+          <td class="px-4 py-2">
             {{ EditButton(url=url, target="#plan-target", text="Edytuj") }}
             {{ DeleteButton(url=url, target="#plan-target", text="Usuń", confirm_text="Na pewno usunąć ten przedmiot?") }}
           </td>

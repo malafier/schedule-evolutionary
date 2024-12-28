@@ -7,11 +7,12 @@
   {{ Button(url="/teacher", target="#plan-target", text="Nowy nauczyciel") }}
 
   {% set table_style = "px-4 py-2 border border-gray-300" %}
-  <table class="table-auto border-collapse border border-gray-300">
+
+  <table class="table-auto border-collapse w-full">
     <tr>
-      <th class="{{ table_style }} bg-gray-100">ID</th>
+      <th class="{{ table_style }} bg-gray-100 w-14">ID</th>
       <th class="{{ table_style }} bg-gray-100">Imię i nazwisko</th>
-      <th class="{{ table_style }} bg-gray-100">Akcje</th>
+      <th class="px-4 py-2"></th>
     </tr>
     {% for teacher in teachers %}
       {% set url = "/teacher/" ~ teacher["id"] %}
@@ -19,8 +20,8 @@
       <tr>
         <td class="{{ table_style }}">{{ teacher["id"] }}</td>
         <td class="{{ table_style }}">{{ teacher["name"] }}</td>
-        <td class="{{ table_style }}">
-          {{ EditButton(url=url, target="#plan-target", text="Edytuj") }}
+        <td class="px-4 py-2">
+          {{ EditButton(url=url, target="#plan-target ", text="Edytuj") }}
           {{ DeleteButton(url=url, target="#plan-target", text="Usuń", confirm_text="Na pewno usunąć tego nauczyciela?") }}
         </td>
       </tr>

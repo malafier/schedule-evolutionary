@@ -22,7 +22,7 @@
         <td class="{{ table_style }}">{{ teacher["name"] }}</td>
         <td class="px-4 py-2">
           {{ EditButton(url=url, target="#plan-target ", text="Edytuj") }}
-          {{ DeleteButton(url=url, target="#plan-target", text="Usuń", confirm_text="Na pewno usunąć tego nauczyciela?") }}
+          {{ DeleteButton(url=url, target="#plan-target", text="Usuń", confirm_text="Czy na pewno usunąć tego nauczyciela?") }}
         </td>
       </tr>
     {% endfor %}

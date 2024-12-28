@@ -47,7 +47,7 @@
     <h6 class="text-lg font-bold mb-4">Ocena godzin</h6>
     {% for i in range(8) %}
       {% set id = i %}
-      {% set text = "Preferencja " ~ (i+1) ~ "-tej godziny lekcyjnej" %}
+      {% set text = "Preferencja " ~ (i+1) ~ ". godziny lekcyjnej" %}
       {{ NumInput(id, text, config.eval.hours_weight[i]) }}
     {% endfor %}
 

@@ -27,8 +27,8 @@ cdef bint is_gap(Matrix plan, int gid, int x_day, int start_h, int h_span):
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
-cpdef double gaps_evaluation(Matrix plan):
-    cdef int start_h, end_h, gaps, i, gaps_sum  #, day_len_sum
+cpdef int gaps_evaluation(Matrix plan):
+    cdef int start_h, end_h, gaps, i, gaps_sum = 0, day
     cdef int groups = len(plan)
 
     for gid in range(groups):
@@ -42,17 +42,17 @@ cpdef double gaps_evaluation(Matrix plan):
                     end_h = i
                     break
 
-            if start_h >= end_h:
+            # There should be at least 1 lesson between to have a gap
+            if end_h - start_h < 2:
                 continue
 
             gaps = 0
-            for i in range(start_h, end_h):
+            for i in range(start_h + 1, end_h):
                 if plan[gid][day + i] == 0:
                     gaps += 1
 
             gaps_sum += gaps
-            # day_len_sum += end_h - start_h + 1
-    return .01 * gaps_sum
+    return gaps_sum
 
 @cython.boundscheck(False)
 @cython.wraparound(False)

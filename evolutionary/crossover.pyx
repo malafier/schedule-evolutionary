@@ -26,12 +26,12 @@ ctypedef list[list[int]] Matrix
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
-cpdef tuple crossover(Matrix plan1, Matrix plan2, int no_groups):
+cpdef tuple matrix_crossover(Matrix plan1, Matrix plan2, int no_groups):
     cdef int x, y, dx, dy
     x = rand() % no_groups
     y = rand() % HOURS
-    dx = rand() % (no_groups - x)
-    dy = rand() % (HOURS - y)
+    dx = rand() % (no_groups - x) + 1
+    dy = rand() % (HOURS - y) + 1
 
     cdef int row, col, temp
     for row in range(x, x + dx):
@@ -44,7 +44,50 @@ cpdef tuple crossover(Matrix plan1, Matrix plan2, int no_groups):
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
+cpdef tuple double_point_crossover(Matrix plan1, Matrix plan2, int no_groups):
+    cdef int i, c1, c2, temp
+
+    c1 = rand() % HOURS
+    c2 = rand() % HOURS
+
+    if c1 == c2:
+        return None, None
+
+    if c1 > c2:
+        temp = c1
+        c1 = c2
+        c2 = temp
+
+    for i in range(len(plan1)):
+        for j in range(len(plan1[0])):
+            if c1 < i * H_PER_DAY + j < c2:
+                temp = plan1[i][j]
+                plan1[i][j] = plan2[i][j]
+                plan2[i][j] = temp
+
+    return plan1, plan2
+
+@cython.boundscheck(False)
+@cython.wraparound(False)
 cpdef tuple single_point_crossover(Matrix plan1, Matrix plan2, int no_groups):
+    cdef int i, c, temp
+
+    c = rand() % HOURS
+
+    for i in range(len(plan1)):
+        for j in range(len(plan1[0])):
+            if i * H_PER_DAY + j < c:
+                temp = plan1[i][j]
+                plan1[i][j] = plan2[i][j]
+                plan2[i][j] = temp
+            else:
+                break
+
+    return plan1, plan2
+
+@cython.boundscheck(False)
+@cython.wraparound(False)
+cpdef tuple uniform_crossover(Matrix plan1, Matrix plan2, int no_groups):
     cdef int i, j, temp
 
     for i in range(len(plan1)):

@@ -3,8 +3,8 @@ from copy import deepcopy
 
 from evolutionary.config import Config, MetaConfig
 from evolutionary.crossover import crossover
-from evolutionary.school_plan import SchoolPlan
 from evolutionary.fixing_algorithm import fix_plan
+from evolutionary.school_plan import SchoolPlan
 from evolutionary.selection import SelectionStrategy, RouletteSelection
 
 
@@ -48,7 +48,7 @@ class Generation:
         # Fitness scaling
         if isinstance(self.config.selection_strategy, RouletteSelection):
             f_min = self.worst_plan().fitness
-            f_max =  self.best_plan().fitness
+            f_max = self.best_plan().fitness
             f_avg = sum([pop.fitness for pop in self.population]) / self.size
             C = self.config.C
 
@@ -74,7 +74,6 @@ class Generation:
 
         if self.config.elitism:
             children.append(best_plan)
-
 
         while len(children) < self.size:
             parent1, parent2 = strategy.select(self.population, self.config)
@@ -102,3 +101,7 @@ class Generation:
 
         self.population = children
         self.gen_no += 1
+
+    def fix(self):
+        for pop in self.population:
+            pop.fix(self.config)

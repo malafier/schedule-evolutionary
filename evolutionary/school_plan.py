@@ -1,13 +1,14 @@
 import random
 
 from evolutionary.config import WEEK_DAYS, H_PER_DAY, Day, Config, MetaConfig
-from evolutionary.fixing_algorithm import teacher_matrix
-from evolutionary.mutation import mutate
 from evolutionary.evaluation import basic_evaluation, gaps_evaluation, hours_per_day_evaluation, \
     max_subject_hours_per_day_evaluation, subject_block_evaluation, teacher_block_evaluation, \
     subject_at_end_or_start_evaluation
+from evolutionary.fixing_algorithm import teacher_matrix, fix_late_gaps
+from evolutionary.mutation import mutate
 
 Matrix = list[list[int]]
+
 
 class SchoolPlan:
     def __init__(self, no_groups, plans=None):
@@ -47,20 +48,25 @@ class SchoolPlan:
 
     def evaluate(self, config: Config):
         score = (
-            config.eval.basic_imp * basic_evaluation(self.plans, config.eval.hours_weight)
-            + config.eval.hpd_imp * hours_per_day_evaluation(self.plans)
-            + config.eval.max_subj_hpd_imp * max_subject_hours_per_day_evaluation(self.plans, config.subjects)
-            + config.eval.subj_block_imp * subject_block_evaluation(self.plans, config.subjects)
-            + config.eval.subj_end_start_imp * subject_at_end_or_start_evaluation(self.plans, config.subjects)
-            + config.eval.teach_block_imp * teacher_block_evaluation(
+                        config.eval.basic_imp * basic_evaluation(self.plans, config.eval.hours_weight)
+                        + config.eval.hpd_imp * hours_per_day_evaluation(self.plans)
+                        + config.eval.max_subj_hpd_imp * max_subject_hours_per_day_evaluation(self.plans,
+                                                                                              config.subjects)
+                        + config.eval.subj_block_imp * subject_block_evaluation(self.plans, config.subjects)
+                        + config.eval.subj_end_start_imp * subject_at_end_or_start_evaluation(self.plans,
+                                                                                              config.subjects)
+                        + config.eval.teach_block_imp * teacher_block_evaluation(
                     teacher_matrix(self.plans, config.sub_to_teach), config.teachers
-            )
-        ) / (1 + config.eval.gap_imp * gaps_evaluation(self.plans))
+                )
+                ) / (1 + config.eval.gap_imp * gaps_evaluation(self.plans))
 
         self.fitness = score
 
     def mutate(self, config: Config):
         self.plans = mutate(self.plans, config.sub_to_teach)
+
+    def fix(self, config: Config):
+        self.plans = fix_late_gaps(self.plans, config.sub_to_teach)
 
     def add_to_plan(self, config: Config, gid: int, day: Day, hour: int, subject: int):
         if subject == (0, 0):

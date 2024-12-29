@@ -109,6 +109,7 @@ def next_gens():
     n = int(request.form.get('n'))
     for i in range(n):
         generation.next_gen()
+        generation.fix()
         generation.evaluate()
 
         if generation.gen_no % SAMPLING_INTERVAL == 0:

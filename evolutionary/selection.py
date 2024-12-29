@@ -1,5 +1,5 @@
-from abc import ABC
 import random
+from abc import ABC
 
 from evolutionary.config import Config
 from evolutionary.school_plan import SchoolPlan
@@ -51,3 +51,10 @@ class TournamentSelection(SelectionStrategy):
 
     def __str__(self):
         return "TournamentSelection"
+
+
+def str_to_class(name):
+    if name == "RouletteSelection":
+        return RouletteSelection
+    else:
+        return TournamentSelection()

@@ -75,7 +75,7 @@ class Generation:
             children.append(best_plan)
 
         while len(children) < self.size:
-            parent1, parent2 = self.meta.selection_strategy.select(self.population, self.config)
+            parent1, parent2 = self.meta.selection_strategy.select(self.meta.selection_strategy, parents=self.population, config=self.config)
             if parent1 is None or parent1 == parent2:
                 continue
 

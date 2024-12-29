@@ -58,3 +58,14 @@ class UniformStrategy(CrossoverStrategy):
 
     def __str__(self):
         return "UniformStrategy"
+
+
+def str_to_class(name):
+    if name == "Matrix2DStrategy":
+        return Matrix2DStrategy()
+    elif name == "SinglePointStrategy":
+        return SinglePointStrategy()
+    elif name == "DoublePointStrategy":
+        return DoublePointStrategy()
+    else:
+        return UniformStrategy()

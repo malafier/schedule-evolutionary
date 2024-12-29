@@ -1,10 +1,10 @@
 import json
 
+import evolutionary.crossover
+import evolutionary.selection
 from evolutionary.config import MetaConfig, Config, EvaluationCriteria, CrossParams
-from evolutionary.crossover import Matrix2DStrategy
 from evolutionary.generation import Generation
 from evolutionary.school_plan import SchoolPlan
-from evolutionary.selection import RouletteSelection
 
 DATA_DIR = "data/"
 SUBJECTS = "subjects.json"
@@ -19,8 +19,8 @@ def get_default_config() -> MetaConfig:
     tf = open(TEACHERS, "r")
     return MetaConfig(
         population_size=100,
-        selection_strat=RouletteSelection(),
-        crossover_strat=Matrix2DStrategy(),
+        selection_strat=evolutionary.selection.RouletteSelection(),
+        crossover_strat=evolutionary.crossover.Matrix2DStrategy(),
         c=2.0,
         k=5,
         teachers=json.load(tf),
@@ -76,8 +76,8 @@ def load_mconfig() -> MetaConfig:
             mutation_rate=other_config["cross"]["mutation_rate"],
         ),
         elitism=other_config["elitism"],
-        crossover_strat=other_config["crossover_strat"],
-        selection_strat=other_config["selection_strat"],
+        crossover_strat=evolutionary.crossover.str_to_class(other_config["crossover_strat"]),
+        selection_strat=evolutionary.selection.str_to_class(other_config["selection_strat"]),
         c=other_config["c"],
         k=other_config["k"],
         teachers=json.load(tf),

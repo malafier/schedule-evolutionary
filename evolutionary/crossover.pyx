@@ -3,6 +3,8 @@ from libc.stdlib cimport rand
 
 cdef int H_PER_DAY = 8
 
+cdef int HOURS = 5 * H_PER_DAY
+
 cdef class Day:
     MON = 0 * H_PER_DAY
     TUE = 1 * H_PER_DAY
@@ -25,14 +27,11 @@ ctypedef list[list[int]] Matrix
 @cython.boundscheck(False)
 @cython.wraparound(False)
 cpdef tuple crossover(Matrix plan1, Matrix plan2, int no_groups):
-    if plan1 == plan2:
-        return None, None
-
     cdef int x, y, dx, dy
     x = rand() % no_groups
-    y = rand() % (5 * H_PER_DAY)
+    y = rand() % HOURS
     dx = rand() % (no_groups - x)
-    dy = rand() % (5 * H_PER_DAY - y)
+    dy = rand() % (HOURS - y)
 
     cdef int row, col, temp
     for row in range(x, x + dx):
@@ -40,5 +39,23 @@ cpdef tuple crossover(Matrix plan1, Matrix plan2, int no_groups):
             temp = plan1[row][col]
             plan1[row][col] = plan2[row][col]
             plan2[row][col] = temp
+
+    return plan1, plan2
+
+@cython.boundscheck(False)
+@cython.wraparound(False)
+cpdef tuple single_point_crossover(Matrix plan1, Matrix plan2, int no_groups):
+    cdef int i, j, temp
+
+    for i in range(len(plan1)):
+        for j in range(len(plan1[0])):
+            if rand() % 2 == 0:
+                temp = plan1[i][j]
+                plan1[i][j] = plan2[i][j]
+                plan2[i][j] = temp
+            else:
+                temp = plan2[i][j]
+                plan2[i][j] = plan1[i][j]
+                plan1[i][j] = temp
 
     return plan1, plan2

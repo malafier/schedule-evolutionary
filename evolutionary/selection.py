@@ -12,6 +12,9 @@ class SelectionStrategy(ABC):
     def __name__(self):
         pass
 
+    def __str__(self):
+        pass
+
 
 class RouletteSelection(SelectionStrategy):
     def select(self, parents: list[SchoolPlan], config: Config) -> (SchoolPlan, SchoolPlan):
@@ -24,6 +27,9 @@ class RouletteSelection(SelectionStrategy):
         return random.choices(parents, probabilities, k=2)
 
     def __name__(self):
+        return "RouletteSelection"
+
+    def __str__(self):
         return "RouletteSelection"
 
 
@@ -41,4 +47,7 @@ class TournamentSelection(SelectionStrategy):
         )
 
     def __name__(self):
+        return "TournamentSelection"
+
+    def __str__(self):
         return "TournamentSelection"

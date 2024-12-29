@@ -13,7 +13,7 @@ from evolutionary.selection import TournamentSelection, RouletteSelection
 templates_dir = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'templates')
 app = Flask(__name__, template_folder=templates_dir)
 
-SAMPLING_INTERVAL = 25
+SAMPLING_INTERVAL = 20
 
 generation: Generation
 config: Config

@@ -1,3 +1,4 @@
+import math
 import random
 
 from evolutionary.config import WEEK_DAYS, H_PER_DAY, Day, Config, MetaConfig
@@ -47,20 +48,16 @@ class SchoolPlan:
         return hours
 
     def evaluate(self, config: Config):
-        score = (
+        self.fitness = (
                         config.eval.basic_imp * basic_evaluation(self.plans, config.eval.hours_weight)
                         + config.eval.hpd_imp * hours_per_day_evaluation(self.plans)
-                        + config.eval.max_subj_hpd_imp * max_subject_hours_per_day_evaluation(self.plans,
-                                                                                              config.subjects)
+                        + config.eval.max_subj_hpd_imp * max_subject_hours_per_day_evaluation(self.plans, config.subjects)
                         + config.eval.subj_block_imp * subject_block_evaluation(self.plans, config.subjects)
-                        + config.eval.subj_end_start_imp * subject_at_end_or_start_evaluation(self.plans,
-                                                                                              config.subjects)
+                        + config.eval.subj_end_start_imp * subject_at_end_or_start_evaluation(self.plans, config.subjects)
                         + config.eval.teach_block_imp * teacher_block_evaluation(
                     teacher_matrix(self.plans, config.sub_to_teach), config.teachers
                 )
-                ) / (1 + config.eval.gap_imp * gaps_evaluation(self.plans))
-
-        self.fitness = score
+                ) / math.log2(1 + config.eval.gap_imp * gaps_evaluation(self.plans))
 
     def mutate(self, config: Config):
         self.plans = mutate(self.plans, config.sub_to_teach)

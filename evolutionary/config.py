@@ -185,8 +185,6 @@ class Config:
         self.no_groups: int = len(mconfig.group_to_id.keys())
         self.elitism: bool = mconfig.elitism
         self.population_size: int = mconfig.population_size
-        self.crossover_strategy = mconfig.crossover_strategy
-        self.selection_strategy = mconfig.selection_strategy
         self.eval = mconfig.eval
         self.cross = mconfig.cross
         self.k = mconfig.k

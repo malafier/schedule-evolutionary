@@ -55,6 +55,6 @@ class TournamentSelection(SelectionStrategy):
 
 def str_to_class(name):
     if name == "RouletteSelection":
-        return RouletteSelection
+        return RouletteSelection()
     else:
         return TournamentSelection()

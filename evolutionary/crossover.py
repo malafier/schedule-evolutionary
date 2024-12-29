@@ -16,7 +16,7 @@ class CrossoverStrategy(ABC):
         pass
 
 
-class Matrix2DStrategy(CrossoverStrategy):
+class Matrix2DCrossover(CrossoverStrategy):
     def cross(self, parent1: SchoolPlan, parent2: SchoolPlan, no_groups: int) -> (SchoolPlan, SchoolPlan):
         return matrix_crossover(parent1, parent2, no_groups)
 
@@ -27,7 +27,7 @@ class Matrix2DStrategy(CrossoverStrategy):
         return "Matrix2DStrategy"
 
 
-class SinglePointStrategy(CrossoverStrategy):
+class SinglePointCrossover(CrossoverStrategy):
     def cross(self, parent1: SchoolPlan, parent2: SchoolPlan, no_groups: int) -> (SchoolPlan, SchoolPlan):
         return single_point_crossover(parent1, parent2, no_groups)
 
@@ -38,7 +38,7 @@ class SinglePointStrategy(CrossoverStrategy):
         return "SinglePointStrategy"
 
 
-class DoublePointStrategy(CrossoverStrategy):
+class DoublePointCrossover(CrossoverStrategy):
     def cross(self, parent1: SchoolPlan, parent2: SchoolPlan, no_groups: int) -> (SchoolPlan, SchoolPlan):
         return double_point_crossover(parent1, parent2, no_groups)
 
@@ -49,7 +49,7 @@ class DoublePointStrategy(CrossoverStrategy):
         return "DoublePointStrategy"
 
 
-class UniformStrategy(CrossoverStrategy):
+class UniformCrossover(CrossoverStrategy):
     def cross(self, parent1: SchoolPlan, parent2: SchoolPlan, no_groups: int) -> (SchoolPlan, SchoolPlan):
         return uniform_crossover(parent1, parent2, no_groups)
 
@@ -62,10 +62,10 @@ class UniformStrategy(CrossoverStrategy):
 
 def str_to_class(name):
     if name == "Matrix2DStrategy":
-        return Matrix2DStrategy()
+        return Matrix2DCrossover()
     elif name == "SinglePointStrategy":
-        return SinglePointStrategy()
+        return SinglePointCrossover()
     elif name == "DoublePointStrategy":
-        return DoublePointStrategy()
+        return DoublePointCrossover()
     else:
-        return UniformStrategy()
+        return UniformCrossover()

@@ -7,7 +7,7 @@ from flask import render_template, Flask, request
 
 import state_io
 from evolutionary.config import Config, MetaConfig
-from evolutionary.crossover import Matrix2DStrategy, SinglePointStrategy, UniformStrategy, DoublePointStrategy
+from evolutionary.crossover import Matrix2DCrossover, SinglePointCrossover, UniformCrossover, DoublePointCrossover
 from evolutionary.generation import Generation
 from evolutionary.selection import TournamentSelection, RouletteSelection
 
@@ -150,13 +150,13 @@ def alter_configuration():
         .crossover(float(request.form.get('crossover'))) \
         .mutation(float(request.form.get('mutation')))
 
-    mconfig.crossover_strategy = Matrix2DStrategy()
+    mconfig.crossover_strategy = Matrix2DCrossover()
     if request.form.get("crossover_strategy") == "single":
-        mconfig.crossover_strategy = SinglePointStrategy()
+        mconfig.crossover_strategy = SinglePointCrossover()
     if request.form.get("crossover_strategy") == "double":
-        mconfig.crossover_strategy = DoublePointStrategy()
+        mconfig.crossover_strategy = DoublePointCrossover()
     if request.form.get("crossover_strategy") == "uniform":
-        mconfig.crossover_strategy = UniformStrategy()
+        mconfig.crossover_strategy = UniformCrossover()
 
     mconfig.selection_strategy = RouletteSelection() \
         if request.form.get('selection_strategy') == 'roulette' else TournamentSelection()

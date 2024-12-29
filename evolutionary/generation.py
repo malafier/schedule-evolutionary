@@ -45,7 +45,7 @@ class Generation:
 
     def next_gen(self):
         # Fitness scaling
-        if isinstance(self.config.selection_strategy, RouletteSelection):
+        if isinstance(self.meta.selection_strategy, RouletteSelection):
             f_min = self.worst_plan().fitness
             f_max = self.best_plan().fitness
             f_avg = sum([pop.fitness for pop in self.population]) / self.size
@@ -75,7 +75,7 @@ class Generation:
             children.append(best_plan)
 
         while len(children) < self.size:
-            parent1, parent2 = self.meta.selection_strategy.select(self.meta.selection_strategy, parents=self.population, config=self.config)
+            parent1, parent2 = self.meta.selection_strategy.select(parents=self.population, config=self.config)
             if parent1 is None or parent1 == parent2:
                 continue
 

@@ -20,7 +20,7 @@ def get_default_config() -> MetaConfig:
     return MetaConfig(
         population_size=100,
         selection_strat=evolutionary.selection.RouletteSelection(),
-        crossover_strat=evolutionary.crossover.Matrix2DStrategy(),
+        crossover_strat=evolutionary.crossover.Matrix2DCrossover(),
         c=2.0,
         k=5,
         teachers=json.load(tf),

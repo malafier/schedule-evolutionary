@@ -2,10 +2,9 @@ import random
 from copy import deepcopy
 
 from evolutionary.config import Config, MetaConfig
-from evolutionary.crossover import crossover
 from evolutionary.fixing_algorithm import fix_plan
 from evolutionary.school_plan import SchoolPlan
-from evolutionary.selection import SelectionStrategy, RouletteSelection
+from evolutionary.selection import RouletteSelection
 
 
 class Generation:
@@ -44,7 +43,7 @@ class Generation:
             "min": self.worst_plan().fitness
         }
 
-    def next_gen(self, strategy: SelectionStrategy = RouletteSelection()):
+    def next_gen(self):
         # Fitness scaling
         if isinstance(self.config.selection_strategy, RouletteSelection):
             f_min = self.worst_plan().fitness
@@ -76,11 +75,13 @@ class Generation:
             children.append(best_plan)
 
         while len(children) < self.size:
-            parent1, parent2 = strategy.select(self.population, self.config)
+            parent1, parent2 = self.meta.selection_strategy.select(self.population, self.config)
             if parent1 is None or parent1 == parent2:
                 continue
 
-            child_plan_1, child_plan_2 = crossover(parent1.plans, parent2.plans, self.config.no_groups)
+            child_plan_1, child_plan_2 = self.meta.crossover_strategy.cross(
+                parent1.plans, parent2.plans, self.config.no_groups
+            )
             if child_plan_1 is not None:
                 child = SchoolPlan(
                     self.config.no_groups,
@@ -102,6 +103,7 @@ class Generation:
         self.population = children
         self.gen_no += 1
 
+    # Second fixing algorithm
     def fix(self):
         for pop in self.population:
             pop.fix(self.config)

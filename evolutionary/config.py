@@ -84,7 +84,8 @@ class MetaConfig:
     def __init__(self,
                  teachers: list,
                  subjects: dict,
-                 selection,
+                 selection_strat,
+                 crossover_strat,
                  c: float = 2.0,
                  k: int = 5,
                  elitism: bool = True,
@@ -95,7 +96,8 @@ class MetaConfig:
         self.subjects: dict = subjects
         self.elitism: bool = elitism
         self.population_size: int = population_size
-        self.selection_strategy = selection
+        self.selection_strategy = selection_strat
+        self.crossover_strategy = crossover_strat
         self.eval: EvaluationCriteria = eval_criteria
         self.cross: CrossParams = cross_params
         self.C: float = c
@@ -179,20 +181,21 @@ class MetaConfig:
 
 
 class Config:
-    def __init__(self, config: MetaConfig):
-        self.no_groups: int = len(config.group_to_id.keys())
-        self.elitism: bool = config.elitism
-        self.population_size: int = config.population_size
-        self.selection_strategy = config.selection_strategy
-        self.eval = config.eval
-        self.cross = config.cross
-        self.k = config.k
-        self.C = config.C
+    def __init__(self, mconfig: MetaConfig):
+        self.no_groups: int = len(mconfig.group_to_id.keys())
+        self.elitism: bool = mconfig.elitism
+        self.population_size: int = mconfig.population_size
+        self.crossover_strategy = mconfig.crossover_strategy
+        self.selection_strategy = mconfig.selection_strategy
+        self.eval = mconfig.eval
+        self.cross = mconfig.cross
+        self.k = mconfig.k
+        self.C = mconfig.C
 
-        self.teachers: list = config.teachers
+        self.teachers: list = mconfig.teachers
         self.subjects: list = [None] * self.no_groups
         for i in range(self.no_groups):
-            self.subjects[i] = config.subjects[config.group_to_id[i]]
+            self.subjects[i] = mconfig.subjects[mconfig.group_to_id[i]]
         self.sub_to_teach: list = [None] * self.no_groups
         for i in range(self.no_groups):
             self.sub_to_teach[i] = {subject["id"]: subject["teacher_id"] for subject in self.subjects[i]}

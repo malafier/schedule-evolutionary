@@ -1,7 +1,7 @@
 {% from "macros/buttons.html" import PatchButton %}
 {% from "macros/input_fields.html" import NumInput %}
 
-{% block config %}
+{% block configuration %}
   <form class="bg-white border-blue-500 border-2 shadow-md rounded px-8 pt-6 pb-8 mb-4">
     <h4 class="text-xl font-bold mb-4">Konfiguracja</h4>
 
@@ -11,17 +11,28 @@
     {{ NumInput("crossover", "Krzyżowanie", config.cross.mutation_rate) }}
 
     <div class="mb-4 flex items-center">
-      <label for="crossover_strategy" class="block text-gray-700 text-sm font-bold mr-2">Strategia selekcji</label>
-      <select id="crossover_strategy" name="selection_strategy"
+      <label for="crossover_strategy" class="block text-gray-700 text-sm font-bold mr-2">Metoda krzyżowania</label>
+      <select id="crossover_strategy" name="crossover_strategy"
               class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
-        <option value="tournament"
-                {% if config.selection_strategy == 'TournamentSelection' %}selected{% endif %}
-        >Turniej
-        </option>
-        <option value="roulette"
-                {% if config.selection_strategy == 'RouletteSelection' %}selected{% endif %}
-        >Ruleta
-        </option>
+        <option value="matrix" {% if config.crossover_strategy | trim == 'Matrix2DStrategy' %} selected {% endif %}
+        >Dwuwymiarowe macierzy</option>
+        <option value="single" {% if config.crossover_strategy | trim == 'SinglePointStrategy' %} selected {% endif %}
+        >Jednopunktowe</option>
+        <option value="double" {% if config.crossover_strategy | trim == 'DoublePointStrategy' %} selected {% endif %}
+        >Dwupunktowe</option>
+        <option value="uniform" {% if config.crossover_strategy | trim == 'UniformStrategy' %} selected {% endif %}
+        >Równomierne</option>
+      </select>
+    </div>
+
+    <div class="mb-4 flex items-center">
+      <label for="selection_strategy" class="block text-gray-700 text-sm font-bold mr-2">Metoda selekcji</label>
+      <select id="selection_strategy" name="selection_strategy"
+              class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+        <option value="tournament" {% if config.selection_strategy | trim == 'TournamentSelection' %} selected {% endif %}
+        >Turniej</option>
+        <option value="roulette" {% if config.selection_strategy | trim == 'RouletteSelection' %} selected {% endif %}
+        >Ruleta</option>
       </select>
     </div>
 
@@ -46,9 +57,9 @@
 
     <h6 class="text-lg font-bold mb-4">Ocena godzin</h6>
     {% for i in range(8) %}
-      {% set id = i %}
-      {% set text = "Preferencja " ~ (i+1) ~ ". godziny lekcyjnej" %}
-      {{ NumInput(id, text, config.eval.hours_weight[i]) }}
+      {% set id = i + 1 %}
+      {% set text = "Preferencja " ~ id ~ ". godziny lekcyjnej" %}
+      {{ NumInput(i, text, config.eval.hours_weight[i]) }}
     {% endfor %}
 
 

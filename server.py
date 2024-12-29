@@ -7,6 +7,7 @@ from flask import render_template, Flask, request
 
 import state_io
 from evolutionary.config import Config, MetaConfig
+from evolutionary.crossover import Matrix2DStrategy, SinglePointStrategy, UniformStrategy, DoublePointStrategy
 from evolutionary.generation import Generation
 from evolutionary.selection import TournamentSelection, RouletteSelection
 
@@ -149,6 +150,14 @@ def alter_configuration():
         .crossover(float(request.form.get('crossover'))) \
         .mutation(float(request.form.get('mutation')))
 
+    mconfig.crossover_strategy = Matrix2DStrategy()
+    if request.form.get("crossover_strategy") == "single":
+        mconfig.crossover_strategy = SinglePointStrategy()
+    if request.form.get("crossover_strategy") == "double":
+        mconfig.crossover_strategy = DoublePointStrategy()
+    if request.form.get("crossover_strategy") == "uniform":
+        mconfig.crossover_strategy = UniformStrategy()
+
     mconfig.selection_strategy = RouletteSelection() \
         if request.form.get('selection_strategy') == 'roulette' else TournamentSelection()
 
@@ -167,14 +176,13 @@ def alter_configuration():
     for i in range(8):
         mconfig.eval.hours_weight[i] = float(request.form.get(str(i)))
 
-    config = Config(mconfig)
+    state_io.save_mconfig(mconfig)
     generation = Generation(config, mconfig)
     generation.evaluate()
     scores = [generation.statistics()]
-
-    state_io.save_mconfig(mconfig)
     state_io.save_plans(generation, scores)
-    return render_template("config_input.html", config=config)
+
+    return render_template("config_input.html", config=mconfig)
 
 
 @app.route('/teachers-plans', methods=['GET'])

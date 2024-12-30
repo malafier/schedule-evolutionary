@@ -80,7 +80,7 @@ cpdef double hours_per_day_evaluation(Matrix plan):
             for i in range(H_PER_DAY):
                 if plan[gid][day + i] != 0:
                     hours += 1
-            score += 1 if 3 <= hours <= 6 else -hours
+            score += 1 if 3 <= hours <= 6 else 0
     return score
 
 @cython.boundscheck(False)
@@ -98,7 +98,7 @@ cpdef double max_subject_hours_per_day_evaluation(Matrix plan, list[dict] subjec
                 for i in range(H_PER_DAY):
                     if plan[gid][day + i] == subject["id"]:
                         hours += 1
-                score += 1 if hours <= 2 else -hours
+                score += 1 if hours <= 2 else 0
     return score
 
 @cython.boundscheck(False)

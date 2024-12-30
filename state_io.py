@@ -15,8 +15,8 @@ STATS = "statistics.json"
 
 
 def get_default_config() -> MetaConfig:
-    sf = open(SUBJECTS, "r")
-    tf = open(TEACHERS, "r")
+    sf = open("./test/test_sets/subjects_2.json", "r")
+    tf = open("./test/test_sets/teachers_2.json", "r")
     return MetaConfig(
         population_size=100,
         selection_strat=evolutionary.selection.RouletteSelection(),

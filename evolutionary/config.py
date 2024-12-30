@@ -13,7 +13,7 @@ class Day(Enum):
 
 
 class CrossParams:
-    def __init__(self, crossover_rate: float = 0.8, mutation_rate: float = 0.01):
+    def __init__(self, crossover_rate: float = 0.8, mutation_rate: float = 0.1):
         self.crossover_rate: float = crossover_rate
         self.mutation_rate: float = mutation_rate
 

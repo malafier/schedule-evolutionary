@@ -135,29 +135,23 @@ cpdef list fix_late_gaps(Matrix plan, list[dict] subject_to_teacher):
 
             # Check if previous plan is a gap
             # if true check, if swapping lessons would create teacher conflict
-            # if true, swap lessons and teachers
+            # if true, move lesson and teacher
             if plan[i][last_lesson - 1] == 0 \
-                    and count_teacher_lessons(teachers, teachers[i][last_lesson], last_lesson - 1) == 0 \
-                    and count_teacher_lessons(teachers, teachers[i][last_lesson - 1], last_lesson) == 0:
-                temp = plan[i][last_lesson - 1]
+                    and count_teacher_lessons(teachers, teachers[i][last_lesson], last_lesson - 1) == 0:
                 plan[i][last_lesson - 1] = plan[i][last_lesson]
-                plan[i][last_lesson] = temp
+                plan[i][last_lesson] = 0
 
-                temp = teachers[i][last_lesson - 1]
                 teachers[i][last_lesson - 1] = teachers[i][last_lesson]
-                plan[i][last_lesson] = temp
+                plan[i][last_lesson] = 0
                 continue
 
-            # If previous wasn't swapped try the same with lesson before
+            # If previous wasn't moved by one try the same with lesson before
             if plan[i][last_lesson - 2] == 0 \
-                    and count_teacher_lessons(teachers, teachers[i][last_lesson], last_lesson - 2) == 0 \
-                    and count_teacher_lessons(teachers, teachers[i][last_lesson - 2], last_lesson) == 0:
-                temp = plan[i][last_lesson - 2]
+                    and count_teacher_lessons(teachers, teachers[i][last_lesson], last_lesson - 2) == 0:
                 plan[i][last_lesson - 2] = plan[i][last_lesson]
-                plan[i][last_lesson] = temp
+                plan[i][last_lesson] = 0
 
-                temp = teachers[i][last_lesson - 2]
                 teachers[i][last_lesson - 2] = teachers[i][last_lesson]
-                plan[i][last_lesson] = temp
+                plan[i][last_lesson] = 0
 
     return plan

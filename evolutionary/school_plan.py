@@ -104,9 +104,9 @@ class SchoolPlan:
     def teachers_plans(self, config: Config):
         matrix = teacher_matrix(self.plans, config.sub_to_teach)
         max_idx = max([t["id"] for t in config.teachers])
-        teachers = [{day: [] for day in WEEK_DAYS} for _ in range(max_idx)]
+        teachers = [{day: [] for day in WEEK_DAYS} for _ in range(max_idx+1)]
 
-        for i in range(1, max_idx):
+        for i in range(1, max_idx+1):
             for day in list(Day):
                 for hour in range(H_PER_DAY):
                     is_teaching = False

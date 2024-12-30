@@ -191,7 +191,7 @@ def teacher_plans():
     return render_template(
         "teachers_plans.html",
         t_plans=generation.best_plan().teachers_plans(config),
-        config=config
+        config=mconfig
     )
 
 

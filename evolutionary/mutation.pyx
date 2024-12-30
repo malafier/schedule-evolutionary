@@ -52,7 +52,7 @@ cdef int count_teacher_lessons(Matrix teacher_plan, int teacher, int hour):
 @cython.boundscheck(False)
 @cython.wraparound(False)
 cpdef Matrix mutate(Matrix plan, list[dict] subject_to_teacher):
-    cdef int i, gid, lesson_h, rows = len(plan), cols = HOURS
+    cdef int i, gid, lesson_h, rows = len(plan), cols = HOURS, temp
     cdef int mutated = 0
 
     teachers = teacher_matrix(plan, subject_to_teacher)
@@ -87,8 +87,13 @@ cpdef Matrix mutate(Matrix plan, list[dict] subject_to_teacher):
 
         for i in range(HOURS):
             if count_teacher_lessons(teachers, teachers[gid][lesson_h], i) == 0 and count_teacher_lessons(teachers, teachers[gid][i], lesson_h) == 0:
-                plan[gid][i], plan[gid][lesson_h] = plan[gid][lesson_h], plan[gid][i]
-                teachers[gid][i], teachers[gid][lesson_h] = teachers[gid][lesson_h], teachers[gid][i]
+                temp = plan[gid][i]
+                plan[gid][i] = plan[gid][lesson_h]
+                plan[gid][lesson_h] = temp
+
+                temp = teachers[gid][i]
+                teachers[gid][i] = teachers[gid][lesson_h]
+                teachers[gid][lesson_h] = temp
                 break
 
     return plan

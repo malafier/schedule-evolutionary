@@ -88,14 +88,14 @@ class SchoolPlan:
                         plan[day.value + hour] = subject["id"]
 
     def as_dict(self, config: Config, mconfig: MetaConfig) -> dict:
-        school_plan = {name: {day: [] for day in WEEK_DAYS} for name in mconfig.group_to_id.values()}
+        school_plan = {name: {day: [] for day in WEEK_DAYS} for name in config.group_to_id.values()}
         for gid in range(len(self.plans)):
             for day in list(Day):
                 for hour in range(H_PER_DAY):
                     sub_id = self.plans[gid][day.value + hour]
                     teach_id = config.sub_to_teach[gid][sub_id] if sub_id != 0 else 0
                     week_day = WEEK_DAYS[day.value // H_PER_DAY]
-                    school_plan[mconfig.group_to_id[gid]][week_day].append({
+                    school_plan[config.group_to_id[gid]][week_day].append({
                         "subject_id": sub_id,
                         "teacher_id": teach_id
                     })

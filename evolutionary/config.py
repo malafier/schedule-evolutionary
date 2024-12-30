@@ -102,7 +102,6 @@ class MetaConfig:
         self.cross: CrossParams = cross_params
         self.C: float = c
         self.k: int = k
-        self.group_to_id = {i: group for i, group in enumerate(subjects.keys())}
 
     def new_teacher(self, name: str):
         idx = 1
@@ -182,7 +181,7 @@ class MetaConfig:
 
 class Config:
     def __init__(self, mconfig: MetaConfig):
-        self.no_groups: int = len(mconfig.group_to_id.keys())
+        self.no_groups: int = len(mconfig.subjects)
         self.elitism: bool = mconfig.elitism
         self.population_size: int = mconfig.population_size
         self.eval = mconfig.eval
@@ -190,10 +189,11 @@ class Config:
         self.k = mconfig.k
         self.C = mconfig.C
 
+        self.group_to_id = {i: group for i, group in enumerate(mconfig.subjects.keys())}
         self.teachers: list = mconfig.teachers
         self.subjects: list = [None] * self.no_groups
         for i in range(self.no_groups):
-            self.subjects[i] = mconfig.subjects[mconfig.group_to_id[i]]
+            self.subjects[i] = mconfig.subjects[self.group_to_id[i]]
         self.sub_to_teach: list = [None] * self.no_groups
         for i in range(self.no_groups):
             self.sub_to_teach[i] = {subject["id"]: subject["teacher_id"] for subject in self.subjects[i]}

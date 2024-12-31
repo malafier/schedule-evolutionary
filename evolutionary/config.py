@@ -156,7 +156,7 @@ class MetaConfig:
         })
         self.subjects[group].sort(key=lambda x: x["id"])
 
-    def find_subject(self, idx: int, group):
+    def find_subject(self, idx: int, group: str):
         for s in self.subjects[group]:
             if s["id"] == idx:
                 return s

@@ -87,7 +87,7 @@ class SchoolPlan:
                     if plan[day.value + hour] == 0 and self.teacher_free_at(subject["teacher_id"], day, hour, config):
                         plan[day.value + hour] = subject["id"]
 
-    def as_dict(self, config: Config, mconfig: MetaConfig) -> dict:
+    def as_dict(self, config: Config) -> dict:
         school_plan = {name: {day: [] for day in WEEK_DAYS} for name in config.group_to_id.values()}
         for gid in range(len(self.plans)):
             for day in list(Day):

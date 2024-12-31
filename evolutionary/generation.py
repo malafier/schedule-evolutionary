@@ -32,9 +32,6 @@ class Generation:
     def worst_plan(self) -> SchoolPlan:
         return min(self.population, key=lambda x: x.fitness)
 
-    def all(self):
-        return [plan.as_dict(self.config, self.meta) for plan in self.population]
-
     def statistics(self) -> dict:
         return {
             "gen": self.gen_no,

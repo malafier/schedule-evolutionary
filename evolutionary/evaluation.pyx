@@ -19,12 +19,6 @@ cdef class Day:
 
 ctypedef list[list[int]] Matrix
 
-cdef bint is_gap(Matrix plan, int gid, int x_day, int start_h, int h_span):
-    cdef list lessons = plan[gid][x_day + start_h: x_day + start_h + h_span - 1]
-    cdef int lesson_before = plan[gid][x_day + start_h - 1]
-    cdef int lesson_after = plan[gid][x_day + start_h + h_span]
-    return all(lesson == 0 for lesson in lessons) and lesson_after != 0 and lesson_before != 0
-
 @cython.boundscheck(False)
 @cython.wraparound(False)
 cpdef int gaps_evaluation(Matrix plan):

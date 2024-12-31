@@ -86,7 +86,8 @@ cpdef Matrix mutate(Matrix plan, list[dict] subject_to_teacher):
             continue
 
         for i in range(HOURS):
-            if count_teacher_lessons(teachers, teachers[gid][lesson_h], i) == 0 and count_teacher_lessons(teachers, teachers[gid][i], lesson_h) == 0:
+            if count_teacher_lessons(teachers, teachers[gid][lesson_h], i) == 0 \
+                    and count_teacher_lessons(teachers, teachers[gid][i], lesson_h) == 0:
                 temp = plan[gid][i]
                 plan[gid][i] = plan[gid][lesson_h]
                 plan[gid][lesson_h] = temp

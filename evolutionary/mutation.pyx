@@ -49,12 +49,13 @@ cdef int count_teacher_lessons(Matrix teacher_plan, int teacher, int hour):
 @cython.wraparound(False)
 cpdef Matrix mutate(Matrix plan, list[dict] subject_to_teacher):
     cdef int i, gid, lesson_h, rows = len(plan), cols = HOURS, temp
-    cdef int mutated = 0
+    cdef int mutated
 
     teachers = teacher_matrix(plan, subject_to_teacher)
     cdef list[int] rand_hours = shuffle([x for x in range(HOURS)])
 
     for gid in range(rows):
+        mutated = 0
         lesson_h = random_hour()
         while plan[gid][lesson_h] == 0:
             lesson_h = random_hour()

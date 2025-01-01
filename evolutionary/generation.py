@@ -48,10 +48,6 @@ class Generation:
             f_avg = sum([pop.fitness for pop in self.population]) / self.size
             C = self.config.C
 
-            if C == 1:
-                self.config.C = 1.01
-                C = 1.01
-
             if f_min > (C * f_avg - f_max) / (C - 1.0):
                 delta = f_max - f_avg
                 a = (C - 1.0) * f_avg / delta

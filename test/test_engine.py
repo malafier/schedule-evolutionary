@@ -1,6 +1,5 @@
 import json
 import time
-from cProfile import label
 
 import numpy as np
 from matplotlib import pyplot as plt
@@ -18,10 +17,10 @@ sf1 = open("test_sets/subjects_1.json", "r")
 tf1 = open("test_sets/teachers_1.json", "r")
 sf2 = open("test_sets/subjects_2.json", "r")
 tf2 = open("test_sets/teachers_2.json", "r")
-teachers1=json.load(tf1)
-subjects1=json.load(sf1)
-teachers2=json.load(tf2)
-subjects2=json.load(sf2)
+teachers1 = json.load(tf1)
+subjects1 = json.load(sf1)
+teachers2 = json.load(tf2)
+subjects2 = json.load(sf2)
 
 CONFIGS: list[MetaConfig] = [
     MetaConfig(
@@ -36,7 +35,7 @@ CONFIGS: list[MetaConfig] = [
             crossover_rate=0.9,
             mutation_rate=0.15
         ),
-        c=2.3
+        c=2.0
     ),
     MetaConfig(
         population_size=100,
@@ -50,7 +49,7 @@ CONFIGS: list[MetaConfig] = [
             crossover_rate=0.9,
             mutation_rate=0.15
         ),
-        c=2.3
+        c=2.0
     ),
     MetaConfig(
         population_size=100,
@@ -64,7 +63,7 @@ CONFIGS: list[MetaConfig] = [
             crossover_rate=0.8,
             mutation_rate=0.15
         ),
-        k=12
+        k=10
     ),
     MetaConfig(
         population_size=100,
@@ -78,7 +77,7 @@ CONFIGS: list[MetaConfig] = [
             crossover_rate=0.8,
             mutation_rate=0.15
         ),
-        k=8
+        k=10
     ),
 ]
 
@@ -90,7 +89,6 @@ def plot_graph(stats, file_name):
     y_min = [s["min"] for s in stats]
     m, b = np.polyfit(x, y_avg, deg=1)
     y_lin = [m * x_i + b for x_i in x]
-
 
     plt.figure(figsize=(10, 5))
     plt.plot(x, y_min, label='Min')

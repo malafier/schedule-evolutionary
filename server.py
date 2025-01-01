@@ -127,7 +127,7 @@ def next_gens():
 @app.route('/best-plan', methods=['GET'])
 def show_plan():
     global generation
-    school_plan: dict = generation.best_plan().as_dict(generation.config, generation.meta)
+    school_plan: dict = generation.best_plan().as_dict(generation.config)
 
     return render_template("plan.html", school_plan=school_plan, config=generation.meta)
 
@@ -135,7 +135,7 @@ def show_plan():
 @app.route('/compact-plan', methods=['GET'])
 def show_compact_plan():
     global generation
-    school_plan: dict = generation.best_plan().as_dict(generation.config, generation.meta)
+    school_plan: dict = generation.best_plan().as_dict(generation.config)
 
     return render_template("compact_plan.html", school_plan=school_plan, config=generation.meta)
 

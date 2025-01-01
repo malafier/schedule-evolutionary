@@ -229,7 +229,7 @@ def teacher_mod(idx):
         mconfig.update_teacher(idx, teacher_name)
     if request.method == 'DELETE':
         if mconfig.teacher_occupied(idx):
-            return render_template("teachers.html", teachers=mconfig.teachers)
+            return render_template("teachers.html", teachers=mconfig.teachers, failed=True)
         mconfig.delete_teacher(idx)
 
     reset_and_save_config()

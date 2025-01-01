@@ -6,6 +6,12 @@
 
   {{ Button(url="/teacher", target="#plan-target", text="Nowy nauczyciel") }}
 
+  {% if failed %}
+    <div class="bg-red-100 text-red-800 font-bold border border-red-400 rounded-lg p-4 mt-4 w-1/2">
+      Nie można usunąć tego nauczyciela. Jest już przypisany do któregoś przedmiotu.
+    </div>
+  {% endif %}
+
   {% set table_style = "px-4 py-2 border border-gray-300" %}
 
   <table class="table-auto border-collapse w-full mt-4">

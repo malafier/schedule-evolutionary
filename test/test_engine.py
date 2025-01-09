@@ -9,7 +9,7 @@ from evolutionary.crossover import DoublePointCrossover, Matrix2DCrossover, Unif
 from evolutionary.generation import Generation
 from evolutionary.selection import RouletteSelection, TournamentSelection
 
-NO_GENERATIONS = 1_000  # Number of generations algorithm should go through
+NO_GENERATIONS = 800  # Number of generations algorithm should go through
 SAMPLING_INTERVAL = 20
 
 # Loading data sets
@@ -22,6 +22,8 @@ subjects1 = json.load(sf1)
 teachers2 = json.load(tf2)
 subjects2 = json.load(sf2)
 
+weights = [2.0, 2.0, 1.0, 1.0, 1.0, 0.7, 0.5, 0.1]
+
 CONFIGS: list[MetaConfig] = [
     MetaConfig(
         population_size=100,
@@ -30,10 +32,10 @@ CONFIGS: list[MetaConfig] = [
         crossover_strat=SinglePointCrossover(),
         teachers=teachers1,
         subjects=subjects1,
-        eval_criteria=EvaluationCriteria(),
+        eval_criteria=EvaluationCriteria(hours_weight=weights),
         cross_params=CrossParams(
             crossover_rate=0.9,
-            mutation_rate=0.15
+            mutation_rate=0.2
         ),
         c=2.0
     ),
@@ -44,10 +46,10 @@ CONFIGS: list[MetaConfig] = [
         crossover_strat=Matrix2DCrossover(),
         teachers=teachers2,
         subjects=subjects2,
-        eval_criteria=EvaluationCriteria(),
+        eval_criteria=EvaluationCriteria(hours_weight=weights),
         cross_params=CrossParams(
             crossover_rate=0.9,
-            mutation_rate=0.15
+            mutation_rate=0.2
         ),
         c=2.0
     ),
@@ -58,12 +60,12 @@ CONFIGS: list[MetaConfig] = [
         crossover_strat=DoublePointCrossover(),
         teachers=teachers1,
         subjects=subjects1,
-        eval_criteria=EvaluationCriteria(),
+        eval_criteria=EvaluationCriteria(hours_weight=weights),
         cross_params=CrossParams(
             crossover_rate=0.8,
             mutation_rate=0.15
         ),
-        k=10
+        k=8
     ),
     MetaConfig(
         population_size=100,
@@ -72,12 +74,12 @@ CONFIGS: list[MetaConfig] = [
         crossover_strat=UniformCrossover(),
         teachers=teachers2,
         subjects=subjects2,
-        eval_criteria=EvaluationCriteria(),
+        eval_criteria=EvaluationCriteria(hours_weight=weights),
         cross_params=CrossParams(
             crossover_rate=0.8,
             mutation_rate=0.15
         ),
-        k=10
+        k=8
     ),
 ]
 
